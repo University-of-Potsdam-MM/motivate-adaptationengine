@@ -1,0 +1,137 @@
+//import("./testActions.nools");
+
+function restrictFeature(msg) {
+	console.log(msg);
+}
+
+function select(nr) {
+	console.log(nr);
+}
+
+function preload(nr) {
+	console.log(nr);
+}
+
+define ContextInformation {
+	id : '',
+	value : 'NO_VALUE',
+	parameters : { },
+	constructor : function(id, value, parameters) {
+		this.id = id;
+		this.value = value;
+		this.parameters = parameters;
+	}
+}
+
+rule "RestrictFeatureConstraintRule[1409235055]" { 
+	when {
+		c1 : ContextInformation;
+		c2 : ContextInformation;
+		not(c3 : ContextInformation (c1.id == 'CurrentTimeMeasurableInformation' && c1.value > "09:00:00") && (c2.id == 'UserRoleMeasurableInformation' && c2.value == Student) && (c3.id == 'CurrentTimeMeasurableInformation' && c3.value < "16:00:00"));
+	} then {
+		restrictFeature("AppUsageFeature");
+	}
+}
+
+rule "SelectLearningUnit[130]" { 
+	when {
+		c1 : ContextInformation (c1.id == 'CurrentTemperatureMeasurableInformation' && c1.parameters['TemperatureScaleContextParameter'] == FAHRENHEIT && c1.value > 30.0);
+	} then {
+		select(130);
+	}
+}
+
+rule "SelectLearningUnit[129]" { 
+	when {
+		c1 : ContextInformation (c1.id == 'UserDidArriveAtLocationMeasurableInformation' && c1.parameters['LatitudeContextParameter'] == 52.42357 && c1.parameters['LongitudeContextParameter'] == 14.2345 && c1.value == true);
+	} then {
+		select(129);
+	}
+}
+
+rule "SelectLearningUnit[126]" { 
+	when {
+		c1 : ContextInformation;
+		c2 : ContextInformation;
+		c3 : ContextInformation;
+		c4 : ContextInformation;
+		c5 : ContextInformation;
+		c6 : ContextInformation;
+		c7 : ContextInformation (c1.id == 'FinishedLearningUnitMeasurableInformation' && c1.value == 127) && ((c2.id == 'FinishedLearningUnitMeasurableInformation' && c2.value == 128) || (c3.id == 'FinishedLearningUnitMeasurableInformation' && c3.value == 125)) && ((c4.id == 'FinishedLearningUnitMeasurableInformation' && c4.value == 124) || (c3.id == 'FinishedLearningUnitMeasurableInformation' && c3.value == 125)) && (c5.id == 'UserMovementSpeedMeasurableInformation' && c5.parameters['VelocityUnitContextParameter'] == KILOMETERS_PER_HOUR && c5.value < 20.0) && (c6.id == 'UserLocationLongitudeMeasurableInformation' && c6.value == 13.34523) && (c7.id == 'UserLocationLatitudeMeasurableInformation' && c7.value == 52.12436);
+	} then {
+		select(126);
+	}
+}
+
+rule "PreloadLearningUnit[126:127]" { 
+	when {
+		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == 126);
+	} then {
+		preload(127);
+	}
+}
+
+rule "PreloadLearningUnit[126:128]" { 
+	when {
+		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == 126);
+	} then {
+		preload(128);
+	}
+}
+
+rule "PreloadLearningUnit[126:124]" { 
+	when {
+		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == 126);
+	} then {
+		preload(124);
+	}
+}
+
+rule "PreloadLearningUnit[128:125]" { 
+	when {
+		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == 128);
+	} then {
+		preload(125);
+	}
+}
+
+rule "PreloadLearningUnit[128:129]" { 
+	when {
+		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == 128);
+	} then {
+		preload(129);
+	}
+}
+
+rule "PreloadLearningUnit[125:128]" { 
+	when {
+		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == 125);
+	} then {
+		preload(128);
+	}
+}
+
+rule "PreloadLearningUnit[125:124]" { 
+	when {
+		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == 125);
+	} then {
+		preload(124);
+	}
+}
+
+rule "SelectLearningUnit[124]" { 
+	when {
+		c1 : ContextInformation (c1.id == 'CurrentTemperatureMeasurableInformation' && c1.parameters['TemperatureScaleContextParameter'] == FAHRENHEIT && c1.value > 30.0);
+	} then {
+		select(124);
+	}
+}
+
+rule "PreloadLearningUnit[124:125]" { 
+	when {
+		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == 124);
+	} then {
+		preload(125);
+	}
+}
+
