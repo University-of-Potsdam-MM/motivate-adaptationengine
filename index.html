@@ -2,7 +2,25 @@
 <html>
     <head>
         <title>MOTIVATE Adaptation Engine</title>
-        <script data-main="scripts/adaptationengine" src="scripts/require.js"></script>
+        <script type="text/javascript" src="scripts/require.js"></script>
+        <script type="text/javascript">
+            // Start the main app logic.
+            require(['scripts/config'], function() {
+                require(['jquery', 'nools', 'ease', 'ae', 're'], function($, nools) {
+                    console.log("good to go");
+                    $.ajax({
+                        url: "noolsDSLOutput.nools",
+                        success: function(noolsDSL) {
+                            var adaptationEngine = new AdaptationEngine(noolsDSL);
+
+
+                        }
+                    });
+
+
+                });
+            });
+        </script>
     </head>
     <body>
     </body>

@@ -1,7 +1,7 @@
 ;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function () {
     "use strict";
-    var nools = require("../");
+    var nools = require("../.");
 
     if (typeof Object.getPrototypeOf !== "function") {
         Object.getPrototypeOf = "".__proto__ === String.prototype
@@ -24,7 +24,7 @@
 }).call(window);
 
 },{"../":2}],2:[function(require,module,exports){
-module.exports = exports = require("./lib");
+module.exports = exports = require("./");
 },{"./lib":15}],3:[function(require,module,exports){
 "use strict";
 var extd = require("./extended"),
@@ -1930,8 +1930,8 @@ var extd = require("./extended"),
     InitialFact = require("./pattern").InitialFact,
     conflictStrategies = require("./conflict"),
     conflictResolution = conflictStrategies.strategy(["salience", "activationRecency"]),
-    rule = require("./rule"),
-    Flow = require("./flow");
+    rule = require("./../rule"),
+    Flow = require("./../flow");
 
 var flows = {};
 var FlowContainer = declare({
