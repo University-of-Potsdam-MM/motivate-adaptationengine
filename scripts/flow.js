@@ -1,1 +1,0 @@
-var flow = nools.compile("noolsDSLOutput.nools", {name: "adaptation"});
