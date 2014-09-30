@@ -2,17 +2,18 @@
 <html>
     <head>
         <title>MOTIVATE Adaptation Engine</title>
-        <script type="text/javascript" src="scripts/require.js"></script>
+        <script type="text/javascript" src="scripts/lib/require.js"></script>
         <script type="text/javascript">
             // Start the main app logic. 
             require(['scripts/config'], function() {
-                require(['jquery', 'ease', 'nools', 're', 'ae'], function($, easejs, nools) {                
+                require(['jquery', 'ease', 'nools', 're', 'ae'], function($, easejs, nools, RuleEngine, AdaptationEngine) {
 	                    console.log("ready to rumble!");
 	                    $.ajax({
 	                        url: "noolsDSLOutput.nools",
 	                        success: function(noolsDSL) {
 	                            var adaptationEngine = new AdaptationEngine(noolsDSL);
-	                            console.log("parsing...");
+                                adaptationEngine.setRestrictFeatureCallback(function(msg) { console.log("Delegate: "+msg) });
+                                adaptationEngine.startRuleMatching(3000);
 	                        }
                 	});
                 });
