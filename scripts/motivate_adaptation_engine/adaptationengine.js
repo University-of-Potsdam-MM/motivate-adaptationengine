@@ -1,7 +1,7 @@
-define("ae", ['re'], function (RuleEngine) {
+define('MoAE', ['easejs', 'MoRE', 'MoCD'], function (easejs, RuleEngine, ContextDetector) {
     var Class = easejs.Class;
 
-    var AdaptationEngine = Class( 'AdaptationEngine',
+    var AdaptationEngine = Class('AdaptationEngine',
         {
             'private _ruleEngine': [],
             'private _contextDetector': [],
@@ -20,6 +20,8 @@ define("ae", ['re'], function (RuleEngine) {
                 }
                 FlowContextInformation = this._ruleEngine.getDefined("ContextInformation");
                 this._ruleEngine.addContextInformation(new FlowContextInformation("CurrentTemperatureMeasurableInformation", 55, {"TemperatureScaleContextParameter" : "FAHRENHEIT"}));
+
+                this._contextDetector = new ContextDetector();
             },
 
             'public setRestrictFeatureCallback': function(callback) {

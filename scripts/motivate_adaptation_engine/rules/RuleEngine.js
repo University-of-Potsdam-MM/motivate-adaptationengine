@@ -1,4 +1,4 @@
-define("re", ['nools'], function (nools) {
+define("MoRE", ['nools', 'easejs'], function (nools, easejs) {
     var Class = easejs.Class;
 
     var RuleEngine = Class('RuleEngine',
@@ -59,7 +59,6 @@ define("re", ['nools'], function (nools) {
                 var that = this;
 
                 console.log("matching...");
-                console.log(this._session.getFacts());
                 this._session.match(function(err) {
                    if (err) {
                        that._callbacks["ruleMatchingErrorCallback"](err);
