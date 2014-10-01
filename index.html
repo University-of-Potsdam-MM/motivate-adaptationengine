@@ -12,7 +12,7 @@
 	                        url: "noolsDSLOutput.nools",
 	                        success: function(noolsDSL) {
 	                            var adaptationEngine = new AdaptationEngine(noolsDSL);
-                                adaptationEngine.setRestrictFeatureCallback(function(msg) { console.log("Delegate: "+msg) });
+                                adaptationEngine.setRestrictFeatureCallback(function(msg) { console.log("Callback: "+msg) });
                                 adaptationEngine.startRuleMatching(3000);
 	                        }
                 	});

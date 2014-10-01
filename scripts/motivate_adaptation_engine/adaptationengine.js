@@ -5,7 +5,7 @@ define('MoAE', ['easejs', 'MoRE', 'MoCD'], function (easejs, RuleEngine, Context
         {
             'private _ruleEngine': [],
             'private _contextDetector': [],
-            'private _noolsDSL': "",
+            'private _noolsDSL': null,
             'private _ruleMatchingInterval': null,
 
             'public isRunning': false,
