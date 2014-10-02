@@ -46,9 +46,7 @@ define(['easejs',
 		 * registers widgets
 		 */
 		'private registerWidgets' : function(){
-			var geoLocationWidget = new GeoLocationWidget(this);
-			//register in Widgets
-			this.registryHelper(this.widgets, geoLocationWidget);
+
 		},
 		
 		/*
@@ -199,8 +197,8 @@ define(['easejs',
 				return this.interpreter;
 			} else {
 				return null;
-			};
-		},
+			}
+		}
 				
 	});
 

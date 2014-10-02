@@ -14,14 +14,10 @@ define('MoAE', ['easejs', 'MoRE', 'MoCD'], function (easejs, RuleEngine, Context
             {
                 this._noolsDSL = noolsDSL;
                 this._ruleEngine = new RuleEngine(noolsDSL);
-                // parse rules for context detection initialization
-                for (var rule in this._ruleEngine.getRules()) {
-                    // pass rule to context detection
-                }
                 FlowContextInformation = this._ruleEngine.getDefined("ContextInformation");
                 this._ruleEngine.addContextInformation(new FlowContextInformation("CurrentTemperatureMeasurableInformation", 55, {"TemperatureScaleContextParameter" : "FAHRENHEIT"}));
 
-                this._contextDetector = new ContextDetector();
+                this._contextDetector = new ContextDetector(this._ruleEngine.getRules());
             },
 
             'public setRestrictFeatureCallback': function(callback) {

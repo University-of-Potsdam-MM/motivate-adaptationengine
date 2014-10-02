@@ -13,7 +13,7 @@
 	                        success: function(noolsDSL) {
 	                            var adaptationEngine = new AdaptationEngine(noolsDSL);
                                 adaptationEngine.setRestrictFeatureCallback(function(msg) { console.log("Callback: "+msg) });
-                                adaptationEngine.startRuleMatching(3000);
+                                adaptationEngine.startRuleMatching();
 	                        }
                 	});
                 });

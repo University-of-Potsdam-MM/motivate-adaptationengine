@@ -1,4 +1,4 @@
-define("MoRE", ['nools', 'easejs'], function (nools, easejs) {
+define("MoRE", ['nools', 'easejs'], function (nools, easejs, ConstraintParser) {
     var Class = easejs.Class;
 
     var RuleEngine = Class('RuleEngine',
