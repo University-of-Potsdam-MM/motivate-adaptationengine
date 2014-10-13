@@ -4,7 +4,7 @@ define("MoCD", ['nools', 'easejs', 'jquery', 'MoCD_Discoverer', 'MoCD_GeoLocatio
     var ContextDetector = Class('ContextDetector', {
         'private _adaptationRules': null,
         'private _discoverer': null,
-        'private _contextInformations': [],
+        'private _contextInformation': [],
         'private _lastContextInformation': [],
 
         __construct: function(adaptationRules) {
@@ -23,7 +23,7 @@ define("MoCD", ['nools', 'easejs', 'jquery', 'MoCD_Discoverer', 'MoCD_GeoLocatio
                 this._extractContextInformationsFromParsedConstraints(parser.parse(lastConstraint[lastConstraint.length - 1]));
             }
 
-            console.log(this._contextInformations);
+            console.log(this._contextInformation);
         },
 
         'private _extractContextInformationsFromParsedConstraints': function(parsedConstraints) {
@@ -34,14 +34,14 @@ define("MoCD", ['nools', 'easejs', 'jquery', 'MoCD_Discoverer', 'MoCD_GeoLocatio
                 } else if (parsedConstraint != null && typeof parsedConstraint == "string") {
                     if (parsedConstraint.indexOf("MeasurableInformation") > -1) {
                         this._lastContextInformation = parsedConstraint;
-                        this._contextInformations.push(parsedConstraint);
+                        this._contextInformation.push(parsedConstraint);
                     } else if (parsedConstraint.indexOf("ContextParameter") > -1) {
                         console.log(parsedConstraints);
                         console.log(this._lastContextInformation + " " + parsedConstraint);
                     } else {
                         console.log(parsedConstraints);
                     }
-                    //$.inArray(parsedConstraint, this._contextInformations) == -1
+                    //$.inArray(parsedConstraint, this._contextInformation) == -1
                 }
             }
         }

@@ -3,8 +3,8 @@ define('MoAE', ['easejs', 'MoRE', 'MoCD'], function (easejs, RuleEngine, Context
 
     var AdaptationEngine = Class('AdaptationEngine',
         {
-            'private _ruleEngine': [],
-            'private _contextDetector': [],
+            'private _ruleEngine': null,
+            'private _contextDetector': null,
             'private _noolsDSL': null,
             'private _ruleMatchingInterval': null,
 
@@ -19,6 +19,7 @@ define('MoAE', ['easejs', 'MoRE', 'MoCD'], function (easejs, RuleEngine, Context
 
                 this._contextDetector = new ContextDetector(this._ruleEngine.getRules());
             },
+
 
             'public setRestrictFeatureCallback': function(callback) {
                 this._ruleEngine.setCallback("restrictFeatureCallback", callback);
