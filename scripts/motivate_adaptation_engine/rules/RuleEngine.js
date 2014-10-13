@@ -58,6 +58,13 @@ define("MoRE", ['nools', 'easejs'], function (nools, easejs, ConstraintParser) {
             'public matchRules': function() {
                 var that = this;
 
+                // modify all facts so that rules will fire even when there are no new context information
+                var facts = this._session.getFacts();
+                for(index in facts) {
+                    var fact = facts[index];
+                    this._session.modify(fact);
+                }
+
                 console.log("matching...");
                 this._session.match(function(err) {
                    if (err) {
