@@ -12,8 +12,10 @@
 	                        url: "noolsDSLOutput.nools",
 	                        success: function(noolsDSL) {
 	                            var adaptationEngine = new AdaptationEngine(noolsDSL);
-                                adaptationEngine.setRestrictFeatureCallback(function(msg) { console.log("Callback: "+msg) });
-                                adaptationEngine.startRuleMatching();
+                                adaptationEngine.setRestrictFeatureCallback(function(msg, facts) { console.log("Restrict: "+msg+" "+facts) });
+                                adaptationEngine.setSelectLearningUnitCallback(function(msg, facts) { console.log("Select: "+msg+" "+facts) });
+                                adaptationEngine.setPreloadLearningUnitCallback(function(msg) { console.log("Preload: "+msg) });
+                                adaptationEngine.startRuleMatching(3000);
 	                        }
                 	});
                 });

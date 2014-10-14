@@ -1,4 +1,4 @@
-define("MoRE", ['nools', 'easejs'], function (nools, easejs, ConstraintParser) {
+define("MoRE", ['nools', 'easejs', 'MoCI'], function (nools, easejs, ContextInformation) {
     var Class = easejs.Class;
 
     var RuleEngine = Class('RuleEngine',
@@ -25,26 +25,33 @@ define("MoRE", ['nools', 'easejs'], function (nools, easejs, ConstraintParser) {
                 this._flow = this._nools.compile(noolsDSL, {name: "adaptationRules"});
                 this._session = this._flow.getSession();
 
-                this._session.on("restrictFeature", function(feature){
-                    console.log("Restrict Feature: "+feature+"!");
+                this._session.on("restrictFeature", function(feature, facts){
                     if (typeof that._callbacks["restrictFeatureCallback"] != "undefined") {
-                        that._callbacks["restrictFeatureCallback"](feature);
+                        that._callbacks["restrictFeatureCallback"](feature, that._contextInformationFromFacts(facts));
                     }
                 });
 
-                this._session.on("selectLearningUnit", function(id){
-                    console.log("Select Learning Unit: "+id+"!");
+                this._session.on("selectLearningUnit", function(id, facts){
+                    console.log(facts);
                     if (typeof that._callbacks["selectLearningUnitCallback"] != "undefined") {
-                        that._callbacks["selectLearningUnitCallback"](id);
+                        that._callbacks["selectLearningUnitCallback"](id, that._contextInformationFromFacts(facts));
                     }
                 });
 
                 this._session.on("preloadLearningUnit", function(id){
-                    console.log("Preload Learning Unit: "+id+"!");
                     if (typeof that._callbacks["preloadLearningUnitCallback"] != "undefined") {
                         that._callbacks["preloadLearningUnitCallback"](id);
                     }
                 });
+            },
+
+            'private _contextInformationFromFacts': function(facts) {
+                var contextInformation = [];
+                for(index in facts) {
+                    var fact = facts[index];
+                    contextInformation.push(ContextInformation.fromFact(fact));
+                }
+                return contextInformation;
             },
 
             'public setCallback': function(callbackName, callback) {
@@ -59,6 +66,7 @@ define("MoRE", ['nools', 'easejs'], function (nools, easejs, ConstraintParser) {
                 var that = this;
 
                 // modify all facts so that rules will fire even when there are no new context information
+                // might be unnecessary in the future because context information will likely be changing all the time
                 var facts = this._session.getFacts();
                 for(index in facts) {
                     var fact = facts[index];

@@ -9,13 +9,13 @@ define ContextInformation {
 	}
 }
 
-rule "RestrictFeatureConstraintRule[1412080874]" { 
+rule "RestrictFeatureConstraintRule[1413297252]" { 
 	when {
 		c1 : ContextInformation;
 		c2 : ContextInformation;
 		not(c3 : ContextInformation (c1.id == 'CurrentTimeMeasurableInformation' && c1.value > '09:00:00') && (c2.id == 'UserRoleMeasurableInformation' && c2.value == 'Student') && (c3.id == 'CurrentTimeMeasurableInformation' && c3.value < '16:00:00'));
 	} then {
-		emit("restrictFeature", "AppUsageFeature");
+		emit("restrictFeature", "AppUsageFeature", getFacts());
 	}
 }
 
@@ -46,7 +46,7 @@ rule "SelectLearningUnit[126]" {
 		c7 : ContextInformation;
 		c8 : ContextInformation (c1.id == 'FinishedLearningUnitMeasurableInformation' && c1.value == '127') && ((c2.id == 'FinishedLearningUnitMeasurableInformation' && c2.value == '124') || (c3.id == 'FinishedLearningUnitMeasurableInformation' && c3.value == '125')) && ((c4.id == 'FinishedLearningUnitMeasurableInformation' && c4.value == '128') || (c3.id == 'FinishedLearningUnitMeasurableInformation' && c3.value == '125')) && (c5.id == 'UserMovementSpeedMeasurableInformation' && c5.parameters['VelocityUnitContextParameter'] == 'KILOMETERS_PER_HOUR' && c5.value < '20.0') && (c6.id == 'DeviceTypeMeasurableInformation' && c6.value != 'FEATURE_PHONE') && (c7.id == 'UserLocationLongitudeMeasurableInformation' && c7.value == '13.34523') && (c8.id == 'UserLocationLatitudeMeasurableInformation' && c8.value == '52.12436');
 	} then {
-		emit("selectLearningUnit", "126");
+		emit("selectLearningUnit", "126", getFacts());
 	}
 }
 
@@ -79,7 +79,7 @@ rule "SelectLearningUnit[130]" {
 		c1 : ContextInformation;
 		c2 : ContextInformation (c1.id == 'DeviceTypeMeasurableInformation' && c1.value != 'FEATURE_PHONE') && (c2.id == 'CurrentTemperatureMeasurableInformation' && c2.parameters['TemperatureScaleContextParameter'] == 'FAHRENHEIT' && c2.value > '30.0');
 	} then {
-		emit("selectLearningUnit", "130");
+		emit("selectLearningUnit", "130", getFacts());
 	}
 }
 
@@ -87,7 +87,7 @@ rule "SelectLearningUnit[129]" {
 	when {
 		c1 : ContextInformation (c1.id == 'UserDidArriveAtLocationMeasurableInformation' && c1.parameters['LongitudeContextParameter'] == '14.2345' && c1.parameters['LatitudeContextParameter'] == '52.42357' && c1.value == 'true');
 	} then {
-		emit("selectLearningUnit", "129");
+		emit("selectLearningUnit", "129", getFacts());
 	}
 }
 
@@ -95,7 +95,7 @@ rule "SelectLearningUnit[124]" {
 	when {
 		c1 : ContextInformation (c1.id == 'CurrentTemperatureMeasurableInformation' && c1.parameters['TemperatureScaleContextParameter'] == 'FAHRENHEIT' && c1.value > '30.0');
 	} then {
-		emit("selectLearningUnit", "124");
+		emit("selectLearningUnit", "124", getFacts());
 	}
 }
 
