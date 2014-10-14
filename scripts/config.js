@@ -9,6 +9,8 @@ require.config({
         MoAE: 'motivate_adaptation_engine/adaptationengine',
         // rule engine
         MoRE: 'motivate_adaptation_engine/rules/ruleengine',
+        // context information
+        MoCI: 'motivate_adaptation_engine/context/ContextInformation',
         // context detection
         MoCD: 'motivate_adaptation_engine/context/ContextDetector',
         MoCD_AttributeType: 'motivate_adaptation_engine/context/attribute/attributeType',
