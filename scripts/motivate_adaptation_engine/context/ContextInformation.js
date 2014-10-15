@@ -51,6 +51,14 @@ define("MoCI", ['easejs'], function(easejs) {
 
         'public setParameters': function(parameters) {
             this._parameters = parameters;
+        },
+
+        'public getValue': function() {
+            return this._value;
+        },
+
+        'public setValue': function(value) {
+            this._value = value
         }
     });
 
