@@ -14,9 +14,9 @@ define("MoCI", ['easejs'], function(easejs) {
 
         'public static fromFact': function(fact) {
             var contextInformation = new ContextInformation();
-            contextInformation._id = fact.id;
-            contextInformation._parameters = fact.parameters;
-            contextInformation._value = fact.value;
+            contextInformation.setID(fact.id);
+            contextInformation.setParameters(fact.parameters);
+            contextInformation.setValue(fact.value);
             return contextInformation;
         },
 
