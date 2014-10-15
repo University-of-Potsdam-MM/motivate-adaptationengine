@@ -20,6 +20,18 @@ define("MoCI", ['easejs'], function(easejs) {
             return contextInformation;
         },
 
+        'public description': function() {
+            var description = "";
+
+            description += this.getID()+" [";
+            for(var parameter in this.getParameters()) {
+                description += parameter+":"+this.getParameter(parameter);
+            }
+            description += "] is "+this.getValue();
+
+            return description;
+        },
+
         'public equals': function(contextInformation) {
             var isEqual = true;
             if (this.getID() != contextInformation.getID()) isEqual = false;
