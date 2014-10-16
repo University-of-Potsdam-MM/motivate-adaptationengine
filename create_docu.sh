@@ -1,0 +1,2 @@
+# Create JSDoc with template in the user's download folder (yea, i know...)
+jsdoc ./scripts/motivate_adaptation_engine/ -d ./doc/ -r -c $HOME/Downloads/jaguarjs-jsdoc-master/conf.json -t $HOME/Downloads/jaguarjs-jsdoc-master/

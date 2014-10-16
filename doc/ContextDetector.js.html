@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Source: context/ContextDetector.js</title>
+    
+    
+    
+    
+    
+    <meta property="og:title" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content=""/>
+    
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jaguar.css">
+    
+    
+    <script>
+    var config = {"monospaceLinks":true,"cleverLinks":true,"default":{"outputSourceFiles":true},"applicationName":"Demo","disqus":"","googleAnalytics":"","openGraph":{"title":"","type":"website","image":"","site_name":"","url":""},"meta":{"title":"","description":"","keyword":""},"linenums":false};
+    </script>
+    
+
+    
+</head>
+<body>
+<div id="wrap" class="clearfix">
+    
+<div class="navigation">
+    <h3 class="applicationName"><a href="index.html">Demo</a></h3>
+
+    <div class="search">
+        <input id="search" type="text" class="form-control input-sm" placeholder="Search Documentations">
+    </div>
+    <ul class="list">
+    
+        <li class="item" data-name="AdaptationEngine">
+            <span class="title">
+                <a href="AdaptationEngine.html">AdaptationEngine</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="AdaptationEngine#isRunning"><a href="AdaptationEngine.html#isRunning">isRunning</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            <span class="subtitle">Typedefs</span>
+            
+                <li data-name="AdaptationEngine~preloadLearningUnitCallback"><a href="AdaptationEngine.html#preloadLearningUnitCallback">preloadLearningUnitCallback</a></li>
+            
+                <li data-name="AdaptationEngine~restrictFeatureCallback"><a href="AdaptationEngine.html#restrictFeatureCallback">restrictFeatureCallback</a></li>
+            
+                <li data-name="AdaptationEngine~ruleMatchingErrorCallback"><a href="AdaptationEngine.html#ruleMatchingErrorCallback">ruleMatchingErrorCallback</a></li>
+            
+                <li data-name="AdaptationEngine~ruleMatchingSuccessCallback"><a href="AdaptationEngine.html#ruleMatchingSuccessCallback">ruleMatchingSuccessCallback</a></li>
+            
+                <li data-name="AdaptationEngine~selectLearningUnitCallback"><a href="AdaptationEngine.html#selectLearningUnitCallback">selectLearningUnitCallback</a></li>
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="AdaptationEngine#setPreloadLearningUnitCallback"><a href="AdaptationEngine.html#setPreloadLearningUnitCallback">setPreloadLearningUnitCallback</a></li>
+            
+                <li data-name="AdaptationEngine#setRestrictFeatureCallback"><a href="AdaptationEngine.html#setRestrictFeatureCallback">setRestrictFeatureCallback</a></li>
+            
+                <li data-name="AdaptationEngine#setRuleMatchingSuccessCallback"><a href="AdaptationEngine.html#setRuleMatchingSuccessCallback">setRuleMatchingSuccessCallback</a></li>
+            
+                <li data-name="AdaptationEngine#setSelectLearningUnitCallback"><a href="AdaptationEngine.html#setSelectLearningUnitCallback">setSelectLearningUnitCallback</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="ContextDetector">
+            <span class="title">
+                <a href="ContextDetector.html">ContextDetector</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="ContextInformation">
+            <span class="title">
+                <a href="ContextInformation.html">ContextInformation</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="ContextInformation.fromFact"><a href="ContextInformation.html#fromFact">fromFact</a></li>
+            
+                <li data-name="ContextInformation#description"><a href="ContextInformation.html#description">description</a></li>
+            
+                <li data-name="ContextInformation#getID"><a href="ContextInformation.html#getID">getID</a></li>
+            
+                <li data-name="ContextInformation#setID"><a href="ContextInformation.html#setID">setID</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="RuleEngine">
+            <span class="title">
+                <a href="RuleEngine.html">RuleEngine</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+    </ul>
+</div>
+    <div class="main">
+        <h1 class="page-title" data-filename="ContextDetector.js.html">Source: context/ContextDetector.js</h1>
+        
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source "><code>define("MoCD", ['nools', 'easejs', 'jquery', 'MoCD_Discoverer', 'MoCD_GeoLocationWidget', 'MoCI', 'lib/parser/constraint/parser'], function(nools, easejs, $, Discoverer, GeoLocationWidget, ContextInformation) {
+    var Class = easejs.Class;
+
+    var ContextDetector = Class('ContextDetector', {
+        'private _discoverer': null,
+        'private _contextInformation' : [],
+        'private _currentContextInformation': null,
+        'private _currentParameter': null,
+        'private _expectParameterValue' : false,
+        'private _callbacks' : {
+            "newContextInformationCallback": function() {
+                console.log("Warning! There is no callback set to handle new context information.");
+            },
+            "updateContextInformationCallback": function() {
+                console.log("Warning! There is no callback set to handle updated context information.");
+            }
+        },
+
+        /**
+         * @constructs ContextDetector
+         * @param adaptationRules
+         */
+        __construct: function(adaptationRules) {
+            this._discoverer = new Discoverer();
+
+            for(var index in adaptationRules) {
+                var adaptationRule = adaptationRules[index];
+                var lastConstraint = adaptationRule.constraints[adaptationRule.constraints.length - 1];
+                this._extractContextInformationFromParsedConstraints(parser.parse(lastConstraint[lastConstraint.length - 1]));
+            }
+
+            this._discoverer.registerNewComponent(new GeoLocationWidget(this._discoverer));
+            console.log(this._discoverer.getWidgetDescriptions());
+        },
+
+
+        'public setCallback': function(callbackName, callback) {
+            this._callbacks[callbackName] = callback;
+        },
+
+        'private _extractContextInformationFromParsedConstraints': function(parsedConstraints) {
+            var parameterValueExceptions = ["string", "propLookup"];
+
+            for(index in parsedConstraints) {
+                var parsedConstraint = parsedConstraints[index];
+                if ($.isArray(parsedConstraint)) {
+                    this._extractContextInformationFromParsedConstraints(parsedConstraint);
+                } else if (parsedConstraint != null && typeof parsedConstraint == "string") {
+                    if (parsedConstraint.indexOf("MeasurableInformation") > -1) {
+                        if (this._currentContextInformation != null) {
+                            this.addContextInformation(this._currentContextInformation, false);
+                        }
+                        this._currentContextInformation = new ContextInformation(parsedConstraint);
+                    } else if (parsedConstraint.indexOf("ContextParameter") > -1) {
+                        this._currentParameter = parsedConstraint;
+                        this._expectParameterValue = true;
+                    } else if (this._expectParameterValue && typeof parsedConstraint == "string" && $.inArray(parsedConstraint, parameterValueExceptions) == -1) {
+                        this._expectParameterValue = false;
+                        this._currentContextInformation.setParameter(this._currentParameter, parsedConstraint);
+                        this._currentParameter = null;
+                    }
+                }
+            }
+        },
+
+        'public indexForContextInformation': function(contextInformation) {
+            for(index in this._contextInformation) {
+                var existingContextInformation = this._contextInformation[index];
+                if (existingContextInformation.equals(contextInformation)) return index;
+            }
+            return -1;
+        },
+
+        'public addContextInformation': function(newContextInformation, multiple) {
+            if (multiple || !multiple && this.indexForContextInformation(newContextInformation) == -1) {
+                this._contextInformation.push(newContextInformation);
+            }
+        },
+
+        'public updateContextInformation': function(updatedContextInformation, multiple) {
+            if (multiple) {
+                this.addContextInformation(updatedContextInformation, multiple);
+            } else {
+                if (this.indexForContextInformation(updatedContextInformation) != -1) this.contextInformation[index] = updatedContextInformation;
+            }
+        },
+
+        'public getContextInformation': function() {
+            return this._contextInformation;
+        }
+    });
+
+    return ContextDetector;
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+
+
+        
+
+        <footer>
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Oct 16 2014 15:51:28 GMT+0200 (MESZ)
+        </footer>
+    </div>
+</div>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+<script src="scripts/main.js"></script>
+</body>
+</html>

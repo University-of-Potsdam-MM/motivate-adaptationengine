@@ -16,6 +16,10 @@ define("MoCD", ['nools', 'easejs', 'jquery', 'MoCD_Discoverer', 'MoCD_GeoLocatio
             }
         },
 
+        /**
+         * @constructs ContextDetector
+         * @param adaptationRules
+         */
         __construct: function(adaptationRules) {
             this._discoverer = new Discoverer();
 
@@ -23,13 +27,12 @@ define("MoCD", ['nools', 'easejs', 'jquery', 'MoCD_Discoverer', 'MoCD_GeoLocatio
                 var adaptationRule = adaptationRules[index];
                 var lastConstraint = adaptationRule.constraints[adaptationRule.constraints.length - 1];
                 this._extractContextInformationFromParsedConstraints(parser.parse(lastConstraint[lastConstraint.length - 1]));
-
-                //this._discoverer.registerNewComponent(new GeoLocationWidget(this._discoverer));
-                //console.log(this._discoverer.getWidgetDescriptions());
             }
 
-            console.log(this._contextInformation);
+            this._discoverer.registerNewComponent(new GeoLocationWidget(this._discoverer));
+            console.log(this._discoverer.getWidgetDescriptions());
         },
+
 
         'public setCallback': function(callbackName, callback) {
             this._callbacks[callbackName] = callback;

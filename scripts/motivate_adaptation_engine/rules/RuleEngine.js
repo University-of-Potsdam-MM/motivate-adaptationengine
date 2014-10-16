@@ -1,7 +1,13 @@
 define("MoRE", ['nools', 'easejs', 'MoCI'], function (nools, easejs, ContextInformation) {
     var Class = easejs.Class;
 
+    /**
+     * The adaptation engine.
+     * @class RuleEngine
+     * @property {object} nools Nools.
+     */
     var RuleEngine = Class('RuleEngine',
+        /** @lends RuleEngine.prototype */
         {
             'private _nools': null,
             'private _flow': null,
@@ -32,7 +38,6 @@ define("MoRE", ['nools', 'easejs', 'MoCI'], function (nools, easejs, ContextInfo
                 });
 
                 this._session.on("selectLearningUnit", function(id, facts){
-                    console.log(facts);
                     if (typeof that._callbacks["selectLearningUnitCallback"] != "undefined") {
                         that._callbacks["selectLearningUnitCallback"](id, that._contextInformationFromFacts(facts));
                     }

@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Class: AdaptationEngine</title>
+    
+    
+    
+    
+    
+    <meta property="og:title" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content=""/>
+    
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jaguar.css">
+    
+    
+    <script>
+    var config = {"monospaceLinks":true,"cleverLinks":true,"default":{"outputSourceFiles":true},"applicationName":"Demo","disqus":"","googleAnalytics":"","openGraph":{"title":"","type":"website","image":"","site_name":"","url":""},"meta":{"title":"","description":"","keyword":""},"linenums":false};
+    </script>
+    
+
+    
+</head>
+<body>
+<div id="wrap" class="clearfix">
+    
+<div class="navigation">
+    <h3 class="applicationName"><a href="index.html">Demo</a></h3>
+
+    <div class="search">
+        <input id="search" type="text" class="form-control input-sm" placeholder="Search Documentations">
+    </div>
+    <ul class="list">
+    
+        <li class="item" data-name="AdaptationEngine">
+            <span class="title">
+                <a href="AdaptationEngine.html">AdaptationEngine</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="AdaptationEngine#isRunning"><a href="AdaptationEngine.html#isRunning">isRunning</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            <span class="subtitle">Typedefs</span>
+            
+                <li data-name="AdaptationEngine~preloadLearningUnitCallback"><a href="AdaptationEngine.html#preloadLearningUnitCallback">preloadLearningUnitCallback</a></li>
+            
+                <li data-name="AdaptationEngine~restrictFeatureCallback"><a href="AdaptationEngine.html#restrictFeatureCallback">restrictFeatureCallback</a></li>
+            
+                <li data-name="AdaptationEngine~ruleMatchingErrorCallback"><a href="AdaptationEngine.html#ruleMatchingErrorCallback">ruleMatchingErrorCallback</a></li>
+            
+                <li data-name="AdaptationEngine~ruleMatchingSuccessCallback"><a href="AdaptationEngine.html#ruleMatchingSuccessCallback">ruleMatchingSuccessCallback</a></li>
+            
+                <li data-name="AdaptationEngine~selectLearningUnitCallback"><a href="AdaptationEngine.html#selectLearningUnitCallback">selectLearningUnitCallback</a></li>
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="AdaptationEngine#setPreloadLearningUnitCallback"><a href="AdaptationEngine.html#setPreloadLearningUnitCallback">setPreloadLearningUnitCallback</a></li>
+            
+                <li data-name="AdaptationEngine#setRestrictFeatureCallback"><a href="AdaptationEngine.html#setRestrictFeatureCallback">setRestrictFeatureCallback</a></li>
+            
+                <li data-name="AdaptationEngine#setRuleMatchingSuccessCallback"><a href="AdaptationEngine.html#setRuleMatchingSuccessCallback">setRuleMatchingSuccessCallback</a></li>
+            
+                <li data-name="AdaptationEngine#setSelectLearningUnitCallback"><a href="AdaptationEngine.html#setSelectLearningUnitCallback">setSelectLearningUnitCallback</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="ContextDetector">
+            <span class="title">
+                <a href="ContextDetector.html">ContextDetector</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="ContextInformation">
+            <span class="title">
+                <a href="ContextInformation.html">ContextInformation</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="ContextInformation.fromFact"><a href="ContextInformation.html#fromFact">fromFact</a></li>
+            
+                <li data-name="ContextInformation#description"><a href="ContextInformation.html#description">description</a></li>
+            
+                <li data-name="ContextInformation#getID"><a href="ContextInformation.html#getID">getID</a></li>
+            
+                <li data-name="ContextInformation#setID"><a href="ContextInformation.html#setID">setID</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="RuleEngine">
+            <span class="title">
+                <a href="RuleEngine.html">RuleEngine</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+    </ul>
+</div>
+    <div class="main">
+        <h1 class="page-title" data-filename="AdaptationEngine.html">Class: AdaptationEngine</h1>
+        
+
+
+
+<section>
+    
+<header>
+    <h2>
+    AdaptationEngine
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="AdaptationEngine">
+            
+            new AdaptationEngine<span class="signature">(noolsDSL)</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line36">line 36</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>The adaptation Engine</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>noolsDSL</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                <p>The adaptation rules as nools DSL format.</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+
+    
+    <pre class="prettyprint"><code><p>$.ajax({
+    url: &quot;www.domain.com/pathToRuleGenerator?params&quot;,
+    success: function(noolsDSL) {
+        var adaptationEngine = new AdaptationEngine(noolsDSL);
+    }
+});</p></code></pre>
+    
+
+    
+</dd>
+
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Members</h3>
+        
+        <dl>
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="isRunning">isRunning<span class="type-signature type boolean">boolean</span> </h4>
+    </div>
+    
+    
+</dt>
+<dd>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy"><li>false</li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        </dl>
+    
+    
+    
+        <h3 class="subsection-title">Methods</h3>
+        
+        <dl>
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="setPreloadLearningUnitCallback">
+            
+            setPreloadLearningUnitCallback<span class="signature">(callback)</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line97">line 97</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="AdaptationEngine.html#preloadLearningUnitCallback">AdaptationEngine~preloadLearningUnitCallback</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                </td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="setRestrictFeatureCallback">
+            
+            setRestrictFeatureCallback<span class="signature">(callback)</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line53">line 53</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="AdaptationEngine.html#restrictFeatureCallback">AdaptationEngine~restrictFeatureCallback</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                <p>The callback to be executed when a feature restricting rule fires.</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="setRuleMatchingSuccessCallback">
+            
+            setRuleMatchingSuccessCallback<span class="signature">(callback)</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line115">line 115</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="AdaptationEngine.html#ruleMatchingSuccessCallback">AdaptationEngine~ruleMatchingSuccessCallback</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                </td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="setSelectLearningUnitCallback">
+            
+            setSelectLearningUnitCallback<span class="signature">(callback)</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line75">line 75</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="AdaptationEngine.html#selectLearningUnitCallback">AdaptationEngine~selectLearningUnitCallback</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                <p>The callback to be executed when a select learning unit rule fires.</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        </dl>
+    
+    
+    
+        <h3 class="subsection-title">Type Definitions</h3>
+        
+        <dl>
+                
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="preloadLearningUnitCallback">
+            
+            preloadLearningUnitCallback<span class="signature">(id)</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line98">line 98</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                <p>The id of the learning unit to be preloaded.</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+
+    
+    <pre class="prettyprint"><code><p>adaptationEngine.setPreloadLearningUnitCallback(function(id) {
+    console.log(&quot;Preload Learning Unit -&gt; &quot;+id);
+});</p></code></pre>
+    
+
+    
+</dd>
+
+            
+                
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="restrictFeatureCallback">
+            
+            restrictFeatureCallback<span class="signature">(feature, contextInformation)</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line54">line 54</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>feature</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                <p>The feature to be restricted.</p></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>contextInformation</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">ContextInformation[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                <p>An array of context information that triggered the rule.</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+
+    
+    <pre class="prettyprint"><code><p>adaptationEngine.setRestrictFeatureCallback(function(feature, contextInformation) {
+    console.log(&quot;Restrict Feature -&gt; &quot;+feature); // Restrict Feature -&gt; AppUsageFeature
+    for(var index in contextInformation) {
+        console.log(contextInformation[index].description()); // @see ContextInformation#description
+    }
+});</p></code></pre>
+    
+
+    
+</dd>
+
+            
+                
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="ruleMatchingErrorCallback">
+            
+            ruleMatchingErrorCallback<span class="signature">(error)</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line123">line 123</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                </td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+            
+                
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="ruleMatchingSuccessCallback">
+            
+            ruleMatchingSuccessCallback<span class="signature">()</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line116">line 116</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+            
+                
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="selectLearningUnitCallback">
+            
+            selectLearningUnitCallback<span class="signature">(id, contextInformation)</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line76">line 76</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                <p>The id of the learning unit to be selected.</p></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>contextInformation</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">ContextInformation[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                <p>An array of context information that triggered the rule.</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+
+    
+    <pre class="prettyprint"><code><p>adaptationEngine.setSelectLearningUnitCallback(function(id, contextInformation) {
+    console.log(&quot;Select Learning Unit -&gt; &quot;+id);
+    for(var index in contextInformation) {
+        console.log(contextInformation[index].description());
+    }
+});</p></code></pre>
+    
+
+    
+</dd>
+
+            </dl>
+    
+    
+    
+</article>
+
+</section>  
+
+
+
+
+
+        
+
+        <footer>
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Oct 16 2014 15:51:28 GMT+0200 (MESZ)
+        </footer>
+    </div>
+</div>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+<script src="scripts/main.js"></script>
+</body>
+</html>

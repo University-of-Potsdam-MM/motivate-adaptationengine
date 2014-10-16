@@ -6,12 +6,27 @@ define("MoCI", ['easejs'], function(easejs) {
         'private _value': null,
         'private _parameters': {},
 
+        /**
+         * A context information
+         * @class Describes a context information.
+         * @constructs ContextInformation
+         * @param [id=null] {string}
+         * @param [value=null] {string}
+         * @param [parameters] {object}
+         */
         __construct : function(id, value, parameters) {
             if (typeof id != "undefined") this._id = id;
             if (typeof value != "undefined") this._value = value;
             if (typeof parameters != "undefined") this._parameters = parameters;
         },
 
+        /**
+         * Creates a context information from a fact that was extracted from a nools adaptation rule.
+         * @alias fromFact
+         * @memberof ContextInformation
+         * @param fact {object} The fact to create the context information from.
+         * @returns {ContextInformation}
+         */
         'public static fromFact': function(fact) {
             var contextInformation = new ContextInformation();
             contextInformation.setID(fact.id);
@@ -20,6 +35,11 @@ define("MoCI", ['easejs'], function(easejs) {
             return contextInformation;
         },
 
+        /**
+         * @alias description
+         * @memberof ContextInformation#
+         * @returns {string} description
+         */
         'public description': function() {
             var description = "";
 
@@ -41,10 +61,22 @@ define("MoCI", ['easejs'], function(easejs) {
             return isEqual;
         },
 
+        /**
+         * Returns the context information's id.
+         * @memberof ContextInformation#
+         * @alias getID
+         * @returns {string} id The context information's id.
+         */
         'public getID': function() {
             return this._id;
         },
 
+        /**
+         * Sets the context information's id.
+         * @memberof ContextInformation#
+         * @alias setID
+         * @param newID {string} The new id.
+         */
         'public setID': function(newID) {
             this._id = newID;
         },
