@@ -24,7 +24,7 @@ define("MoCI", ['easejs'], function(easejs) {
          * Creates a context information from a fact that was extracted from a nools adaptation rule.
          * @alias fromFact
          * @memberof ContextInformation
-         * @param fact {object} The fact to create the context information from.
+         * @param fact {Object} The fact to create the context information from.
          * @returns {ContextInformation}
          */
         'public static fromFact': function(fact) {
@@ -36,6 +36,7 @@ define("MoCI", ['easejs'], function(easejs) {
         },
 
         /**
+         *
          * @alias description
          * @memberof ContextInformation#
          * @returns {string} description
@@ -45,18 +46,25 @@ define("MoCI", ['easejs'], function(easejs) {
 
             description += this.getID()+" [";
             for(var parameter in this.getParameters()) {
-                description += parameter+":"+this.getParameter(parameter);
+                description += parameter+":"+this.getParameterValue(parameter);
             }
             description += "] is "+this.getValue();
 
             return description;
         },
 
+        /**
+         * Compares two context information and returns true if ID and parameters are equal.
+         * @alias equals
+         * @memberof ContextInformation#
+         * @param contextInformation {ContextInformation} The context information to compare.
+         * @returns {boolean}
+         */
         'public equals': function(contextInformation) {
             var isEqual = true;
             if (this.getID() != contextInformation.getID()) isEqual = false;
             for(parameter in this.getParameters()) {
-                if (this.getParameter(parameter) != contextInformation.getParameter(parameter)) isEqual = false;
+                if (this.getParameterValue(parameter) != contextInformation.getParameterValue(parameter)) isEqual = false;
             }
             return isEqual;
         },
@@ -81,26 +89,70 @@ define("MoCI", ['easejs'], function(easejs) {
             this._id = newID;
         },
 
-        'public getParameter': function(name) {
+        /**
+         * Returns the value for a parameter by name.
+         * @alias getParameterValue
+         * @memberof ContextInformation#
+         * @param name {String} The name of the parameter.
+         * @returns value {String} The value of the parameter.
+         */
+        'public getParameterValue': function(name) {
             return this._parameters[name];
         },
 
-        'public setParameter': function(name, value) {
+        /**
+         * Sets a parameter value for a parameter by name.
+         * @alias setParameterValue
+         * @memberof ContextInformation#
+         * @param name {String} The name of the parameter.
+         * @param value {String} The value for the parameter.
+         * @example
+         * contextInformation.setParameterValue("TemperatureScaleContextParameter", "FAHRENHEIT");
+         */
+        'public setParameterValue': function(name, value) {
             this._parameters[name] = value;
         },
 
+        /**
+         * Returns all parameters.
+         * @alias getParameter
+         * @memberof ContextInformation#
+         * @returns {Object}
+         */
         'public getParameters': function() {
             return this._parameters;
         },
 
+        /**
+         * Sets an object with parameters.
+         * @alias setParameters
+         * @memberof ContextInformation#
+         * @param parameters {Object} The parameters.
+         * @example
+         * contextInformation.setParameters({
+         *      "TemperatureScaleContextParameter": "FAHRENHEIT"
+         * });
+         */
         'public setParameters': function(parameters) {
             this._parameters = parameters;
         },
 
+        /**
+         * Returns the value for the context information.
+         * @alias getValue
+         * @memberof ContextInformation#
+         * @returns {String}
+         */
         'public getValue': function() {
             return this._value;
         },
 
+        /**
+         * Sets the value for the context information.
+         * @alias setValue
+         * @memberof ContextInformation#
+         * @param value {String} The new value.
+         */
         'public setValue': function(value) {
             this._value = value
         }

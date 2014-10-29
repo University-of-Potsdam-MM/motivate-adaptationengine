@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Source: context/ContextInformation.js</title>
+    <title>External: String</title>
     
     
     
@@ -26,7 +26,7 @@
     
     
     <script>
-    var config = {"monospaceLinks":true,"cleverLinks":true,"default":{"outputSourceFiles":true},"applicationName":"MOTIVATE Adaptation Engine","disqus":"","googleAnalytics":"","openGraph":{"title":"","type":"website","image":"","site_name":"","url":""},"meta":{"title":"","description":"","keyword":""},"linenums":false};
+    var config = {"monospaceLinks":true,"cleverLinks":true,"default":{"outputSourceFiles":true},"applicationName":"Demo","disqus":"","googleAnalytics":"","openGraph":{"title":"","type":"website","image":"","site_name":"","url":""},"meta":{"title":"","description":"","keyword":""},"linenums":false};
     </script>
     
 
@@ -36,7 +36,7 @@
 <div id="wrap" class="clearfix">
     
 <div class="navigation">
-    <h3 class="applicationName"><a href="index.html">MOTIVATE Adaptation Engine</a></h3>
+    <h3 class="applicationName"><a href="index.html">Demo</a></h3>
 
     <div class="search">
         <input id="search" type="text" class="form-control input-sm" placeholder="Search Documentations">
@@ -204,178 +204,86 @@
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="ContextInformation.js.html">Source: context/ContextInformation.js</h1>
+        <h1 class="page-title" data-filename="external-String.html">External: String</h1>
         
 
 
+
+<section>
     
-    <section>
-        <article>
-            <pre class="prettyprint source "><code>define("MoCI", ['easejs'], function(easejs) {
-    var Class = easejs.Class;
+<header>
+    <h2>
+    String
+    </h2>
+    
+</header>  
 
-    var ContextInformation = Class('ContextInformation', {
-        'private _id': null,
-        'private _value': null,
-        'private _parameters': {},
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+            <div class="description"><p>The built in string object.</p></div>
+        
+        
+        
+<dl class="details">
+    
+        
+    
+    
+    
 
-        /**
-         * A context information
-         * @class Describes a context information.
-         * @constructs ContextInformation
-         * @param [id=null] {string}
-         * @param [value=null] {string}
-         * @param [parameters] {object}
-         */
-        __construct : function(id, value, parameters) {
-            if (typeof id != "undefined") this._id = id;
-            if (typeof value != "undefined") this._value = value;
-            if (typeof parameters != "undefined") this._parameters = parameters;
-        },
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String">String</a></li>
+        </ul>
+    </dd>
+    
+    
+    
+</dl>
 
-        /**
-         * Creates a context information from a fact that was extracted from a nools adaptation rule.
-         * @alias fromFact
-         * @memberof ContextInformation
-         * @param fact {Object} The fact to create the context information from.
-         * @returns {ContextInformation}
-         */
-        'public static fromFact': function(fact) {
-            var contextInformation = new ContextInformation();
-            contextInformation.setID(fact.id);
-            contextInformation.setParameters(fact.parameters);
-            contextInformation.setValue(fact.value);
-            return contextInformation;
-        },
+        
+        
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</article>
 
-        /**
-         *
-         * @alias description
-         * @memberof ContextInformation#
-         * @returns {string} description
-         */
-        'public description': function() {
-            var description = "";
-
-            description += this.getID()+" [";
-            for(var parameter in this.getParameters()) {
-                description += parameter+":"+this.getParameter(parameter);
-            }
-            description += "] is "+this.getValue();
-
-            return description;
-        },
-
-        /**
-         * Compares two context information and returns true if ID and parameters are equal.
-         * @alias equals
-         * @memberof ContextInformation#
-         * @param contextInformation {ContextInformation} The context information to compare.
-         * @returns {boolean}
-         */
-        'public equals': function(contextInformation) {
-            var isEqual = true;
-            if (this.getID() != contextInformation.getID()) isEqual = false;
-            for(parameter in this.getParameters()) {
-                if (this.getParameter(parameter) != contextInformation.getParameter(parameter)) isEqual = false;
-            }
-            return isEqual;
-        },
-
-        /**
-         * Returns the context information's id.
-         * @memberof ContextInformation#
-         * @alias getID
-         * @returns {string} id The context information's id.
-         */
-        'public getID': function() {
-            return this._id;
-        },
-
-        /**
-         * Sets the context information's id.
-         * @memberof ContextInformation#
-         * @alias setID
-         * @param newID {string} The new id.
-         */
-        'public setID': function(newID) {
-            this._id = newID;
-        },
-
-        /**
-         * Returns the value for a parameter by name.
-         * @alias getParameterValue
-         * @memberof ContextInformation#
-         * @param name {String} The name of the parameter.
-         * @returns value {String} The value of the parameter.
-         */
-        'public getParameterValue': function(name) {
-            return this._parameters[name];
-        },
-
-        /**
-         * Sets a parameter value for a parameter by name.
-         * @alias setParameterValue
-         * @memberof ContextInformation#
-         * @param name {String} The name of the parameter.
-         * @param value {String} The value for the parameter.
-         * @example
-         * contextInformation.setParameterValue("TemperatureScaleContextParameter", "FAHRENHEIT");
-         */
-        'public setParameterValue': function(name, value) {
-            this._parameters[name] = value;
-        },
-
-        /**
-         * Returns all parameters.
-         * @alias getParameter
-         * @memberof ContextInformation#
-         * @returns {Object}
-         */
-        'public getParameters': function() {
-            return this._parameters;
-        },
-
-        /**
-         * Sets an object with parameters.
-         * @alias setParameters
-         * @memberof ContextInformation#
-         * @param parameters {Object} The parameters.
-         * @example
-         * contextInformation.setParameters({
-         *      "TemperatureScaleContextParameter": "FAHRENHEIT"
-         * });
-         */
-        'public setParameters': function(parameters) {
-            this._parameters = parameters;
-        },
-
-        /**
-         * Returns the value for the context information.
-         * @alias getValue
-         * @memberof ContextInformation#
-         * @returns {String}
-         */
-        'public getValue': function() {
-            return this._value;
-        },
-
-        /**
-         * Sets the value for the context information.
-         * @alias setValue
-         * @memberof ContextInformation#
-         * @param value {String} The new value.
-         */
-        'public setValue': function(value) {
-            this._value = value
-        }
-    });
-
-    return ContextInformation;
-});</code></pre>
-        </article>
-    </section>
-
+</section>  
 
 
 
@@ -384,7 +292,7 @@
         
 
         <footer>
-            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Oct 21 2014 14:18:37 GMT+0200 (MESZ)
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Oct 21 2014 10:14:54 GMT+0200 (MESZ)
         </footer>
     </div>
 </div>

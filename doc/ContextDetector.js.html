@@ -26,7 +26,7 @@
     
     
     <script>
-    var config = {"monospaceLinks":true,"cleverLinks":true,"default":{"outputSourceFiles":true},"applicationName":"Demo","disqus":"","googleAnalytics":"","openGraph":{"title":"","type":"website","image":"","site_name":"","url":""},"meta":{"title":"","description":"","keyword":""},"linenums":false};
+    var config = {"monospaceLinks":true,"cleverLinks":true,"default":{"outputSourceFiles":true},"applicationName":"MOTIVATE Adaptation Engine","disqus":"","googleAnalytics":"","openGraph":{"title":"","type":"website","image":"","site_name":"","url":""},"meta":{"title":"","description":"","keyword":""},"linenums":false};
     </script>
     
 
@@ -36,7 +36,7 @@
 <div id="wrap" class="clearfix">
     
 <div class="navigation">
-    <h3 class="applicationName"><a href="index.html">Demo</a></h3>
+    <h3 class="applicationName"><a href="index.html">MOTIVATE Adaptation Engine</a></h3>
 
     <div class="search">
         <input id="search" type="text" class="form-control input-sm" placeholder="Search Documentations">
@@ -74,13 +74,21 @@
             
             <span class="subtitle">Methods</span>
             
+                <li data-name="AdaptationEngine#restartRuleMatching"><a href="AdaptationEngine.html#restartRuleMatching">restartRuleMatching</a></li>
+            
                 <li data-name="AdaptationEngine#setPreloadLearningUnitCallback"><a href="AdaptationEngine.html#setPreloadLearningUnitCallback">setPreloadLearningUnitCallback</a></li>
             
                 <li data-name="AdaptationEngine#setRestrictFeatureCallback"><a href="AdaptationEngine.html#setRestrictFeatureCallback">setRestrictFeatureCallback</a></li>
             
+                <li data-name="AdaptationEngine#setRuleMatchingErrorCallback"><a href="AdaptationEngine.html#setRuleMatchingErrorCallback">setRuleMatchingErrorCallback</a></li>
+            
                 <li data-name="AdaptationEngine#setRuleMatchingSuccessCallback"><a href="AdaptationEngine.html#setRuleMatchingSuccessCallback">setRuleMatchingSuccessCallback</a></li>
             
                 <li data-name="AdaptationEngine#setSelectLearningUnitCallback"><a href="AdaptationEngine.html#setSelectLearningUnitCallback">setSelectLearningUnitCallback</a></li>
+            
+                <li data-name="AdaptationEngine#startRuleMatching"><a href="AdaptationEngine.html#startRuleMatching">startRuleMatching</a></li>
+            
+                <li data-name="AdaptationEngine#stopRuleMatching"><a href="AdaptationEngine.html#stopRuleMatching">stopRuleMatching</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -100,6 +108,18 @@
             
             </ul>
             <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="ContextDetector#addContextInformation"><a href="ContextDetector.html#addContextInformation">addContextInformation</a></li>
+            
+                <li data-name="ContextDetector#contextInformationExists"><a href="ContextDetector.html#contextInformationExists">contextInformationExists</a></li>
+            
+                <li data-name="ContextDetector#getContextInformation"><a href="ContextDetector.html#getContextInformation">getContextInformation</a></li>
+            
+                <li data-name="ContextDetector#setCallback"><a href="ContextDetector.html#setCallback">setCallback</a></li>
+            
+                <li data-name="ContextDetector#updateContextInformation"><a href="ContextDetector.html#updateContextInformation">updateContextInformation</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -126,9 +146,23 @@
             
                 <li data-name="ContextInformation#description"><a href="ContextInformation.html#description">description</a></li>
             
+                <li data-name="ContextInformation#equals"><a href="ContextInformation.html#equals">equals</a></li>
+            
                 <li data-name="ContextInformation#getID"><a href="ContextInformation.html#getID">getID</a></li>
             
+                <li data-name="ContextInformation#getParameter"><a href="ContextInformation.html#getParameter">getParameter</a></li>
+            
+                <li data-name="ContextInformation#getParameterValue"><a href="ContextInformation.html#getParameterValue">getParameterValue</a></li>
+            
+                <li data-name="ContextInformation#getValue"><a href="ContextInformation.html#getValue">getValue</a></li>
+            
                 <li data-name="ContextInformation#setID"><a href="ContextInformation.html#setID">setID</a></li>
+            
+                <li data-name="ContextInformation#setParameters"><a href="ContextInformation.html#setParameters">setParameters</a></li>
+            
+                <li data-name="ContextInformation#setParameterValue"><a href="ContextInformation.html#setParameterValue">setParameterValue</a></li>
+            
+                <li data-name="ContextInformation#setValue"><a href="ContextInformation.html#setValue">setValue</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -148,6 +182,18 @@
             
             </ul>
             <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="RuleEngine#addContextInformation"><a href="RuleEngine.html#addContextInformation">addContextInformation</a></li>
+            
+                <li data-name="RuleEngine#getDefined"><a href="RuleEngine.html#getDefined">getDefined</a></li>
+            
+                <li data-name="RuleEngine#getRules"><a href="RuleEngine.html#getRules">getRules</a></li>
+            
+                <li data-name="RuleEngine#matchRules"><a href="RuleEngine.html#matchRules">matchRules</a></li>
+            
+                <li data-name="RuleEngine#setCallback"><a href="RuleEngine.html#setCallback">setCallback</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -184,8 +230,10 @@
         },
 
         /**
+         * The context detector encapsulates the context toolkit which provides context information.
+         * @class
          * @constructs ContextDetector
-         * @param adaptationRules
+         * @param adaptationRules {*|Array} The adaptation rules as returned by the rule engine. Are used to determine which context information are required.
          */
         __construct: function(adaptationRules) {
             this._discoverer = new Discoverer();
@@ -201,6 +249,13 @@
         },
 
 
+        /**
+         * Sets a function as the callback for the provided callback name.
+         * @alias setCallback
+         * @memberof ContextDetector#
+         * @param callbackName {string} The name of the callback.
+         * @param callback {function} The function that handles the callback.
+         */
         'public setCallback': function(callbackName, callback) {
             this._callbacks[callbackName] = callback;
         },
@@ -230,7 +285,18 @@
             }
         },
 
-        'public indexForContextInformation': function(contextInformation) {
+        /**
+         * Returns true if the given context information was gathered before.
+         * @alias contextInformationExists
+         * @memberof ContextDetector#
+         * @param contextInformation {ContextInformation} The context information to test.
+         * @returns {Boolean}
+         */
+        'public contextInformationExists': function(contextInformation) {
+            return this._indexForContextInformation(contextInformation) != -1;
+        },
+
+        'private _indexForContextInformation': function(contextInformation) {
             for(index in this._contextInformation) {
                 var existingContextInformation = this._contextInformation[index];
                 if (existingContextInformation.equals(contextInformation)) return index;
@@ -238,12 +304,26 @@
             return -1;
         },
 
+        /**
+         * Adds a context information that wasn't gathered before.
+         * @alias addContextInformation
+         * @memberof ContextDetector#
+         * @param newContextInformation {ContextInformation} The new context information.
+         * @param multiple {Boolean} Set to true if multiple instances of the context information are allowed.
+         */
         'public addContextInformation': function(newContextInformation, multiple) {
-            if (multiple || !multiple && this.indexForContextInformation(newContextInformation) == -1) {
+            if (multiple || !multiple && !this.contextInformationExists(newContextInformation)) {
                 this._contextInformation.push(newContextInformation);
             }
         },
 
+        /**
+         * Updates a context information that was gathered before.
+         * @alias updateContextInformation
+         * @memberof ContextDetector#
+         * @param updatedContextInformation {ContextInformation} The updated context information.
+         * @param multiple {Boolean} Set to true if multiple instances of the context information are allowed.
+         */
         'public updateContextInformation': function(updatedContextInformation, multiple) {
             if (multiple) {
                 this.addContextInformation(updatedContextInformation, multiple);
@@ -252,6 +332,12 @@
             }
         },
 
+        /**
+         * Returns all context information.
+         * @alias getContextInformation
+         * @memberof ContextDetector#
+         * @returns {Array.&lt;ContextInformation>}
+         */
         'public getContextInformation': function() {
             return this._contextInformation;
         }
@@ -270,7 +356,7 @@
         
 
         <footer>
-            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Oct 16 2014 15:51:28 GMT+0200 (MESZ)
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Oct 21 2014 14:18:37 GMT+0200 (MESZ)
         </footer>
     </div>
 </div>

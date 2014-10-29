@@ -4,20 +4,24 @@
         <title>MOTIVATE Adaptation Engine</title>
         <script type="text/javascript" src="scripts/lib/require.js"></script>
         <script type="text/javascript">
-            // Start the main app logic. 
             require(['scripts/config'], function() {
                 require(['jquery', 'easejs', 'nools', 'MoRE', 'MoAE'], function($, easejs, nools, RuleEngine, AdaptationEngine) {
-	                    console.log("ready to rumble!");
-	                    $.ajax({
-	                        url: "noolsDSLOutput.nools",
-	                        success: function(noolsDSL) {
-	                            var adaptationEngine = new AdaptationEngine(noolsDSL);
-                                adaptationEngine.setRestrictFeatureCallback(function(msg, facts) { console.log("Restrict: "+msg+" "+facts) });
-                                adaptationEngine.setSelectLearningUnitCallback(function(msg, facts) { console.log("Select: "+msg+" "+facts) });
-                                adaptationEngine.setPreloadLearningUnitCallback(function(msg) { console.log("Preload: "+msg) });
-                                adaptationEngine.startRuleMatching(3000);
-	                        }
-                	});
+                    console.log("ready to rumble!");
+                    $.ajax({
+                        url: "noolsDSLOutput.nools",
+                        success: function(noolsDSL) {
+                            var adaptationEngine = new AdaptationEngine(noolsDSL);
+                            adaptationEngine.setRestrictFeatureCallback(function(msg, facts) { console.log("Restrict: "+msg+" Reason: "+facts) });
+                            adaptationEngine.setSelectLearningUnitCallback(function(id, contextInformation) {
+                                console.log("Select Learning Unit -> "+id);
+                                for(var index in contextInformation) {
+                                    console.log(contextInformation[index].description());
+                                }
+                            });
+                            adaptationEngine.setPreloadLearningUnitCallback(function(msg) { console.log("Preload: "+msg) });
+                            adaptationEngine.startRuleMatching();
+                        }
+                    });
                 });
             });
         </script>

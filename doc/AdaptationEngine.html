@@ -26,7 +26,7 @@
     
     
     <script>
-    var config = {"monospaceLinks":true,"cleverLinks":true,"default":{"outputSourceFiles":true},"applicationName":"Demo","disqus":"","googleAnalytics":"","openGraph":{"title":"","type":"website","image":"","site_name":"","url":""},"meta":{"title":"","description":"","keyword":""},"linenums":false};
+    var config = {"monospaceLinks":true,"cleverLinks":true,"default":{"outputSourceFiles":true},"applicationName":"MOTIVATE Adaptation Engine","disqus":"","googleAnalytics":"","openGraph":{"title":"","type":"website","image":"","site_name":"","url":""},"meta":{"title":"","description":"","keyword":""},"linenums":false};
     </script>
     
 
@@ -36,7 +36,7 @@
 <div id="wrap" class="clearfix">
     
 <div class="navigation">
-    <h3 class="applicationName"><a href="index.html">Demo</a></h3>
+    <h3 class="applicationName"><a href="index.html">MOTIVATE Adaptation Engine</a></h3>
 
     <div class="search">
         <input id="search" type="text" class="form-control input-sm" placeholder="Search Documentations">
@@ -74,13 +74,21 @@
             
             <span class="subtitle">Methods</span>
             
+                <li data-name="AdaptationEngine#restartRuleMatching"><a href="AdaptationEngine.html#restartRuleMatching">restartRuleMatching</a></li>
+            
                 <li data-name="AdaptationEngine#setPreloadLearningUnitCallback"><a href="AdaptationEngine.html#setPreloadLearningUnitCallback">setPreloadLearningUnitCallback</a></li>
             
                 <li data-name="AdaptationEngine#setRestrictFeatureCallback"><a href="AdaptationEngine.html#setRestrictFeatureCallback">setRestrictFeatureCallback</a></li>
             
+                <li data-name="AdaptationEngine#setRuleMatchingErrorCallback"><a href="AdaptationEngine.html#setRuleMatchingErrorCallback">setRuleMatchingErrorCallback</a></li>
+            
                 <li data-name="AdaptationEngine#setRuleMatchingSuccessCallback"><a href="AdaptationEngine.html#setRuleMatchingSuccessCallback">setRuleMatchingSuccessCallback</a></li>
             
                 <li data-name="AdaptationEngine#setSelectLearningUnitCallback"><a href="AdaptationEngine.html#setSelectLearningUnitCallback">setSelectLearningUnitCallback</a></li>
+            
+                <li data-name="AdaptationEngine#startRuleMatching"><a href="AdaptationEngine.html#startRuleMatching">startRuleMatching</a></li>
+            
+                <li data-name="AdaptationEngine#stopRuleMatching"><a href="AdaptationEngine.html#stopRuleMatching">stopRuleMatching</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -100,6 +108,18 @@
             
             </ul>
             <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="ContextDetector#addContextInformation"><a href="ContextDetector.html#addContextInformation">addContextInformation</a></li>
+            
+                <li data-name="ContextDetector#contextInformationExists"><a href="ContextDetector.html#contextInformationExists">contextInformationExists</a></li>
+            
+                <li data-name="ContextDetector#getContextInformation"><a href="ContextDetector.html#getContextInformation">getContextInformation</a></li>
+            
+                <li data-name="ContextDetector#setCallback"><a href="ContextDetector.html#setCallback">setCallback</a></li>
+            
+                <li data-name="ContextDetector#updateContextInformation"><a href="ContextDetector.html#updateContextInformation">updateContextInformation</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -126,9 +146,23 @@
             
                 <li data-name="ContextInformation#description"><a href="ContextInformation.html#description">description</a></li>
             
+                <li data-name="ContextInformation#equals"><a href="ContextInformation.html#equals">equals</a></li>
+            
                 <li data-name="ContextInformation#getID"><a href="ContextInformation.html#getID">getID</a></li>
             
+                <li data-name="ContextInformation#getParameter"><a href="ContextInformation.html#getParameter">getParameter</a></li>
+            
+                <li data-name="ContextInformation#getParameterValue"><a href="ContextInformation.html#getParameterValue">getParameterValue</a></li>
+            
+                <li data-name="ContextInformation#getValue"><a href="ContextInformation.html#getValue">getValue</a></li>
+            
                 <li data-name="ContextInformation#setID"><a href="ContextInformation.html#setID">setID</a></li>
+            
+                <li data-name="ContextInformation#setParameters"><a href="ContextInformation.html#setParameters">setParameters</a></li>
+            
+                <li data-name="ContextInformation#setParameterValue"><a href="ContextInformation.html#setParameterValue">setParameterValue</a></li>
+            
+                <li data-name="ContextInformation#setValue"><a href="ContextInformation.html#setValue">setValue</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -148,6 +182,18 @@
             
             </ul>
             <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="RuleEngine#addContextInformation"><a href="RuleEngine.html#addContextInformation">addContextInformation</a></li>
+            
+                <li data-name="RuleEngine#getDefined"><a href="RuleEngine.html#getDefined">getDefined</a></li>
+            
+                <li data-name="RuleEngine#getRules"><a href="RuleEngine.html#getRules">getRules</a></li>
+            
+                <li data-name="RuleEngine#matchRules"><a href="RuleEngine.html#matchRules">matchRules</a></li>
+            
+                <li data-name="RuleEngine#setCallback"><a href="RuleEngine.html#setCallback">setCallback</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -187,7 +233,7 @@
     
         
         <div class="tag-source">
-            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line36">line 36</a>
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line45">line 45</a>
         </div>
         
     </div>
@@ -198,7 +244,15 @@
     
     
     <div class="description">
-        <p>The adaptation Engine</p>
+        <p>The adaptation engine encapsulates the rule engine and the context detection. Via callbacks an application
+can listen to events fired by the rule engine during the rule evaluation process and react to the triggered rules.</p>
+<p>The adaptation engine and it's components require the following external libraries:</p>
+<ul>
+<li>jQuery</li>
+<li>nools.js &amp; its constraint parser (lib/parser/constraint/parser.js)</li>
+<li>require.js</li>
+<li>ease.js</li>
+</ul>
     </div>
     
 
@@ -235,7 +289,7 @@
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
             
@@ -332,6 +386,10 @@
 </dt>
 <dd>
     
+    <div class="description">
+        <p>Indicates whether the rule matching process is running.</p>
+    </div>
+    
     
     
 <dl class="details">
@@ -375,14 +433,14 @@
             
 <dt>
     <div class="nameContainer">
-        <h4 class="name" id="setPreloadLearningUnitCallback">
+        <h4 class="name" id="restartRuleMatching">
             
-            setPreloadLearningUnitCallback<span class="signature">(callback)</span>
+            restartRuleMatching<span class="signature">(intervalInMilliseconds)</span>
         </h4>
     
         
         <div class="tag-source">
-            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line97">line 97</a>
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line199">line 199</a>
         </div>
         
     </div>
@@ -391,6 +449,128 @@
 </dt>
 <dd>
     
+    
+    <div class="description">
+        <p>Restarts the rule matching process (i.e. executes <a href="AdaptationEngine.html#stopRuleMatching"><code>AdaptationEngine#stopRuleMatching</code></a> and
+<a href="AdaptationEngine.html#startRuleMatching"><code>AdaptationEngine#startRuleMatching</code></a> successively). If an integer value is provided a new
+interval will be set.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>intervalInMilliseconds</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                </td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="setPreloadLearningUnitCallback">
+            
+            setPreloadLearningUnitCallback<span class="signature">(callback)</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line110">line 110</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Sets a callback function to be executed when a preload learning unit rule fires.</p>
+    </div>
     
 
     
@@ -436,7 +616,7 @@
             
             <td class="description last">
                 
-                </td>
+                <p>The function that handles the callback.</p></td>
         </tr>
 	
 	
@@ -494,7 +674,7 @@
     
         
         <div class="tag-source">
-            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line53">line 53</a>
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line62">line 62</a>
         </div>
         
     </div>
@@ -503,6 +683,10 @@
 </dt>
 <dd>
     
+    
+    <div class="description">
+        <p>Sets a callback function to be executed when a feature restricting rule fires.</p>
+    </div>
     
 
     
@@ -548,7 +732,123 @@
             
             <td class="description last">
                 
-                <p>The callback to be executed when a feature restricting rule fires.</p></td>
+                <p>The function that handles the callback.</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="setRuleMatchingErrorCallback">
+            
+            setRuleMatchingErrorCallback<span class="signature">(callback)</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line147">line 147</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Sets a callback function that is executed when the rule matching produced an error.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="AdaptationEngine.html#ruleMatchingErrorCallback">AdaptationEngine~ruleMatchingErrorCallback</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                <p>The function that handles the callback.</p></td>
         </tr>
 	
 	
@@ -606,7 +906,7 @@
     
         
         <div class="tag-source">
-            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line115">line 115</a>
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line129">line 129</a>
         </div>
         
     </div>
@@ -615,6 +915,10 @@
 </dt>
 <dd>
     
+    
+    <div class="description">
+        <p>Sets a callback function that is executed every time the rule matching was executed successfully.</p>
+    </div>
     
 
     
@@ -660,7 +964,7 @@
             
             <td class="description last">
                 
-                </td>
+                <p>The function that handles the callback.</p></td>
         </tr>
 	
 	
@@ -718,7 +1022,7 @@
     
         
         <div class="tag-source">
-            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line75">line 75</a>
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line86">line 86</a>
         </div>
         
     </div>
@@ -727,6 +1031,10 @@
 </dt>
 <dd>
     
+    
+    <div class="description">
+        <p>Sets a callback function to be executed when a learning unit selection rule fires.</p>
+    </div>
     
 
     
@@ -772,12 +1080,200 @@
             
             <td class="description last">
                 
-                <p>The callback to be executed when a select learning unit rule fires.</p></td>
+                <p>The function that handles the callback.</p></td>
         </tr>
 	
 	
 	</tbody>
 </table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="startRuleMatching">
+            
+            startRuleMatching<span class="signature">(intervalInMilliseconds)</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line167">line 167</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Starts the rule matching process. If an integer values is provided the rule matching process will repeat
+every x milliseconds until it is halted manually by executing <a href="AdaptationEngine.html#stopRuleMatching"><code>AdaptationEngine#stopRuleMatching</code></a>.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>intervalInMilliseconds</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                <p>The time in milliseconds between every rule matching interval.</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="stopRuleMatching">
+            
+            stopRuleMatching<span class="signature">()</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line184">line 184</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Stops the rule matching process. If rules are currently executed the process will halt afterwards.</p>
+    </div>
+    
+
+    
+    
+    
+    
     
     
     
@@ -836,7 +1332,7 @@
     
         
         <div class="tag-source">
-            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line98">line 98</a>
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line111">line 111</a>
         </div>
         
     </div>
@@ -845,6 +1341,10 @@
 </dt>
 <dd>
     
+    
+    <div class="description">
+        <p>The callback returns with a string containing the ID of the learning unit to be preloaded.</p>
+    </div>
     
 
     
@@ -880,7 +1380,7 @@
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
             
@@ -958,7 +1458,7 @@
     
         
         <div class="tag-source">
-            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line54">line 54</a>
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line63">line 63</a>
         </div>
         
     </div>
@@ -967,6 +1467,11 @@
 </dt>
 <dd>
     
+    
+    <div class="description">
+        <p>The callback returns with a string containing the feature to be restricted and an array of context
+information that triggered the rule.</p>
+    </div>
     
 
     
@@ -1025,7 +1530,7 @@
             <td class="type">
             
                 
-<span class="param-type">ContextInformation[]</span>
+<span class="param-type">Array.&lt;<a href="ContextInformation.html">ContextInformation</a>></span>
 
 
             
@@ -1087,7 +1592,7 @@
     <pre class="prettyprint"><code><p>adaptationEngine.setRestrictFeatureCallback(function(feature, contextInformation) {
     console.log(&quot;Restrict Feature -&gt; &quot;+feature); // Restrict Feature -&gt; AppUsageFeature
     for(var index in contextInformation) {
-        console.log(contextInformation[index].description()); // @see ContextInformation#description
+        console.log(contextInformation[index].description()); // see <a href="ContextInformation.html#description"><code>ContextInformation#description</code></a>
     }
 });</p></code></pre>
     
@@ -1106,7 +1611,7 @@
     
         
         <div class="tag-source">
-            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line123">line 123</a>
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line148">line 148</a>
         </div>
         
     </div>
@@ -1115,6 +1620,10 @@
 </dt>
 <dd>
     
+    
+    <div class="description">
+        <p>The callback returns with an object containing further information about the error that occurred.</p>
+    </div>
     
 
     
@@ -1160,7 +1669,7 @@
             
             <td class="description last">
                 
-                </td>
+                <p>Further information about the error.</p></td>
         </tr>
 	
 	
@@ -1205,6 +1714,16 @@
     
     
     
+        <h5>Example</h5>
+        
+
+    
+    <pre class="prettyprint"><code><p>adaptationEngine.setRuleMatchingErrorCallback(function(error) {
+    console.error(error.stack);
+});</p></code></pre>
+    
+
+    
 </dd>
 
             
@@ -1218,7 +1737,7 @@
     
         
         <div class="tag-source">
-            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line116">line 116</a>
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line130">line 130</a>
         </div>
         
     </div>
@@ -1227,6 +1746,10 @@
 </dt>
 <dd>
     
+    
+    <div class="description">
+        <p>The callback returns when the rule matching process was executed successfully.</p>
+    </div>
     
 
     
@@ -1272,6 +1795,16 @@
     
     
     
+        <h5>Example</h5>
+        
+
+    
+    <pre class="prettyprint"><code><p>adaptationEngine.setRuleMatchingSuccessCallback(function() {
+    console.log(&quot;Rule matching was executed successfully.&quot;);
+});</p></code></pre>
+    
+
+    
 </dd>
 
             
@@ -1285,7 +1818,7 @@
     
         
         <div class="tag-source">
-            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line76">line 76</a>
+            <a href="AdaptationEngine.js.html">AdaptationEngine.js</a>, <a href="AdaptationEngine.js.html#line87">line 87</a>
         </div>
         
     </div>
@@ -1294,6 +1827,11 @@
 </dt>
 <dd>
     
+    
+    <div class="description">
+        <p>The callback returns with a string containing the ID of the learning unit to be selected and an array
+of context information that triggered the rule.</p>
+    </div>
     
 
     
@@ -1329,7 +1867,7 @@
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
             
@@ -1352,7 +1890,7 @@
             <td class="type">
             
                 
-<span class="param-type">ContextInformation[]</span>
+<span class="param-type">Array.&lt;<a href="ContextInformation.html">ContextInformation</a>></span>
 
 
             
@@ -1414,7 +1952,7 @@
     <pre class="prettyprint"><code><p>adaptationEngine.setSelectLearningUnitCallback(function(id, contextInformation) {
     console.log(&quot;Select Learning Unit -&gt; &quot;+id);
     for(var index in contextInformation) {
-        console.log(contextInformation[index].description());
+        console.log(contextInformation[index].description());  // see <a href="ContextInformation.html#description"><code>ContextInformation#description</code></a>
     }
 });</p></code></pre>
     
@@ -1437,7 +1975,7 @@
         
 
         <footer>
-            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Oct 16 2014 15:51:28 GMT+0200 (MESZ)
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Oct 21 2014 14:18:37 GMT+0200 (MESZ)
         </footer>
     </div>
 </div>

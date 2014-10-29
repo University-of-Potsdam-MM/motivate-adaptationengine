@@ -1,13 +1,7 @@
 define("MoRE", ['nools', 'easejs', 'MoCI'], function (nools, easejs, ContextInformation) {
     var Class = easejs.Class;
 
-    /**
-     * The adaptation engine.
-     * @class RuleEngine
-     * @property {object} nools Nools.
-     */
     var RuleEngine = Class('RuleEngine',
-        /** @lends RuleEngine.prototype */
         {
             'private _nools': null,
             'private _flow': null,
@@ -22,6 +16,12 @@ define("MoRE", ['nools', 'easejs', 'MoCI'], function (nools, easejs, ContextInfo
                 }
             },
 
+            /**
+             * The rule engine encapsulates the nools.js rule engine.
+             * @class RuleEngine
+             * @constructs RuleEngine
+             * @param noolsDSL {string} The adaptation rules formated in nools DSL as provided by the rule generator.
+             */
             __construct: function(noolsDSL)
             {
                 var that = this;
@@ -59,14 +59,32 @@ define("MoRE", ['nools', 'easejs', 'MoCI'], function (nools, easejs, ContextInfo
                 return contextInformation;
             },
 
+            /**
+             * Sets a function as the callback for the provided callback name.
+             * @alias setCallback
+             * @memberof RuleEngine#
+             * @param callbackName {string} The name of the callback.
+             * @param callback {function} The function that handles the callback.
+             */
             'public setCallback': function(callbackName, callback) {
                 this._callbacks[callbackName] = callback;
             },
 
+            /**
+             * Returns the rules that are part of the current nools flow.
+             * @alias getRules
+             * @memberof RuleEngine#
+             * @returns {*|Array}
+             */
             'public getRules': function() {
                 return this._parsedFlow.rules;
             },
 
+            /**
+             * Starts the nools rule matching and triggers callbacks for success or errors.
+             * @alias matchRules
+             * @memberof RuleEngine#
+             */
             'public matchRules': function() {
                 var that = this;
 
@@ -92,6 +110,12 @@ define("MoRE", ['nools', 'easejs', 'MoCI'], function (nools, easejs, ContextInfo
                 this._session.assert(fact);
             },
 
+            /**
+             * Adds a context information as fact to the current nools session.
+             * @alias addContextInformation
+             * @memberof RuleEngine#
+             * @param contextInformation
+             */
             'public addContextInformation': function(contextInformation) {
                 //TODO: add context information directly from context detection and convert to flow context information
                 //FlowContextInformation = this.getDefined("ContextInformation");
@@ -103,6 +127,13 @@ define("MoRE", ['nools', 'easejs', 'MoCI'], function (nools, easejs, ContextInfo
                 }
             },
 
+            /**
+             * Returns the nools class definition with the provided name.
+             * @alias getDefined
+             * @memberof RuleEngine#
+             * @param definitionName
+             * @returns {*}
+             */
             'public getDefined': function(definitionName) {
                 return this._flow.getDefined(definitionName);
             }
