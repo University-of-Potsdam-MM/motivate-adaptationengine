@@ -88,13 +88,6 @@ define("MoRE", ['nools', 'easejs', 'MoCI'], function (nools, easejs, ContextInfo
             'public matchRules': function() {
                 var that = this;
 
-                // modify all facts so that rules will fire even when there are no new context information
-                // might be unnecessary in the future because context information will likely be changing all the time
-                var facts = this._session.getFacts();
-                for(index in facts) {
-                    var fact = facts[index];
-                    this._session.modify(fact);
-                }
 
                 console.log("matching...");
                 this._session.match(function(err) {
