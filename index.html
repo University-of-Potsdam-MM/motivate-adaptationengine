@@ -11,14 +11,27 @@
                         url: "noolsDSLOutput.nools",
                         success: function(noolsDSL) {
                             var adaptationEngine = new AdaptationEngine(noolsDSL);
-                            adaptationEngine.setRestrictFeatureCallback(function(msg, facts) { console.log("Restrict: "+msg+" Reason: "+facts) });
-                            adaptationEngine.setSelectLearningUnitCallback(function(id, contextInformation) {
-                                console.log("Select Learning Unit -> "+id);
+                            adaptationEngine.setRestrictFeatureCallback(function(feature, contextInformation) {
+                                console.log("<restrict feature='"+feature+"'>");
                                 for(var index in contextInformation) {
-                                    console.log(contextInformation[index].description());
+                                    console.log("\t"+contextInformation[index].description());
                                 }
+                                console.log("</restrict>");
                             });
-                            adaptationEngine.setPreloadLearningUnitCallback(function(msg) { console.log("Preload: "+msg) });
+                            adaptationEngine.setSelectLearningUnitCallback(function(id, contextInformation) {
+                                console.log("<select id='"+id+"'>");
+                                for(var index in contextInformation) {
+                                    console.log("\t"+contextInformation[index].description());
+                                }
+                                console.log("</select>");
+                            });
+                            adaptationEngine.setPreloadLearningUnitCallback(function(id, contextInformation) {
+                                console.log("<preload id='"+id+"'>");
+                                for(var index in contextInformation) {
+                                    console.log("\t"+contextInformation[index].description());
+                                }
+                                console.log("</preload>");
+                            });
                             adaptationEngine.startRuleMatching();
                         }
                     });

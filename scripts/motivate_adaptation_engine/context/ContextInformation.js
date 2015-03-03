@@ -28,11 +28,7 @@ define("MoCI", ['easejs'], function(easejs) {
          * @returns {ContextInformation}
          */
         'public static fromFact': function(fact) {
-            var contextInformation = new ContextInformation();
-            contextInformation.setID(fact.id);
-            contextInformation.setParameters(fact.parameters);
-            contextInformation.setValue(fact.value);
-            return contextInformation;
+            return new ContextInformation(fact.id, fact.value, fact.parameters);
         },
 
         /**
@@ -44,11 +40,15 @@ define("MoCI", ['easejs'], function(easejs) {
         'public description': function() {
             var description = "";
 
-            description += this.getID()+" [";
-            for(var parameter in this.getParameters()) {
-                description += parameter+":"+this.getParameterValue(parameter);
+            description += this.getID();
+            if (!$.isEmptyObject(this.getParameters())) {
+                description += " [";
+                for(var parameter in this.getParameters()) {
+                    description += parameter+":"+this.getParameterValue(parameter);
+                }
+                description += "]";
             }
-            description += "] is "+this.getValue();
+            description += " IS "+this.getValue();
 
             return description;
         },
