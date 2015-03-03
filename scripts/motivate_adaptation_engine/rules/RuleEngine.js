@@ -103,14 +103,13 @@ define("MoRE", ['nools', 'easejs', 'MoCI'], function (nools, easejs, ContextInfo
                         that._callbacks["ruleMatchingErrorCallback"](err);
                     } else {
                         var endTime = Math.floor(Date.now() / 1000);
-                        if (this._verbose) console.log("Time for rule matching "+(endTime-startTime)+" secs.");
+                        if (that._verbose) console.log("Time for rule matching "+(endTime-startTime)+" secs.");
                         that._callbacks["ruleMatchingSuccessCallback"]();
                     }
                 });
             },
 
             'private _addFact': function(fact) {
-                if (this._verbose) console.log("addFact");
                 this._session.assert(fact);
             },
 

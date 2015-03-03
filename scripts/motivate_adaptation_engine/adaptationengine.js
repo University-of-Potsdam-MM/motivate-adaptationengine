@@ -42,10 +42,10 @@ define('MoAE', ['easejs', 'MoRE', 'MoCD', 'MoCI'], function (easejs, RuleEngine,
              *     }
              * });
              */
-            __construct: function(noolsDSL)
+            __construct: function(noolsDSL, verbose)
             {
                 this._noolsDSL = noolsDSL;
-                this._ruleEngine = new RuleEngine(noolsDSL);
+                this._ruleEngine = new RuleEngine(noolsDSL, verbose);
                 // for test purposes
                 this._ruleEngine.addContextInformation(new ContextInformation("CI_CURRENT_TEMPERATURE", 55, {"CP_TEMPERATURE_SCALE" : "FAHRENHEIT"}));
                 // this._ruleEngine.addContextInformation(new ContextInformation("CI_DEVICE_TYPE", "FEATURE_PHONE"));

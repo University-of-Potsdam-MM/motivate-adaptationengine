@@ -10,7 +10,7 @@
                     $.ajax({
                         url: "noolsDSLOutput.nools",
                         success: function(noolsDSL) {
-                            var adaptationEngine = new AdaptationEngine(noolsDSL);
+                            var adaptationEngine = new AdaptationEngine(noolsDSL, true);
                             adaptationEngine.setRestrictFeatureCallback(function(feature, contextInformation) {
                                 console.log("<restrict feature='"+feature+"'>");
                                 for(var index in contextInformation) {
