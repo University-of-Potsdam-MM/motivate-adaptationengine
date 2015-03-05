@@ -74,8 +74,8 @@ rule "96cb2ef1-8913-4508-b315-92309f76fbdf" {
 
 rule "aaed79dc-a5fd-4da1-b884-35d43096c5e0" { 
 	when {
-		c1 : ContextInformation;
-		c2 : ContextInformation c1.id == 'CI_DEVICE_TYPE' && c1.value != 'FEATURE_PHONE' && c2.id == 'CI_CURRENT_TEMPERATURE' && c2.parameters['CP_TEMPERATURE_SCALE'] == 'FAHRENHEIT' && c2.value > '30.0';
+		c1 : ContextInformation c1.id == 'CI_DEVICE_TYPE' && c1.value != 'FEATURE_PHONE';
+		c2 : ContextInformation c2.id == 'CI_CURRENT_TEMPERATURE' && c2.parameters['CP_TEMPERATURE_SCALE'] == 'FAHRENHEIT' && c2.value > '30.0';
 	} then {
 		emit("selectLearningUnit", "130", facts);
 	}
