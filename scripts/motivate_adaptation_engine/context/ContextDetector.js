@@ -1,4 +1,4 @@
-define("MoCD", ['nools', 'easejs', 'jquery', 'MoCD_Discoverer', 'MoCD_GeoLocationWidget', 'MoCI', 'lib/parser/constraint/parser'], function(nools, easejs, $, Discoverer, GeoLocationWidget, ContextInformation) {
+define("MoCD", ['nools', 'easejs', 'jquery', 'MoCI', 'contactJS', 'lib/parser/constraint/parser'], function(nools, easejs, $, ContextInformation, contactJS) {
     var Class = easejs.Class;
 
     var ContextDetector = Class('ContextDetector', {
@@ -23,7 +23,7 @@ define("MoCD", ['nools', 'easejs', 'jquery', 'MoCD_Discoverer', 'MoCD_GeoLocatio
          * @param adaptationRules {*|Array} The adaptation rules as returned by the rule engine. Are used to determine which context information are required.
          */
         __construct: function(adaptationRules) {
-            this._discoverer = new Discoverer();
+            this._discoverer = new contactJS.Discoverer();
 
             for(var index in adaptationRules) {
                 var adaptationRule = adaptationRules[index];
@@ -31,7 +31,7 @@ define("MoCD", ['nools', 'easejs', 'jquery', 'MoCD_Discoverer', 'MoCD_GeoLocatio
                 this._extractContextInformationFromParsedConstraints(parser.parse(lastConstraint[lastConstraint.length - 1]));
             }
 
-            this._discoverer.registerNewComponent(new GeoLocationWidget(this._discoverer));
+            this._discoverer.registerNewComponent(new contactJS.GeoLocationWidget(this._discoverer));
             console.log(this._discoverer.getWidgetDescriptions());
         },
 
