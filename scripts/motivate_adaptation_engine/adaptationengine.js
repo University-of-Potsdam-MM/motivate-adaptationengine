@@ -1,4 +1,4 @@
-define('MoAE', ['easejs', 'MoRE', 'MoCD'], function (easejs, RuleEngine, ContextDetector) {
+define('MoAE', ['easejs', 'MoRE', 'MoCD', 'MoCI'], function (easejs, RuleEngine, ContextDetector, ContextInformation) {
     var Class = easejs.Class;
 
     var AdaptationEngine = Class('AdaptationEngine',
@@ -42,13 +42,18 @@ define('MoAE', ['easejs', 'MoRE', 'MoCD'], function (easejs, RuleEngine, Context
              *     }
              * });
              */
-            __construct: function(noolsDSL)
+            __construct: function(noolsDSL, verbose)
             {
                 this._noolsDSL = noolsDSL;
-                this._ruleEngine = new RuleEngine(noolsDSL);
+                this._ruleEngine = new RuleEngine(noolsDSL, verbose);
                 // for test purposes
-                FlowContextInformation = this._ruleEngine.getDefined("ContextInformation");
-                this._ruleEngine.addContextInformation(new FlowContextInformation("CurrentTemperatureMeasurableInformation", 55, {"TemperatureScaleContextParameter" : "FAHRENHEIT"}));
+                this._ruleEngine.addContextInformation(new ContextInformation("CI_CURRENT_TEMPERATURE", 55, {"CP_TEMPERATURE_SCALE" : "FAHRENHEIT"}));
+                // this._ruleEngine.addContextInformation(new ContextInformation("CI_DEVICE_TYPE", "FEATURE_PHONE"));
+                this._ruleEngine.addContextInformation(new ContextInformation("CI_DEVICE_TYPE", "SMARTPHONE"));
+                this._ruleEngine.addContextInformation(new ContextInformation("CI_USER_ROLE", "TEACHER"));
+                //this._ruleEngine.addContextInformation(new ContextInformation("CI_USER_ROLE", "STUDENT"));
+                this._ruleEngine.addContextInformation(new ContextInformation("CI_USER_MOVEMENT_SPEED", "10", {"CP_VELOCITY_UNIT" : "KILOMETERS_PER_HOUR"}));
+                this._ruleEngine.addContextInformation(new ContextInformation("CI_CURRENT_LEARNING_UNIT", "128"));
                 // initialize context detector and set callbacks for context information gathering
                 this._contextDetector = new ContextDetector(this._ruleEngine.getRules());
             },
@@ -165,10 +170,11 @@ define('MoAE', ['easejs', 'MoRE', 'MoCD'], function (easejs, RuleEngine, Context
              * @param intervalInMilliseconds {number} The time in milliseconds between every rule matching interval.
              */
             'public startRuleMatching': function(intervalInMilliseconds) {
+                console.log("startRuleMatching");
                 var that = this;
 
                 if (!this.isRunning) {
-                    this.isRunning = false;
+                    this.isRunning = true;
                     this._ruleEngine.matchRules();
                     if (!isNaN(intervalInMilliseconds)) {
                         this._ruleMatchingInterval = setInterval(function(){that._ruleEngine.matchRules()}, intervalInMilliseconds);
@@ -182,6 +188,8 @@ define('MoAE', ['easejs', 'MoRE', 'MoCD'], function (easejs, RuleEngine, Context
              * @memberof AdaptationEngine#
              */
             'public stopRuleMatching': function() {
+                console.log("stopRuleMatching");
+
                 if (this.isRunning) {
                     this.isRunning = false;
                     clearInterval(this._ruleMatchingInterval);
@@ -197,6 +205,8 @@ define('MoAE', ['easejs', 'MoRE', 'MoCD'], function (easejs, RuleEngine, Context
              * @param intervalInMilliseconds {number}
              */
             'public restartRuleMatching': function(intervalInMilliseconds) {
+                console.log("restartRuleMatching");
+
                 this.stopRuleMatching();
                 this.startRuleMatching(intervalInMilliseconds);
             }

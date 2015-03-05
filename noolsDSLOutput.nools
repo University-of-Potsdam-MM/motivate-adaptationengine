@@ -9,33 +9,31 @@ define ContextInformation {
 	}
 }
 
-rule "RestrictFeatureConstraintRule[1413297252]" { 
+rule "3b5cc3d5-4f31-450d-91af-349dd0eb958d" { 
 	when {
-		c1 : ContextInformation;
-		c2 : ContextInformation;
-		not(c3 : ContextInformation (c1.id == 'CurrentTimeMeasurableInformation' && c1.value > '09:00:00') && (c2.id == 'UserRoleMeasurableInformation' && c2.value == 'Student') && (c3.id == 'CurrentTimeMeasurableInformation' && c3.value < '16:00:00'));
+	    c1 : ContextInformation (c1.id == 'CI_CURRENT_TIME' && c1.value < '09:00:00') || (c1.id == 'CI_CURRENT_TIME' && c1.value > '16:00:00') || (c1.id == 'CI_USER_ROLE' && c1.value != 'STUDENT');
 	} then {
-		emit("restrictFeature", "AppUsageFeature", getFacts());
+		emit("restrictFeature", "AppUsageFeature", facts);
 	}
 }
 
-rule "PreloadLearningUnit[125:124]" { 
+rule "24aad587-c0b9-458e-a466-07afce7422bf" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == '125');
+		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '125');
 	} then {
 		emit("preloadLearningUnit", "124");
 	}
 }
 
-rule "PreloadLearningUnit[125:128]" { 
+rule "18721bee-7269-40fd-80eb-e088d23983b5" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == '125');
+		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '125');
 	} then {
 		emit("preloadLearningUnit", "128");
 	}
 }
 
-rule "SelectLearningUnit[126]" { 
+rule "801170ef-7320-4cf8-82ae-2cb9423f3734" { 
 	when {
 		c1 : ContextInformation;
 		c2 : ContextInformation;
@@ -44,81 +42,81 @@ rule "SelectLearningUnit[126]" {
 		c5 : ContextInformation;
 		c6 : ContextInformation;
 		c7 : ContextInformation;
-		c8 : ContextInformation (c1.id == 'FinishedLearningUnitMeasurableInformation' && c1.value == '127') && ((c2.id == 'FinishedLearningUnitMeasurableInformation' && c2.value == '124') || (c3.id == 'FinishedLearningUnitMeasurableInformation' && c3.value == '125')) && ((c4.id == 'FinishedLearningUnitMeasurableInformation' && c4.value == '128') || (c3.id == 'FinishedLearningUnitMeasurableInformation' && c3.value == '125')) && (c5.id == 'UserMovementSpeedMeasurableInformation' && c5.parameters['VelocityUnitContextParameter'] == 'KILOMETERS_PER_HOUR' && c5.value < '20.0') && (c6.id == 'DeviceTypeMeasurableInformation' && c6.value != 'FEATURE_PHONE') && (c7.id == 'UserLocationLongitudeMeasurableInformation' && c7.value == '13.34523') && (c8.id == 'UserLocationLatitudeMeasurableInformation' && c8.value == '52.12436');
+		c8 : ContextInformation (c1.id == 'FinishedLearningUnitMeasurableInformation' && c1.value == '127') && ((c2.id == 'FinishedLearningUnitMeasurableInformation' && c2.value == '124') || (c3.id == 'FinishedLearningUnitMeasurableInformation' && c3.value == '125')) && ((c4.id == 'FinishedLearningUnitMeasurableInformation' && c4.value == '128') || (c3.id == 'FinishedLearningUnitMeasurableInformation' && c3.value == '125')) && (c5.id == 'CI_USER_MOVEMENT_SPEED' && c5.parameters['CP_VELOCITY_UNIT'] == 'KILOMETERS_PER_HOUR' && c5.value < '20.0') && (c6.id == 'CI_DEVICE_TYPE' && c6.value != 'FEATURE_PHONE') && (c7.id == 'CI_USER_LOCATION_LONGITUDE' && c7.value == '13.13021') && (c8.id == 'CI_USER_LOCATION_LATITUDE' && c8.value == '52.39346');
 	} then {
-		emit("selectLearningUnit", "126", getFacts());
+		emit("selectLearningUnit", "126", facts);
 	}
 }
 
-rule "PreloadLearningUnit[126:127]" { 
+rule "6a2b947c-d8ee-4468-8bf4-4964f773b2d8" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == '126');
+		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '126');
 	} then {
 		emit("preloadLearningUnit", "127");
 	}
 }
 
-rule "PreloadLearningUnit[126:124]" { 
+rule "c667806c-8c82-4055-abf0-9d36b3714b19" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == '126');
+		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '126');
 	} then {
 		emit("preloadLearningUnit", "124");
 	}
 }
 
-rule "PreloadLearningUnit[126:128]" { 
+rule "96cb2ef1-8913-4508-b315-92309f76fbdf" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == '126');
+		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '126');
 	} then {
 		emit("preloadLearningUnit", "128");
 	}
 }
 
-rule "SelectLearningUnit[130]" { 
+rule "aaed79dc-a5fd-4da1-b884-35d43096c5e0" { 
 	when {
 		c1 : ContextInformation;
-		c2 : ContextInformation (c1.id == 'DeviceTypeMeasurableInformation' && c1.value != 'FEATURE_PHONE') && (c2.id == 'CurrentTemperatureMeasurableInformation' && c2.parameters['TemperatureScaleContextParameter'] == 'FAHRENHEIT' && c2.value > '30.0');
+		c2 : ContextInformation c1.id == 'CI_DEVICE_TYPE' && c1.value != 'FEATURE_PHONE' && c2.id == 'CI_CURRENT_TEMPERATURE' && c2.parameters['CP_TEMPERATURE_SCALE'] == 'FAHRENHEIT' && c2.value > '30.0';
 	} then {
-		emit("selectLearningUnit", "130", getFacts());
+		emit("selectLearningUnit", "130", facts);
 	}
 }
 
-rule "SelectLearningUnit[129]" { 
+rule "96093f93-fe2f-487b-b643-2f0cb854ab93" { 
 	when {
-		c1 : ContextInformation (c1.id == 'UserDidArriveAtLocationMeasurableInformation' && c1.parameters['LongitudeContextParameter'] == '14.2345' && c1.parameters['LatitudeContextParameter'] == '52.42357' && c1.value == 'true');
+		c1 : ContextInformation (c1.id == 'CI_DID_ARRIVE_AT_LOCATION' && c1.parameters['CP_LONGITUDE'] == '13.13024' && c1.parameters['CP_LATITUDE'] == '52.39351' && c1.value == 'true');
 	} then {
-		emit("selectLearningUnit", "129", getFacts());
+		emit("selectLearningUnit", "129", facts);
 	}
 }
 
-rule "SelectLearningUnit[124]" { 
+rule "64751ed1-dca4-4885-b6c0-d8f33e8c81b3" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CurrentTemperatureMeasurableInformation' && c1.parameters['TemperatureScaleContextParameter'] == 'FAHRENHEIT' && c1.value > '30.0');
+		c1 : ContextInformation (c1.id == 'CI_CURRENT_TEMPERATURE' && c1.parameters['CP_TEMPERATURE_SCALE'] == 'FAHRENHEIT' && c1.value > '30.0');
 	} then {
-		emit("selectLearningUnit", "124", getFacts());
+		emit("selectLearningUnit", "124", facts);
 	}
 }
 
-rule "PreloadLearningUnit[124:125]" { 
+rule "3c14232e-48b6-41e3-9e3a-ae4695c14433" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == '124');
+		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '124');
 	} then {
-		emit("preloadLearningUnit", "125");
+		emit("preloadLearningUnit", "125", facts);
 	}
 }
 
-rule "PreloadLearningUnit[128:125]" { 
+rule "134b8dc3-34fb-4b4f-9d2e-e58fb9725401" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == '128');
+		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '128');
 	} then {
-		emit("preloadLearningUnit", "125");
+		emit("preloadLearningUnit", "125", facts);
 	}
 }
 
-rule "PreloadLearningUnit[128:129]" { 
+rule "7b95a467-3578-4d41-92b5-b5178421dba0" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CurrentLearningUnitMeasurableInformation' && c1.value == '128');
+		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '128');
 	} then {
-		emit("preloadLearningUnit", "129");
+		emit("preloadLearningUnit", "129", facts);
 	}
 }

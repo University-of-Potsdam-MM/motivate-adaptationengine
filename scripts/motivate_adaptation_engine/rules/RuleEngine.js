@@ -3,13 +3,15 @@ define("MoRE", ['nools', 'easejs', 'MoCI'], function (nools, easejs, ContextInfo
 
     var RuleEngine = Class('RuleEngine',
         {
+            'private _verbose': false,
             'private _nools': null,
             'private _flow': null,
             'private _parsedFlow': null,
             'private _session': null,
+            'private _FlowContextInformation': null,
             'private _callbacks': {
                 "ruleMatchingSuccessCallback": function() {
-                    console.log("done");
+                    console.log("Rule matching finished successfully.");
                 },
                 "ruleMatchingErrorCallback": function(err) {
                     console.error(err.stack);
@@ -21,14 +23,18 @@ define("MoRE", ['nools', 'easejs', 'MoCI'], function (nools, easejs, ContextInfo
              * @class RuleEngine
              * @constructs RuleEngine
              * @param noolsDSL {string} The adaptation rules formated in nools DSL as provided by the rule generator.
+             * @param verbose {boolean} Activates console output if set to true.
              */
-            __construct: function(noolsDSL)
+            __construct: function(noolsDSL, verbose)
             {
                 var that = this;
+                this._verbose = verbose;
+
 
                 this._nools = require("nools");
                 this._parsedFlow = this._nools.parse(noolsDSL);
                 this._flow = this._nools.compile(noolsDSL, {name: "adaptationRules"});
+                this._FlowContextInformation = this.getDefined("ContextInformation");
                 this._session = this._flow.getSession();
 
                 this._session.on("restrictFeature", function(feature, facts){
@@ -43,18 +49,20 @@ define("MoRE", ['nools', 'easejs', 'MoCI'], function (nools, easejs, ContextInfo
                     }
                 });
 
-                this._session.on("preloadLearningUnit", function(id){
+                this._session.on("preloadLearningUnit", function(id, facts){
                     if (typeof that._callbacks["preloadLearningUnitCallback"] != "undefined") {
-                        that._callbacks["preloadLearningUnitCallback"](id);
+                        that._callbacks["preloadLearningUnitCallback"](id, that._contextInformationFromFacts(facts));
                     }
                 });
             },
 
             'private _contextInformationFromFacts': function(facts) {
                 var contextInformation = [];
-                for(index in facts) {
+                for(var index in facts) {
                     var fact = facts[index];
-                    contextInformation.push(ContextInformation.fromFact(fact));
+                    if(fact instanceof this._FlowContextInformation) {
+                        contextInformation.push(ContextInformation.fromFact(fact));
+                    }
                 }
                 return contextInformation;
             },
@@ -88,21 +96,16 @@ define("MoRE", ['nools', 'easejs', 'MoCI'], function (nools, easejs, ContextInfo
             'public matchRules': function() {
                 var that = this;
 
-                // modify all facts so that rules will fire even when there are no new context information
-                // might be unnecessary in the future because context information will likely be changing all the time
-                var facts = this._session.getFacts();
-                for(index in facts) {
-                    var fact = facts[index];
-                    this._session.modify(fact);
-                }
-
-                console.log("matching...");
+                if (this._verbose) console.log("Matching rules...");
+                var startTime = Math.floor(Date.now() / 1000);
                 this._session.match(function(err) {
-                   if (err) {
-                       that._callbacks["ruleMatchingErrorCallback"](err);
-                   } else {
-                       that._callbacks["ruleMatchingSuccessCallback"]();
-                   }
+                    if (err) {
+                        that._callbacks["ruleMatchingErrorCallback"](err);
+                    } else {
+                        var endTime = Math.floor(Date.now() / 1000);
+                        if (that._verbose) console.log("Time for rule matching "+(endTime-startTime)+" secs.");
+                        that._callbacks["ruleMatchingSuccessCallback"]();
+                    }
                 });
             },
 
@@ -111,19 +114,20 @@ define("MoRE", ['nools', 'easejs', 'MoCI'], function (nools, easejs, ContextInfo
             },
 
             /**
-             * Adds a context information as fact to the current nools session.
+             * Adds a context information as a fact to the current nools session.
              * @alias addContextInformation
              * @memberof RuleEngine#
-             * @param contextInformation
+             * @param contextInformation {ContextInformation}
              */
             'public addContextInformation': function(contextInformation) {
                 //TODO: add context information directly from context detection and convert to flow context information
                 //FlowContextInformation = this.getDefined("ContextInformation");
-                //TODO: test if context information already exists
+                //TODO: test if context information already exist
+
                 if (false) {
 
                 } else {
-                    this._addFact(contextInformation);
+                    this._addFact(new this._FlowContextInformation(contextInformation.getID(), contextInformation.getValue(), contextInformation.getParameters()));
                 }
             },
 
