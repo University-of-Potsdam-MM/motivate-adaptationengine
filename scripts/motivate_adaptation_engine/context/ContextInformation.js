@@ -1,24 +1,19 @@
-define("MoCI", ['easejs'], function(easejs) {
-    var Class = easejs.Class;
-
-    var ContextInformation = Class('ContextInformation', {
-        'private _id': null,
-        'private _value': null,
-        'private _parameters': {},
+define("MoCI", [], function() {
+    var ContextInformation = (function() {
 
         /**
          * A context information
-         * @class Describes a context information.
+         * @class
          * @constructs ContextInformation
          * @param [id=null] {string}
          * @param [value=null] {string}
          * @param [parameters] {object}
          */
-        __construct : function(id, value, parameters) {
-            if (typeof id != "undefined") this._id = id;
-            if (typeof value != "undefined") this._value = value;
-            if (typeof parameters != "undefined") this._parameters = parameters;
-        },
+        function ContextInformation(id, value, parameters) {
+            this._id = typeof id != "undefined" ? id : null;
+            this._value = typeof value != "undefined" ? value : null;
+            this._parameters = typeof parameters != "undefined" ? parameters : {};
+        }
 
         /**
          * Creates a context information from a fact that was extracted from a nools adaptation rule.
@@ -27,9 +22,14 @@ define("MoCI", ['easejs'], function(easejs) {
          * @param fact {Object} The fact to create the context information from.
          * @returns {ContextInformation}
          */
-        'public static fromFact': function(fact) {
+        ContextInformation.fromFact = function(fact) {
             return new ContextInformation(fact.id, fact.value, fact.parameters);
-        },
+        };
+
+        ContextInformation.fromAttributeValue = function(attributeValue) {
+            //TODO: test!
+            return new ContextInformation(attributeValue.getName(), attributeValue.getValue(), attributeValue.getParameters().getItems());
+        };
 
         /**
          *
@@ -37,7 +37,7 @@ define("MoCI", ['easejs'], function(easejs) {
          * @memberof ContextInformation#
          * @returns {string} description
          */
-        'public description': function() {
+        ContextInformation.prototype.description = function() {
             var description = "";
 
             description += this.getID();
@@ -51,7 +51,7 @@ define("MoCI", ['easejs'], function(easejs) {
             description += " IS "+this.getValue();
 
             return description;
-        },
+        };
 
         /**
          * Compares two context information and returns true if ID and parameters are equal.
@@ -60,34 +60,34 @@ define("MoCI", ['easejs'], function(easejs) {
          * @param contextInformation {ContextInformation} The context information to compare.
          * @returns {boolean}
          */
-        'public equals': function(contextInformation) {
+        ContextInformation.prototype.equals = function(contextInformation) {
             var isEqual = true;
             if (this.getID() != contextInformation.getID()) isEqual = false;
             for(parameter in this.getParameters()) {
                 if (this.getParameterValue(parameter) != contextInformation.getParameterValue(parameter)) isEqual = false;
             }
             return isEqual;
-        },
+        };
 
         /**
          * Returns the context information's id.
          * @memberof ContextInformation#
          * @alias getID
-         * @returns {string} id The context information's id.
+         * @returns {String} id The context information's id.
          */
-        'public getID': function() {
+        ContextInformation.prototype.getID = function() {
             return this._id;
-        },
+        };
 
         /**
          * Sets the context information's id.
          * @memberof ContextInformation#
          * @alias setID
-         * @param newID {string} The new id.
+         * @param newID {String} The new id.
          */
-        'public setID': function(newID) {
+        ContextInformation.prototype.setID  = function(newID) {
             this._id = newID;
-        },
+        };
 
         /**
          * Returns the value for a parameter by name.
@@ -96,9 +96,9 @@ define("MoCI", ['easejs'], function(easejs) {
          * @param name {String} The name of the parameter.
          * @returns value {String} The value of the parameter.
          */
-        'public getParameterValue': function(name) {
+        ContextInformation.prototype.getParameterValue = function(name) {
             return this._parameters[name];
-        },
+        };
 
         /**
          * Sets a parameter value for a parameter by name.
@@ -109,9 +109,9 @@ define("MoCI", ['easejs'], function(easejs) {
          * @example
          * contextInformation.setParameterValue("TemperatureScaleContextParameter", "FAHRENHEIT");
          */
-        'public setParameterValue': function(name, value) {
+        ContextInformation.prototype.setParameterValue = function(name, value) {
             this._parameters[name] = value;
-        },
+        };
 
         /**
          * Returns all parameters.
@@ -119,9 +119,9 @@ define("MoCI", ['easejs'], function(easejs) {
          * @memberof ContextInformation#
          * @returns {Object}
          */
-        'public getParameters': function() {
+        ContextInformation.prototype.getParameters = function() {
             return this._parameters;
-        },
+        };
 
         /**
          * Sets an object with parameters.
@@ -133,9 +133,9 @@ define("MoCI", ['easejs'], function(easejs) {
          *      "TemperatureScaleContextParameter": "FAHRENHEIT"
          * });
          */
-        'public setParameters': function(parameters) {
+        ContextInformation.prototype.setParameters = function(parameters) {
             this._parameters = parameters;
-        },
+        };
 
         /**
          * Returns the value for the context information.
@@ -143,9 +143,9 @@ define("MoCI", ['easejs'], function(easejs) {
          * @memberof ContextInformation#
          * @returns {String}
          */
-        'public getValue': function() {
+        ContextInformation.prototype.getValue = function() {
             return this._value;
-        },
+        };
 
         /**
          * Sets the value for the context information.
@@ -153,10 +153,12 @@ define("MoCI", ['easejs'], function(easejs) {
          * @memberof ContextInformation#
          * @param value {String} The new value.
          */
-        'public setValue': function(value) {
+        ContextInformation.prototype.setValue = function(value) {
             this._value = value
-        }
-    });
+        };
+
+        return ContextInformation;
+    })();
 
     return ContextInformation;
 });

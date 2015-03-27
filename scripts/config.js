@@ -14,7 +14,7 @@ require.config({
         // context information
         MoCI: 'motivate_adaptation_engine/context/ContextInformation',
         // context detection
-        MoCD: 'motivate_adaptation_engine/context/ContextDetector'
+        MoCD: 'motivate_adaptation_engine/context/ContextDetector',
     },
     shim:{
         'easejs' : {
