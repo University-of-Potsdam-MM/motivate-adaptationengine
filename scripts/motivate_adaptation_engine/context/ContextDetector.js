@@ -1,40 +1,76 @@
-define("MoCD", ['nools', 'easejs', 'jquery', 'MoCI', 'contactJS', 'lib/parser/constraint/parser'], function(nools, easejs, $, ContextInformation, contactJS) {
-    var Class = easejs.Class;
+define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_UnixTime', 'MoWI_GeoLocation', 'MoIN_Address',
+    'lib/parser/constraint/parser'], function(nools, $, ContextInformation, contactJS, UnixTimeWidget, UnixTimeInterpreter, GeoLocationWidget, AddressInterpreter) {
 
-    var ContextDetector = Class('ContextDetector', {
-        'private _discoverer': null,
-        'private _contextInformation' : [],
-        'private _currentContextInformation': null,
-        'private _currentParameter': null,
-        'private _expectParameterValue' : false,
-        'private _callbacks' : {
-            "newContextInformationCallback": function() {
-                console.log("Warning! There is no callback set to handle new context information.");
-            },
-            "updateContextInformationCallback": function() {
-                console.log("Warning! There is no callback set to handle updated context information.");
-            }
-        },
+    var ContextDetector = (function() {
 
         /**
          * The context detector encapsulates the context toolkit which provides context information.
          * @class
          * @constructs ContextDetector
-         * @param adaptationRules {*|Array} The adaptation rules as returned by the rule engine. Are used to determine which context information are required.
+         * @param adaptationRules {*|Array} The adaptation rules that are returned by the rule engine are used to determine which context information are required.
          */
-        __construct: function(adaptationRules) {
+        function ContextDetector(adaptationRules) {
+            var self = this;
+
+            this._aggregators = [];
+            this._contextInformation = [];
+            this._currentContextInformation = null;
+            this._currentParameter = null;
+            this._expectParameterValue = false;
+            this._callbacks = {
+                "newContextInformationCallback": function() {
+                    console.log("Warning! There is no callback set to handle new context information.");
+                },
+                "updateContextInformationCallback": function() {
+                    console.log("Warning! There is no callback set to handle updated context information.");
+                }
+            };
+
             this._discoverer = new contactJS.Discoverer();
 
+            // TODO: dynamic context information extraction
             for(var index in adaptationRules) {
                 var adaptationRule = adaptationRules[index];
                 var lastConstraint = adaptationRule.constraints[adaptationRule.constraints.length - 1];
                 this._extractContextInformationFromParsedConstraints(parser.parse(lastConstraint[lastConstraint.length - 1]));
+
+                //var ruleAggregator = new contactJS.Aggregator(_this.discoverer);
             }
 
-            this._discoverer.registerNewComponent(new contactJS.GeoLocationWidget(this._discoverer));
-            console.log(this._discoverer.getWidgetDescriptions());
-        },
+            //TODO: Dynamic Configuration
+            // (CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:MILLISECONDS]
+            var attributeTypeUnixTimeMilliseconds = contactJS.AttributeType().withName('CI_CURRENT_UNIX_TIME').withType('INTEGER').withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"));
+            // (CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:SECONDS]
+            var attributeTypeUnixTimeSeconds = contactJS.AttributeType().withName('CI_CURRENT_UNIX_TIME').withType('INTEGER').withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"));
+            // (CI_USER_LOCATION_LATITUDE:FLOAT)
+            var attributeTypeLatitude = contactJS.AttributeType().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT');
+            // (CI_USER_LOCATION_LONGITUDE:FLOAT)
+            var attributeTypeLongitude = contactJS.AttributeType().withName('CI_USER_LOCATION_LONGITUDE').withType('FLOAT');
+            // (CI_USER_LOCATION_ADDRESS:STRING)
+            var attributeTypeAddress = contactJS.AttributeType().withName('CI_USER_LOCATION_ADDRESS').withType('STRING');
 
+            // Add widgets
+            new UnixTimeWidget(this._discoverer);
+            new GeoLocationWidget(this._discoverer);
+
+            // Add interpreters
+            new UnixTimeInterpreter(this._discoverer);
+            new AddressInterpreter(this._discoverer);
+
+            var unixTimeAggregator = new contactJS.Aggregator(this._discoverer, [
+                attributeTypeUnixTimeMilliseconds,
+                attributeTypeUnixTimeSeconds
+            ]);
+
+            var locationAggregator = new contactJS.Aggregator(this._discoverer, [
+                attributeTypeLatitude,
+                attributeTypeLongitude,
+                attributeTypeAddress
+            ]);
+
+            this._aggregators.push(unixTimeAggregator);
+            this._aggregators.push(locationAggregator);
+        }
 
         /**
          * Sets a function as the callback for the provided callback name.
@@ -43,14 +79,14 @@ define("MoCD", ['nools', 'easejs', 'jquery', 'MoCI', 'contactJS', 'lib/parser/co
          * @param callbackName {string} The name of the callback.
          * @param callback {function} The function that handles the callback.
          */
-        'public setCallback': function(callbackName, callback) {
+        ContextDetector.setCallback = function(callbackName, callback) {
             this._callbacks[callbackName] = callback;
-        },
+        };
 
-        'private _extractContextInformationFromParsedConstraints': function(parsedConstraints) {
+        ContextDetector.prototype._extractContextInformationFromParsedConstraints = function(parsedConstraints) {
             var parameterValueExceptions = ["string", "propLookup"];
 
-            for(index in parsedConstraints) {
+            for(var index in parsedConstraints) {
                 var parsedConstraint = parsedConstraints[index];
                 if ($.isArray(parsedConstraint)) {
                     this._extractContextInformationFromParsedConstraints(parsedConstraint);
@@ -70,7 +106,7 @@ define("MoCD", ['nools', 'easejs', 'jquery', 'MoCI', 'contactJS', 'lib/parser/co
                     }
                 }
             }
-        },
+        };
 
         /**
          * Returns true if the given context information was gathered before.
@@ -79,17 +115,17 @@ define("MoCD", ['nools', 'easejs', 'jquery', 'MoCI', 'contactJS', 'lib/parser/co
          * @param contextInformation {ContextInformation} The context information to test.
          * @returns {Boolean}
          */
-        'public contextInformationExists': function(contextInformation) {
+        ContextDetector.prototype.contextInformationExists = function(contextInformation) {
             return this._indexForContextInformation(contextInformation) != -1;
-        },
+        };
 
-        'private _indexForContextInformation': function(contextInformation) {
+        ContextDetector.prototype._indexForContextInformation = function(contextInformation) {
             for(index in this._contextInformation) {
                 var existingContextInformation = this._contextInformation[index];
                 if (existingContextInformation.equals(contextInformation)) return index;
             }
             return -1;
-        },
+        };
 
         /**
          * Adds a context information that wasn't gathered before.
@@ -98,11 +134,11 @@ define("MoCD", ['nools', 'easejs', 'jquery', 'MoCI', 'contactJS', 'lib/parser/co
          * @param newContextInformation {ContextInformation} The new context information.
          * @param multiple {Boolean} Set to true if multiple instances of the context information are allowed.
          */
-        'public addContextInformation': function(newContextInformation, multiple) {
+        ContextDetector.prototype.addContextInformation = function(newContextInformation, multiple) {
             if (multiple || !multiple && !this.contextInformationExists(newContextInformation)) {
                 this._contextInformation.push(newContextInformation);
             }
-        },
+        };
 
         /**
          * Updates a context information that was gathered before.
@@ -111,13 +147,13 @@ define("MoCD", ['nools', 'easejs', 'jquery', 'MoCI', 'contactJS', 'lib/parser/co
          * @param updatedContextInformation {ContextInformation} The updated context information.
          * @param multiple {Boolean} Set to true if multiple instances of the context information are allowed.
          */
-        'public updateContextInformation': function(updatedContextInformation, multiple) {
+        ContextDetector.prototype.updateContextInformation = function(updatedContextInformation, multiple) {
             if (multiple) {
                 this.addContextInformation(updatedContextInformation, multiple);
             } else {
                 if (this.indexForContextInformation(updatedContextInformation) != -1) this.contextInformation[index] = updatedContextInformation;
             }
-        },
+        };
 
         /**
          * Returns all context information.
@@ -125,10 +161,25 @@ define("MoCD", ['nools', 'easejs', 'jquery', 'MoCI', 'contactJS', 'lib/parser/co
          * @memberof ContextDetector#
          * @returns {Array.<ContextInformation>}
          */
-        'public getContextInformation': function() {
-            return this._contextInformation;
-        }
-    });
+        ContextDetector.prototype.getContextInformation = function() {
+            var self = this;
+
+            for (var index in this._aggregators) {
+                var theAggregator = this._aggregators[index];
+
+                theAggregator.queryReferencedComponents(function(attributeValues) {
+                    for (var attributeValueIndex in attributeValues.getItems()) {
+                        var theAttributeValue = attributeValues.getItems()[attributeValueIndex];
+
+                        //TODO: add und update zuammenfügen
+                        self.addContextInformation(ContextInformation.fromAttributeValue(theAttributeValue, false));
+                    }
+                });
+            }
+        };
+
+        return ContextDetector;
+    })();
 
     return ContextDetector;
 });

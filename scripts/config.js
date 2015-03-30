@@ -14,7 +14,13 @@ require.config({
         // context information
         MoCI: 'motivate_adaptation_engine/context/ContextInformation',
         // context detection
-        MoCD: 'motivate_adaptation_engine/context/ContextDetector'
+        MoCD: 'motivate_adaptation_engine/context/ContextDetector',
+        // custom widgets
+        MoWI_UnixTime: 'motivate_adaptation_engine/context/widgets/UnixTimeWidget',
+        MoWI_GeoLocation: 'motivate_adaptation_engine/context/widgets/GeoLocationWidget',
+        // custom interpreters
+        MoIN_UnixTime: 'motivate_adaptation_engine/context/interpreters/UnixTimeInterpreter',
+        MoIN_Address: 'motivate_adaptation_engine/context/interpreters/AddressInterpreter'
     },
     shim:{
         'easejs' : {
