@@ -17,8 +17,10 @@ define("MoCI", [], function() {
 
         /**
          * Creates a context information from a fact that was extracted from a nools adaptation rule.
+         * @static
          * @alias fromFact
          * @memberof ContextInformation
+         * @constructs ContextInformation
          * @param fact {Object} The fact to create the context information from.
          * @returns {ContextInformation}
          */
@@ -26,9 +28,17 @@ define("MoCI", [], function() {
             return new ContextInformation(fact.id, fact.value, fact.parameters);
         };
 
+        /**
+         * Creates a context information from a attribute value that was gathered by the contactJS framework.
+         * @static
+         * @alias fromAttributeValue
+         * @memberof ContextInformation
+         * @constructs ContextInformation
+         * @param attributeValue
+         * @returns {ContextInformation}
+         */
         ContextInformation.fromAttributeValue = function(attributeValue) {
-            //TODO: test!
-            return new ContextInformation(attributeValue.getName(), attributeValue.getValue(), attributeValue.getParameters().getItems());
+            return new ContextInformation(attributeValue.getName(), attributeValue.getValue(), attributeValue.getParameters().getItemsAsJson());
         };
 
         /**

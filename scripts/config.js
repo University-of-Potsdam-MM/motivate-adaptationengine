@@ -18,9 +18,13 @@ require.config({
         // custom widgets
         MoWI_UnixTime: 'motivate_adaptation_engine/context/widgets/UnixTimeWidget',
         MoWI_GeoLocation: 'motivate_adaptation_engine/context/widgets/GeoLocationWidget',
+        MoWI_FakeCelsiusTemperature: 'motivate_adaptation_engine/context/widgets/FakeCelsiusTemperatureWidget',
         // custom interpreters
         MoIN_UnixTime: 'motivate_adaptation_engine/context/interpreters/UnixTimeInterpreter',
-        MoIN_Address: 'motivate_adaptation_engine/context/interpreters/AddressInterpreter'
+        MoIN_Address: 'motivate_adaptation_engine/context/interpreters/AddressInterpreter',
+        MoIN_ISO8601: 'motivate_adaptation_engine/context/interpreters/ISO8601Interpreter',
+        MoIN_CelsiusToFahrenheit: 'motivate_adaptation_engine/context/interpreters/CelsiusToFahrenheitInterpreter',
+        MoIN_Seconds: 'motivate_adaptation_engine/context/interpreters/SecondsInterpreter'
     },
     shim:{
         'easejs' : {

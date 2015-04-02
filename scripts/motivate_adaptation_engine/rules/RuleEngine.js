@@ -9,8 +9,6 @@ define('MoRE', ['nools', 'MoCI'], function (nools, ContextInformation) {
          * @param verbose {boolean} Activates console output if set to true.
          */
         function RuleEngine(noolsDSL, verbose) {
-            var self = this;
-
             this._verbose = verbose;
             this._callbacks = {
                 "ruleMatchingSuccessCallback": function() {
@@ -25,26 +23,77 @@ define('MoRE', ['nools', 'MoCI'], function (nools, ContextInformation) {
             this._parsedFlow = this._nools.parse(noolsDSL);
             this._flow = this._nools.compile(noolsDSL, {name: "adaptationRules"});
             this._FlowContextInformation = this.getDefined("ContextInformation");
-            this._session = this._flow.getSession();
+            this._currentSession = null;
 
-            this._session.on("restrictFeature", function(feature, facts){
+            /*var _FlowContextInformation = this.getDefined("ContextInformation");
+            var _currentSession = this._flow.getSession();
+
+            var addIntTime = Date.now() / 1000;
+            for (var i = 1; i < 10000; i++) {
+                _currentSession.assert(i);
+            }
+            console.log("Add 10000 integers time: "+(Date.now() / 1000 - addIntTime));
+
+            var addStringsTime = Date.now() / 1000;
+            for (var i = 1; i < 10000; i++) {
+                _currentSession.assert("foo");
+            }
+            console.log("Add 10000 strings time: "+(Date.now() / 1000 - addStringsTime));
+
+            var addArrayTime = Date.now() / 1000;
+            for (var i = 1; i < 10000; i++) {
+                _currentSession.assert([1, 2, 3]);
+            }
+            console.log("Add 10000 arrays time: "+(Date.now() / 1000 - addArrayTime));
+
+            var addObjectTime = Date.now() / 1000;
+            for (var i = 1; i < 10000; i++) {
+                _currentSession.assert({foo: "bar", baz: [42, "foobar", 24]});
+            }
+            console.log("Add 10000 objects time: "+(Date.now() / 1000 - addObjectTime));
+
+            var addDefinedObjectTime = Date.now() / 1000;
+            for (var i = 1; i < 10; i++) {
+                var addObjectTime = Date.now() / 1000;
+                _currentSession.assert(new _FlowContextInformation("foo", "bar", {foo: "baz"}));
+                console.log("Add predefined object time: "+(Date.now() / 1000 - addObjectTime));
+            }
+            console.log("Add 10 predefined objects time: "+(Date.now() / 1000 - addDefinedObjectTime));*/
+        }
+
+        RuleEngine.prototype._generateNewSession = function(contextInformation) {
+            var self = this;
+
+            if (this._currentSession != null) this._currentSession.dispose();
+
+            this._currentSession = this._flow.getSession();
+
+            // set session callbacks
+            this._currentSession.on("restrictFeature", function(feature, facts){
                 if (typeof self._callbacks["restrictFeatureCallback"] != "undefined") {
                     self._callbacks["restrictFeatureCallback"](feature, self._contextInformationFromFacts(facts));
                 }
             });
 
-            this._session.on("selectLearningUnit", function(id, facts){
+            this._currentSession.on("selectLearningUnit", function(id, facts){
                 if (typeof self._callbacks["selectLearningUnitCallback"] != "undefined") {
                     self._callbacks["selectLearningUnitCallback"](id, self._contextInformationFromFacts(facts));
                 }
             });
 
-            this._session.on("preloadLearningUnit", function(id, facts){
+            this._currentSession.on("preloadLearningUnit", function(id, facts){
                 if (typeof self._callbacks["preloadLearningUnitCallback"] != "undefined") {
                     self._callbacks["preloadLearningUnitCallback"](id, self._contextInformationFromFacts(facts));
                 }
             });
-        }
+
+            // add context information as facts
+            if (this._verbose) var addOverallTime = Date.now() / 1000;
+            for (var index in contextInformation) {
+                this.addContextInformation(contextInformation[index]);
+            }
+            if (this._verbose) console.log("Add overall time: "+(Date.now() / 1000 - addOverallTime));
+        };
 
         RuleEngine.prototype._contextInformationFromFacts = function(facts) {
             var contextInformation = [];
@@ -83,24 +132,27 @@ define('MoRE', ['nools', 'MoCI'], function (nools, ContextInformation) {
          * @alias matchRules
          * @memberof RuleEngine#
          */
-        RuleEngine.prototype.matchRules = function() {
-            var that = this;
+        RuleEngine.prototype.matchRules = function(contextInformation) {
+            var self = this;
+
+            // create new session
+            this._generateNewSession(contextInformation);
 
             if (this._verbose) console.log("Matching rules...");
             var startTime = Math.floor(Date.now() / 1000);
-            this._session.match(function(err) {
+            this._currentSession.match(function(err) {
                 if (err) {
-                    that._callbacks["ruleMatchingErrorCallback"](err);
+                    self._callbacks["ruleMatchingErrorCallback"](err);
                 } else {
                     var endTime = Math.floor(Date.now() / 1000);
-                    if (that._verbose) console.log("Time for rule matching "+(endTime-startTime)+" secs.");
-                    that._callbacks["ruleMatchingSuccessCallback"]();
+                    if (self._verbose) console.log("Time for rule matching "+(endTime-startTime)+" secs.");
+                    self._callbacks["ruleMatchingSuccessCallback"]();
                 }
             });
         };
 
         RuleEngine.prototype._addFact = function(fact) {
-            this._session.assert(fact);
+            this._currentSession.assert(fact);
         };
 
         /**
@@ -110,15 +162,9 @@ define('MoRE', ['nools', 'MoCI'], function (nools, ContextInformation) {
          * @param contextInformation {ContextInformation}
          */
         RuleEngine.prototype.addContextInformation = function(contextInformation) {
-            //TODO: add context information directly from context detection and convert to flow context information
-            //FlowContextInformation = this.getDefined("ContextInformation");
-            //TODO: test if context information already exist
-
-            if (false) {
-
-            } else {
-                this._addFact(new this._FlowContextInformation(contextInformation.getID(), contextInformation.getValue(), contextInformation.getParameters()));
-            }
+            if (this._verbose) var addStart = Date.now() / 1000;
+            this._addFact(new this._FlowContextInformation(contextInformation.getID(), contextInformation.getValue(), contextInformation.getParameters()));
+            if (this._verbose) console.log("Add time: "+(Date.now() / 1000 - addStart)+" "+contextInformation.getID());
         };
 
         /**

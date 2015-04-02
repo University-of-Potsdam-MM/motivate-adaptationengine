@@ -5,13 +5,13 @@ define(['easejs', 'contactJS'],
     function(easejs, contactJS) {
         var Class = easejs.Class;
 
-        var UnixTimeInterpreter = Class('UnixTimeInterpreter').extend(contactJS.Interpreter, {
-            'public name' : 'UnixTimeInterpreter',
+        var SecondsInterpreter = Class('SecondsInterpreter').extend(contactJS.Interpreter, {
+            'public name' : 'SecondsInterpreter',
 
             'protected initInAttributes' : function() {
                 this.inAttributeTypes.put(
                     new contactJS.AttributeType()
-                    .withName('CI_CURRENT_UNIX_TIME')
+                    .withName('CI_BASE_UNIT_OF_TIME')
                     .withType('INTEGER')
                     .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"))
                 );
@@ -20,7 +20,7 @@ define(['easejs', 'contactJS'],
             'protected initOutAttributes' : function() {
                 this.outAttributeTypes.put(
                     new contactJS.AttributeType()
-                    .withName('CI_CURRENT_UNIX_TIME')
+                    .withName('CI_BASE_UNIT_OF_TIME')
                     .withType('INTEGER')
                     .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"))
                 );
@@ -28,9 +28,9 @@ define(['easejs', 'contactJS'],
 
             'protected interpretData' : function(_data, _function) {
                 this.setOutAttribute(
-                    'CI_CURRENT_UNIX_TIME',
+                    'CI_BASE_UNIT_OF_TIME',
                     'INTEGER',
-                    Math.floor(_data.getItem(this.inAttributeTypes.getItems()[0].getIdentifier()).getValue() / 1000),
+                    Math.floor(_data.getItems()[0].getValue() / 1000),
                     [new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS")]
                 );
 
@@ -40,5 +40,5 @@ define(['easejs', 'contactJS'],
             }
         });
 
-        return UnixTimeInterpreter;
+        return SecondsInterpreter;
     });

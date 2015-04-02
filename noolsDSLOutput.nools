@@ -9,31 +9,23 @@ define ContextInformation {
 	}
 }
 
-rule "3b5cc3d5-4f31-450d-91af-349dd0eb958d" { 
+rule "c618966e-7134-4bb1-839a-703e9734e34f" { 
 	when {
-	    c1 : ContextInformation (c1.id == 'CI_CURRENT_TIME' && c1.value < '09:00:00') || (c1.id == 'CI_CURRENT_TIME' && c1.value > '16:00:00') || (c1.id == 'CI_USER_ROLE' && c1.value != 'STUDENT');
+		c1 : ContextInformation ((c1.id == 'CI_USER_ROLE' && c1.value == 'Student') || (c1.id == 'CI_CURRENT_TIME' && c1.value < '16:00:00') || (c1.id == 'CI_CURRENT_TIME' && c1.value > '09:00:00'));
 	} then {
 		emit("restrictFeature", "AppUsageFeature", facts);
 	}
 }
 
-rule "24aad587-c0b9-458e-a466-07afce7422bf" { 
+rule "9a42340b-3f32-4dbe-a693-23de1459a559" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '125');
+		c1 : ContextInformation ((c1.id == 'CI_DID_ARRIVE_AT_LOCATION' && c1.parameters['CP_LATITUDE'] == '52.39351' && c1.parameters['CP_LONGITUDE'] == '13.13024' && c1.value == 'true'));
 	} then {
-		emit("preloadLearningUnit", "124");
+		emit("selectLearningUnit", "129", facts);
 	}
 }
 
-rule "18721bee-7269-40fd-80eb-e088d23983b5" { 
-	when {
-		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '125');
-	} then {
-		emit("preloadLearningUnit", "128");
-	}
-}
-
-rule "801170ef-7320-4cf8-82ae-2cb9423f3734" { 
+rule "518d21ef-70f1-442e-a26f-de35343b7dc8" { 
 	when {
 		c1 : ContextInformation;
 		c2 : ContextInformation;
@@ -41,81 +33,88 @@ rule "801170ef-7320-4cf8-82ae-2cb9423f3734" {
 		c4 : ContextInformation;
 		c5 : ContextInformation;
 		c6 : ContextInformation;
-		c7 : ContextInformation;
-		c8 : ContextInformation (c1.id == 'FinishedLearningUnitMeasurableInformation' && c1.value == '127') && ((c2.id == 'FinishedLearningUnitMeasurableInformation' && c2.value == '124') || (c3.id == 'FinishedLearningUnitMeasurableInformation' && c3.value == '125')) && ((c4.id == 'FinishedLearningUnitMeasurableInformation' && c4.value == '128') || (c3.id == 'FinishedLearningUnitMeasurableInformation' && c3.value == '125')) && (c5.id == 'CI_USER_MOVEMENT_SPEED' && c5.parameters['CP_VELOCITY_UNIT'] == 'KILOMETERS_PER_HOUR' && c5.value < '20.0') && (c6.id == 'CI_DEVICE_TYPE' && c6.value != 'FEATURE_PHONE') && (c7.id == 'CI_USER_LOCATION_LONGITUDE' && c7.value == '13.13021') && (c8.id == 'CI_USER_LOCATION_LATITUDE' && c8.value == '52.39346');
+		c7 : ContextInformation ((c1.id == 'CI_FINISHED_LEARNING_UNIT' && c1.value == '127') && ((c2.id == 'CI_FINISHED_LEARNING_UNIT' && c2.value == '124') || (c2.id == 'CI_FINISHED_LEARNING_UNIT' && c2.value == '125')) && ((c3.id == 'CI_FINISHED_LEARNING_UNIT' && c3.value == '128') || (c3.id == 'CI_FINISHED_LEARNING_UNIT' && c3.value == '125')) && (c4.id == 'CI_USER_MOVEMENT_SPEED' && c4.parameters['CP_VELOCITY_UNIT'] == 'KILOMETERS_PER_HOUR' && c4.value < '20.0') && (c5.id == 'CI_DEVICE_TYPE' && c5.value == 'FEATURE_PHONE')) && ((c6.id == 'CI_USER_LOCATION_LONGITUDE' && c6.value == '13.13021') && (c7.id == 'CI_USER_LOCATION_LATITUDE' && c7.value == '52.39346'));
 	} then {
 		emit("selectLearningUnit", "126", facts);
 	}
 }
 
-rule "6a2b947c-d8ee-4468-8bf4-4964f773b2d8" { 
+rule "6f8ff3e9-0e78-4d03-b0f3-5e837d701d4a" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '126');
+		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '126'));
 	} then {
-		emit("preloadLearningUnit", "127");
+		emit("preloadLearningUnit", "127", facts);
 	}
 }
 
-rule "c667806c-8c82-4055-abf0-9d36b3714b19" { 
+rule "40f37643-2e7c-4da0-9f27-8ffb445fe092" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '126');
+		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '126'));
 	} then {
-		emit("preloadLearningUnit", "124");
+		emit("preloadLearningUnit", "124", facts);
 	}
 }
 
-rule "96cb2ef1-8913-4508-b315-92309f76fbdf" { 
+rule "44f8ceeb-0d8e-49df-818d-a80606c1aa0f" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '126');
+		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '126'));
 	} then {
-		emit("preloadLearningUnit", "128");
+		emit("preloadLearningUnit", "128", facts);
 	}
 }
 
-rule "aaed79dc-a5fd-4da1-b884-35d43096c5e0" { 
+rule "131a8461-8b97-4abd-b15a-64760b2942d7" { 
 	when {
-		c1 : ContextInformation c1.id == 'CI_DEVICE_TYPE' && c1.value != 'FEATURE_PHONE';
-		c2 : ContextInformation c2.id == 'CI_CURRENT_TEMPERATURE' && c2.parameters['CP_TEMPERATURE_SCALE'] == 'FAHRENHEIT' && c2.value > '30.0';
+		c1 : ContextInformation;
+		c2 : ContextInformation ((c1.id == 'CI_DEVICE_TYPE' && c1.value == 'FEATURE_PHONE')) && ((c2.id == 'CI_CURRENT_TEMPERATURE' && c2.parameters['CP_TEMPERATURE_SCALE'] == 'FAHRENHEIT' && c2.value > '30.0'));
 	} then {
 		emit("selectLearningUnit", "130", facts);
 	}
 }
 
-rule "96093f93-fe2f-487b-b643-2f0cb854ab93" { 
+rule "55c054e6-81cc-4b39-a6c0-4e83047204bf" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CI_DID_ARRIVE_AT_LOCATION' && c1.parameters['CP_LONGITUDE'] == '13.13024' && c1.parameters['CP_LATITUDE'] == '52.39351' && c1.value == 'true');
-	} then {
-		emit("selectLearningUnit", "129", facts);
-	}
-}
-
-rule "64751ed1-dca4-4885-b6c0-d8f33e8c81b3" { 
-	when {
-		c1 : ContextInformation (c1.id == 'CI_CURRENT_TEMPERATURE' && c1.parameters['CP_TEMPERATURE_SCALE'] == 'FAHRENHEIT' && c1.value > '30.0');
+		c1 : ContextInformation ((c1.id == 'CI_CURRENT_TEMPERATURE' && c1.parameters['CP_TEMPERATURE_SCALE'] == 'FAHRENHEIT' && c1.value > '30.0'));
 	} then {
 		emit("selectLearningUnit", "124", facts);
 	}
 }
 
-rule "3c14232e-48b6-41e3-9e3a-ae4695c14433" { 
+rule "080ccd08-8644-4f6a-8ff1-b01fa522c621" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '124');
+		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '124'));
 	} then {
 		emit("preloadLearningUnit", "125", facts);
 	}
 }
 
-rule "134b8dc3-34fb-4b4f-9d2e-e58fb9725401" { 
+rule "abda52d8-5e55-4be1-9f17-30b9e29eb413" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '128');
+		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '125'));
+	} then {
+		emit("preloadLearningUnit", "124", facts);
+	}
+}
+
+rule "857005ad-f0f0-4bf0-9cb4-5e6e13cd6254" { 
+	when {
+		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '125'));
+	} then {
+		emit("preloadLearningUnit", "128", facts);
+	}
+}
+
+rule "37cf9c32-1a88-4407-aff6-6d8a2dd55104" { 
+	when {
+		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '128'));
 	} then {
 		emit("preloadLearningUnit", "125", facts);
 	}
 }
 
-rule "7b95a467-3578-4d41-92b5-b5178421dba0" { 
+rule "e41b1cde-fd20-4c46-bb51-57fbd9aef51d" { 
 	when {
-		c1 : ContextInformation (c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '128');
+		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '128'));
 	} then {
 		emit("preloadLearningUnit", "129", facts);
 	}

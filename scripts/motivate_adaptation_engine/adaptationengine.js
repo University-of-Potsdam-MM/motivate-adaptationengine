@@ -23,31 +23,35 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
              * });
          */
         function AdaptationEngine(noolsDSL, verbose) {
+            var self = this;
+
             /**
              * Indicates whether the rule matching process is running.
-             * @alias isRunning
+             * @alias isRuleMatching
              * @memberof AdaptationEngine#
              * @type {boolean}
              * @default false
              */
-            this.isRunning = false;
+            this.isRuleMatching = false;
+            /**
+             * Indicates whether the context detection process is running.
+             * @alias isDetectingContext
+             * @memberof AdaptationEngine#
+             * @type {boolean}
+             * @default false
+             */
+            this.isDetectingContext = false;
 
             this._ruleMatchingInterval = null;
+            this._contextDetectionInterval = null;
 
             this._noolsDSL = noolsDSL;
+
+            // initialize the rule engine
             this._ruleEngine = new RuleEngine(noolsDSL, verbose);
 
-            // for test purposes
-            this._ruleEngine.addContextInformation(new ContextInformation("CI_CURRENT_TEMPERATURE", 55, {"CP_TEMPERATURE_SCALE" : "FAHRENHEIT"}));
-            //this._ruleEngine.addContextInformation(new ContextInformation("CI_DEVICE_TYPE", "FEATURE_PHONE"));
-            this._ruleEngine.addContextInformation(new ContextInformation("CI_DEVICE_TYPE", "SMARTPHONE"));
-            this._ruleEngine.addContextInformation(new ContextInformation("CI_USER_ROLE", "TEACHER"));
-            //this._ruleEngine.addContextInformation(new ContextInformation("CI_USER_ROLE", "STUDENT"));
-            this._ruleEngine.addContextInformation(new ContextInformation("CI_USER_MOVEMENT_SPEED", "10", {"CP_VELOCITY_UNIT" : "KILOMETERS_PER_HOUR"}));
-            this._ruleEngine.addContextInformation(new ContextInformation("CI_CURRENT_LEARNING_UNIT", "128"));
-
-            // initialize context detector and set callbacks for context information gathering
-            this._contextDetector = new ContextDetector(this._ruleEngine.getRules());
+            // initialize context detector
+            this._contextDetector = new ContextDetector(this._ruleEngine.getRules(), verbose);
         }
 
         /**
@@ -163,13 +167,13 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
          */
         AdaptationEngine.prototype.startRuleMatching = function(intervalInMilliseconds) {
             console.log("startRuleMatching");
-            var that = this;
+            var self = this;
 
-            if (!this.isRunning) {
-                this.isRunning = true;
-                this._ruleEngine.matchRules();
+            if (!this.isRuleMatching) {
+                this.isRuleMatching = true;
+                this._ruleEngine.matchRules(this._contextDetector.getContextInformation());
                 if (!isNaN(intervalInMilliseconds)) {
-                    this._ruleMatchingInterval = setInterval(function(){that._ruleEngine.matchRules()}, intervalInMilliseconds);
+                    this._ruleMatchingInterval = setInterval(function(){self._ruleEngine.matchRules(self._contextDetector.getContextInformation())}, intervalInMilliseconds);
                 }
             }
         };
@@ -182,8 +186,8 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
         AdaptationEngine.prototype.stopRuleMatching = function() {
             console.log("stopRuleMatching");
 
-            if (this.isRunning) {
-                this.isRunning = false;
+            if (this.isRuleMatching) {
+                this.isRuleMatching = false;
                 clearInterval(this._ruleMatchingInterval);
             }
         };
@@ -201,6 +205,79 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
 
             this.stopRuleMatching();
             this.startRuleMatching(intervalInMilliseconds);
+        };
+
+        /**
+         * Sets a callback function that is executed when a new context information is detected.
+         * @alias setNewContextInformationCallback
+         * @memberof AdaptationEngine#
+         * @param callback {AdaptationEngine~newContextInformationCallback} The function that handles the callback.
+         */
+        AdaptationEngine.prototype.setNewContextInformationCallback = function(callback) {
+            /**
+             * The callback returns with an object containing further information about the error that occurred.
+             * @callback AdaptationEngine~newContextInformationCallback
+             * @param contextInformation {ContextInformation} Further information about the error.
+             */
+            this._contextDetector.setCallback("newContextInformationCallback", callback);
+        };
+
+        /**
+         * Starts the context detection process.
+         * @alias startContextDetection
+         * @memberof AdaptationEngine#
+         * @param intervalInMilliseconds {Number}
+         */
+        AdaptationEngine.prototype.startContextDetection = function(intervalInMilliseconds) {
+            console.log("startContextDetection");
+
+            var self = this;
+
+            if (!this.isDetectingContext) {
+                this.isDetectingContext = true;
+                this._contextDetector.gatherContextInformation();
+                if (!isNaN(intervalInMilliseconds)) {
+                    this._contextDetectionInterval = setInterval(function(){self._contextDetector.gatherContextInformation();}, intervalInMilliseconds);
+                }
+            }
+        };
+
+        /**
+         * Stops the context detection process.
+         * @alias stopContextDetection
+         * @memberof AdaptationEngine#
+         */
+        AdaptationEngine.prototype.stopContextDetection = function() {
+            console.log("stopContextDetection");
+
+            if (this.isDetectingContext) {
+                this.isDetectingContext = false;
+                clearInterval(this._contextDetectionInterval);
+            }
+        };
+
+        /**
+         * Restarts the context detection process (i.e. executes {@link AdaptationEngine#stopContextDetection} and
+         * {@link AdaptationEngine#startContextDetection} successively). If an integer value is provided a new
+         * interval will be set.
+         * @alias restartContextDetection
+         * @memberof AdaptationEngine#
+         * @param intervalInMilliseconds {number}
+         */
+        AdaptationEngine.prototype.restartContextDetection = function(intervalInMilliseconds) {
+            console.log("restartContextDetection");
+
+            this.stopContextDetection();
+            this.startContextDetection(intervalInMilliseconds);
+        };
+
+        /**
+         * Allows to manually add context information to be used by the rule engine.
+         * @param contextInformation {ContextInformation}
+         * @param allowMultipleInstances {boolean}
+         */
+        AdaptationEngine.prototype.addContextInformation = function(contextInformation, allowMultipleInstances) {
+            this._contextDetector.addContextInformation(contextInformation, allowMultipleInstances);
         };
 
         return AdaptationEngine;
