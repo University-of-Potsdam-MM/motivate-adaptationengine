@@ -6702,7 +6702,7 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		 * @alias getComponentsByAttributes
 		 * @memberof Discoverer#
 		 * @param {AttributeTypeList} _attributeTypeList list of searched attributes
-		 * @param {boolean} _all choise of the verification mode
+		 * @param {boolean} _all choice of the verification mode
          * @param {Array} _componentTypes Components types to search for
 		 * @returns {Array}
 		 */
@@ -6753,7 +6753,7 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		},
 
 		/**
-		 * Helper: Verifies whether a component description contains at least on searched attributes.
+		 * Helper: Verifies whether a component description contains at least one searched attribute.
 		 * 
 		 * @private
 		 * @alias containsAtLeastOneAttribute

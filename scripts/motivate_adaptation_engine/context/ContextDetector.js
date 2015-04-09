@@ -46,31 +46,31 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_U
 
             //TODO: Dynamic Configuration
             // (CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:MILLISECONDS]
-            var attributeTypeUnixTimeMilliseconds = contactJS.AttributeType().withName('CI_CURRENT_UNIX_TIME').withType('INTEGER').withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"));
+            //var attributeTypeUnixTimeMilliseconds = contactJS.AttributeType().withName('CI_CURRENT_UNIX_TIME').withType('INTEGER').withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"));
             // (CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:SECONDS]
             var attributeTypeUnixTimeSeconds = contactJS.AttributeType().withName('CI_CURRENT_UNIX_TIME').withType('INTEGER').withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"));
             // (CI_USER_LOCATION_LATITUDE:FLOAT)
-            var attributeTypeLatitude = contactJS.AttributeType().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT');
+            //var attributeTypeLatitude = contactJS.AttributeType().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT');
             // (CI_USER_LOCATION_LONGITUDE:FLOAT)
-            var attributeTypeLongitude = contactJS.AttributeType().withName('CI_USER_LOCATION_LONGITUDE').withType('FLOAT');
+           // var attributeTypeLongitude = contactJS.AttributeType().withName('CI_USER_LOCATION_LONGITUDE').withType('FLOAT');
             // (CI_USER_LOCATION_ADDRESS:STRING)
-            var attributeTypeAddress = contactJS.AttributeType().withName('CI_USER_LOCATION_ADDRESS').withType('STRING');
+           // var attributeTypeAddress = contactJS.AttributeType().withName('CI_USER_LOCATION_ADDRESS').withType('STRING');
             // (CI_CURRENT_FORMATTED_TIME:STRING)#[CP_FORMAT:YYYYMMDD]
-            var attributeFormattedTime = contactJS.AttributeType().withName('CI_CURRENT_FORMATTED_TIME').withType('STRING').withParameter(new contactJS.Parameter().withKey("CP_FORMAT").withValue("YYYYMMDD"));
+          //  var attributeFormattedTime = contactJS.AttributeType().withName('CI_CURRENT_FORMATTED_TIME').withType('STRING').withParameter(new contactJS.Parameter().withKey("CP_FORMAT").withValue("YYYYMMDD"));
             // (CI_CURRENT_TEMPERATURE:FLOAT)#[CP_TEMPERATURE_SCALE:FAHRENHEIT]
-            var attributeTemperatureFahrenheit = contactJS.AttributeType().withName('CI_CURRENT_TEMPERATURE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("FAHRENHEIT"));
+          //  var attributeTemperatureFahrenheit = contactJS.AttributeType().withName('CI_CURRENT_TEMPERATURE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("FAHRENHEIT"));
 
             // Add widgets
             new UnixTimeWidget(this._discoverer);
-            new GeoLocationWidget(this._discoverer);
-            new FakeCelsiusTemperatureWidget(this._discoverer);
+            //new GeoLocationWidget(this._discoverer);
+            //new FakeCelsiusTemperatureWidget(this._discoverer);
 
             // Add interpreters
-            new UnixTimeInterpreter(this._discoverer);
-            new AddressInterpreter(this._discoverer);
-            new ISO8601Interpreter(this._discoverer);
-            new CelsiusToFahrenheitInterpreter(this._discoverer);
-            //new SecondsInterpreter(this._discoverer);
+            //new UnixTimeInterpreter(this._discoverer);
+            //new AddressInterpreter(this._discoverer);
+            //new ISO8601Interpreter(this._discoverer);
+            //new CelsiusToFahrenheitInterpreter(this._discoverer);
+            new SecondsInterpreter(this._discoverer);
 
             var theAggregator = new contactJS.Aggregator(this._discoverer, [
                 attributeTypeUnixTimeSeconds
@@ -167,7 +167,7 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_U
                     for (var attributeValueIndex in attributeValues.getItems()) {
                         var theAttributeValue = attributeValues.getItems()[attributeValueIndex];
 
-                        self.addContextInformation(ContextInformation.fromAttributeValue(theAttributeValue, false));
+                        self.addContextInformation(ContextInformation.fromAttributeValue(theAttributeValue), false);
                     }
                 });
             }
