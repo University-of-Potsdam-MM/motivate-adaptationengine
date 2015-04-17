@@ -26,11 +26,11 @@ define(['easejs', 'contactJS'],
                 );
             },
 
-            'protected interpretData' : function(_data, _function) {
+            'protected interpretData' : function(_attributeValues, _function) {
                 this.setOutAttribute(
                     'CI_BASE_UNIT_OF_TIME',
                     'INTEGER',
-                    Math.floor(_data.getItems()[0].getValue() / 1000),
+                    Math.floor(_attributeValues.getValueForAttributeType(this.inAttributeTypes.getItems()[0]) / 1000),
                     [new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS")]
                 );
 

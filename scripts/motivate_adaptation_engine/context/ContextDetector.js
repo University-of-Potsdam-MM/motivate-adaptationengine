@@ -1,5 +1,5 @@
-define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_UnixTime', 'MoWI_GeoLocation', 'MoIN_Address', 'MoIN_ISO8601', 'MoWI_FakeCelsiusTemperature', 'MoIN_CelsiusToFahrenheit', 'MoIN_Seconds',
-    'lib/parser/constraint/parser'], function(nools, $, ContextInformation, contactJS, UnixTimeWidget, UnixTimeInterpreter, GeoLocationWidget, AddressInterpreter, ISO8601Interpreter, FakeCelsiusTemperatureWidget, CelsiusToFahrenheitInterpreter, SecondsInterpreter) {
+define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_UnixTime', 'MoWI_GeoLocation', 'MoIN_Address', 'MoIN_ISO8601', 'MoWI_FakeCelsiusTemperature', 'MoIN_CelsiusToFahrenheit', 'MoIN_Seconds', 'MoIN_Distance',
+    'lib/parser/constraint/parser'], function(nools, $, ContextInformation, contactJS, UnixTimeWidget, UnixTimeInterpreter, GeoLocationWidget, AddressInterpreter, ISO8601Interpreter, FakeCelsiusTemperatureWidget, CelsiusToFahrenheitInterpreter, SecondsInterpreter, DistanceInterpreter) {
 
     var ContextDetector = (function() {
 
@@ -28,12 +28,9 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_U
                 }
             };
 
-            this._discoverer = new contactJS.Discoverer({
-                "(CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:MILLISECONDS]": "(CI_BASE_UNIT_TIME:INTEGER)#[CP_UNIT:MILLISECONDS]",
-                "(CI_OTHER_MILLISECONDS:INTEGER)#[CP_UNIT:MILLISECONDS]": "(CI_BASE_UNIT_TIME:INTEGER)#[CP_UNIT:MILLISECONDS]",
-                "(CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:SECONDS]": "(CI_BASE_UNIT_TIME:INTEGER)#[CP_UNIT:SECONDS]",
-                "(CI_OTHER_SECONDS:INTEGER)#[CP_UNIT:SECONDS]": "(CI_BASE_UNIT_TIME:INTEGER)#[CP_UNIT:SECONDS]"
-            });
+            this._discoverer = new contactJS.Discoverer([
+                    //new Translation(_fromAttributeType, _toAttributeType)
+            ]);
 
             // TODO: dynamic context information extraction
             for(var index in adaptationRules) {
@@ -59,6 +56,9 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_U
             var attributeFormattedTime = contactJS.AttributeType().withName('CI_CURRENT_FORMATTED_TIME').withType('STRING').withParameter(new contactJS.Parameter().withKey("CP_FORMAT").withValue("YYYYMMDD"));
             // (CI_CURRENT_TEMPERATURE:FLOAT)#[CP_TEMPERATURE_SCALE:FAHRENHEIT]
             var attributeTemperatureFahrenheit = contactJS.AttributeType().withName('CI_CURRENT_TEMPERATURE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("FAHRENHEIT"));
+            // (CI_USER_LOCATION_DISTANCE:FLOAT)#[CP_TARGET_LATITUDE:52][CP_TARGET_LONGITUDE:13][CP_UNIT:KILOMETERS]
+            var attributeDistanceKilometers = contactJS.AttributeType().withName('CI_USER_LOCATION_DISTANCE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("52.38834")).withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("13.09817")).withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"));
+            var attributeDistanceKilometers2 = contactJS.AttributeType().withName('CI_USER_LOCATION_DISTANCE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("20")).withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("20")).withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"));
 
             // Add widgets
             new UnixTimeWidget(this._discoverer);
@@ -71,9 +71,11 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_U
             new ISO8601Interpreter(this._discoverer);
             new CelsiusToFahrenheitInterpreter(this._discoverer);
             //new SecondsInterpreter(this._discoverer);
+            new DistanceInterpreter(this._discoverer);
 
             var theAggregator = new contactJS.Aggregator(this._discoverer, [
-                attributeTypeUnixTimeSeconds
+                attributeDistanceKilometers,
+                attributeDistanceKilometers2
             ]);
 
             this._aggregators.push(theAggregator);
@@ -139,7 +141,7 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_U
          * @alias addContextInformation
          * @memberof ContextDetector#
          * @param newContextInformation {ContextInformation} The new context information.
-         * @param multiple {Boolean} Set to true if multiple instances of the context information are allowed.
+         * @param {Boolean} allowMultipleInstances Set to true if multiple instances of the context information are allowed.
          */
         ContextDetector.prototype.addContextInformation = function(newContextInformation, allowMultipleInstances) {
             var indexForContextInformation = this._indexForContextInformation(newContextInformation);
@@ -155,7 +157,7 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_U
          * Queries all aggregators and returns new context information.
          * @alias gatherContextInformation
          * @memberof ContextDetector#
-         * @returns {Array.<ContextInformatcontainsAllAttributesion>}
+         * @returns {Array.<ContextInformation>}
          */
         ContextDetector.prototype.gatherContextInformation = function() {
             var self = this;

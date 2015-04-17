@@ -26,8 +26,8 @@ define(['easejs', 'contactJS'],
                 );
             },
 
-            'protected interpretData' : function(_data, _function) {
-                var unixTimeMilliseconds = _data.getItem(this.inAttributeTypes.getItems()[0].getIdentifier()).getValue();
+            'protected interpretData' : function(_attributeValues, _function) {
+                var unixTimeMilliseconds = _attributeValues.getValueForAttributeType(this.inAttributeTypes.getItems()[0]);
                 var theDate = new Date(unixTimeMilliseconds*1000);
 
                 var year = theDate.getFullYear();

@@ -24,7 +24,8 @@ require.config({
         MoIN_Address: 'motivate_adaptation_engine/context/interpreters/AddressInterpreter',
         MoIN_ISO8601: 'motivate_adaptation_engine/context/interpreters/ISO8601Interpreter',
         MoIN_CelsiusToFahrenheit: 'motivate_adaptation_engine/context/interpreters/CelsiusToFahrenheitInterpreter',
-        MoIN_Seconds: 'motivate_adaptation_engine/context/interpreters/SecondsInterpreter'
+        MoIN_Seconds: 'motivate_adaptation_engine/context/interpreters/SecondsInterpreter',
+        MoIN_Distance: 'motivate_adaptation_engine/context/interpreters/DistanceInterpreter'
     },
     shim:{
         'easejs' : {
