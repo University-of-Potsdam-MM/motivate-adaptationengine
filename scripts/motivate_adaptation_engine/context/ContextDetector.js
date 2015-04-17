@@ -169,7 +169,7 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_U
                     for (var attributeValueIndex in attributeValues.getItems()) {
                         var theAttributeValue = attributeValues.getItems()[attributeValueIndex];
 
-                        self.addContextInformation(ContextInformation.fromAttributeValue(theAttributeValue, false));
+                        self.addContextInformation(ContextInformation.fromAttributeValue(theAttributeValue), false);
                     }
                 });
             }
