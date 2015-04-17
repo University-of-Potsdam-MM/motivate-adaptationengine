@@ -2443,7 +2443,7 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 });
 /**
  * This module represents a Callback.
- * Callbacks defines events for sending data to subscribers
+ * Callbacks define events for sending data to subscribers
  * 
  * @module Callback
  * @fileOverview
@@ -4936,7 +4936,7 @@ define('interpreterDescription',['easejs','attributeTypeList','widgetDescription
         return InterpreterDescription;
 });
 /**
- * This module represents a InterpreterResult.
+ * This module represents an InterpreterResult.
  * 
  * @module InterpreterResult
  * @fileOverview
@@ -5222,7 +5222,7 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 					this.outAttributeTypes = new AttributeTypeList();
 					this.inAttributeValues = new AttributeValueList();
 					this.outAttributeValues = new AttributeValueList();
-					this.initInterpreter();
+					this.initInterpreter(this.discoverer.translations);
 				},
 				
 				/**
@@ -5269,9 +5269,9 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 				 * @alias initInterpreter
 				 * @memberof Interpreter#
 				 */
-				'private initInterpreter' : function() {
-					this.initInAttributes();
-					this.initOutAttributes();
+				'private initInterpreter' : function(_translations) {
+					this.initInAttributes(_translations);
+					this.initOutAttributes(_translations);
 				},
 
 				/**
@@ -6437,6 +6437,8 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		 * @desc List of available Interpreter.
 		 */
 		'private interpreter' : {},
+		
+		'private translations' : {},
 
 		/**
 		 * Constructor: All known components given in the associated functions will be registered as startup.
@@ -6447,7 +6449,21 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		 * @requires AttributeTypeList
 		 * @constructs Discoverer
 		 */
-		'public __construct' : function() {
+		'public __construct' : function(_translations) {
+			var translationMap = {};
+            for (var type in _translations) {
+                var firstAttributeType = new AttributeType().
+                    withName(). // type = "(name:type)#[parameterKey:parameterValue]"
+                    withType().
+                    withParameters()
+                    ;
+                var secondAttributeType = new AttributeType().
+                	withName(). // type = "(name:type)#[parameterKey:parameterValue]"
+                	withType().
+                	withParameters()
+                	;
+                translationMap[JSON.stringify(firstAttributeType)] = secondAttributeType;
+            }
 			this.register();
 		},
 
