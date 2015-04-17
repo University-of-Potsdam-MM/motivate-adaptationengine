@@ -36,7 +36,7 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
 
             if(navigator.geolocation){
                 navigator.geolocation.getCurrentPosition(function(_position) {
-                    response.put(self.getAttributeValues().getItems()[0].setValue(_position.coords.latitude))
+                    response.put(self.getAttributeValues().getItems()[0].setValue(_position.coords.latitude));
                     response.put(self.getAttributeValues().getItems()[1].setValue(_position.coords.longitude));
 
                     self.sendResponse(response, _function);

@@ -25,7 +25,8 @@ define('MoRE', ['nools', 'MoCI'], function (nools, ContextInformation) {
             this._FlowContextInformation = this.getDefined("ContextInformation");
             this._currentSession = null;
 
-            /*var _FlowContextInformation = this.getDefined("ContextInformation");
+            /*
+            var _FlowContextInformation = this.getDefined("ContextInformation");
             var _currentSession = this._flow.getSession();
 
             var addIntTime = Date.now() / 1000;
@@ -58,7 +59,8 @@ define('MoRE', ['nools', 'MoCI'], function (nools, ContextInformation) {
                 _currentSession.assert(new _FlowContextInformation("foo", "bar", {foo: "baz"}));
                 console.log("Add predefined object time: "+(Date.now() / 1000 - addObjectTime));
             }
-            console.log("Add 10 predefined objects time: "+(Date.now() / 1000 - addDefinedObjectTime));*/
+            console.log("Add 10 predefined objects time: "+(Date.now() / 1000 - addDefinedObjectTime));
+            */
         }
 
         RuleEngine.prototype._generateNewSession = function(contextInformation) {

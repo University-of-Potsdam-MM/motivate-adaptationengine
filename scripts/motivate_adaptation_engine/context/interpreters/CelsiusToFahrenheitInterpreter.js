@@ -26,8 +26,8 @@ define(['easejs', 'contactJS'],
                 );
             },
 
-            'protected interpretData' : function(_data, _function) {
-                var celsiusTemperature = _data.getItem(this.inAttributeTypes.getItems()[0].getIdentifier()).getValue();
+            'protected interpretData' : function(_attributeValues, _function) {
+                var celsiusTemperature = _attributeValues.getValueForAttributeType(this.inAttributeTypes.getItems()[0]);
                 var fahrenheitTemperature = celsiusTemperature * 1.8 + 32;
 
                 this.setOutAttribute(
