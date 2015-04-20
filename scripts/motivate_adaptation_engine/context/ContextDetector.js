@@ -74,8 +74,7 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_U
             new DistanceInterpreter(this._discoverer);
 
             var theAggregator = new contactJS.Aggregator(this._discoverer, [
-                attributeDistanceKilometers,
-                attributeDistanceKilometers2
+                attributeFormattedTime
             ]);
 
             this._aggregators.push(theAggregator);

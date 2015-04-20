@@ -5418,17 +5418,23 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 				 * @param {?function} _function For additional actions, if an asynchronous function is used.
 				 */
 				'public callInterpreter' : function(_inAttributeValues, _outAttributeValues, _function) {
-					if (_inAttributeValues && this.canHandle(_inAttributeValues)) {
-						this.interpretData(_inAttributeValues, _outAttributeValues, _function);
-						this.setInAttributeValues(_inAttributeValues);
-						this.lastInterpretation = new Date();
-					} else {
-						var list = this.outAttributeTypes.getItems();
-						for ( var i in list) {
-							this.setOutAttribute(list[i].getName(), list[i].getType(), 'unavailable');
+					var self = this;
+
+					if (!_inAttributeValues || !this.canHandleInAttributeValues(_inAttributeValues)) throw "Empty input attribute list or unhandled input attribute.";
+					if (!_outAttributeValues || !this.canHandleOutAttributeValues(_outAttributeValues)) throw "Empty output attribute list or unhandled output attribute.";
+
+					this.interpretData(_inAttributeValues, _outAttributeValues, function(interpretedData) {
+						var response = new AttributeValueList().withItems(interpretedData);
+
+						if (!self.canHandleOutAttributeValues(response)) throw "Unhandled output attribute generated.";
+
+						self.setInAttributeValues(_inAttributeValues);
+						self.lastInterpretation = new Date();
+
+						if (_function && typeof(_function) == 'function'){
+							_function(response);
 						}
-                        _function();
-					}
+					});
 				},
 
 				/**
@@ -5442,29 +5448,56 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 				 * @param {AttributeValueList} _data Data that should be interpreted.
 				 * @param {?function} _function For additional actions, if an asynchronous function is used.
 				 */
-				'abstract protected interpretData' : [ '_data', '_function' ],
+				'abstract protected interpretData' : ['_inAttributeValues', '_outAttributeValues', '_callback'],
 
 				/**
 				 * Checks whether the specified data match the expected.
 				 * 
 				 * @protected
-				 * @alias canHandle
+				 * @alias canHandleInAttributeValues
 				 * @memberof Interpreter#
-				 * @param {AttributeValueList} _inAtts Data that should be verified.
+				 * @param {AttributeValueList|Array.<AttributeValue>} _inAttributeValues Data that should be verified.
 				 */
-				'protected canHandle' : function(_inAtts) {
+				'protected canHandleInAttributeValues' : function(_inAttributeValues) {
 					var list = [];
-					if (_inAtts instanceof Array) {
-						list = _inAtts;
-					} else if (Class.isA(AttributeValueList, _inAtts)) {
-						list = _inAtts.getItems();
+					if (_inAttributeValues instanceof Array) {
+						list = _inAttributeValues;
+					} else if (Class.isA(AttributeValueList, _inAttributeValues)) {
+						list = _inAttributeValues.getItems();
 					}
-					if (list.length == 0 || _inAtts.size() != this.getInAttributeTypes().size()) {
+					if (list.length == 0 || _inAttributeValues.size() != this.getInAttributeTypes().size()) {
 						return false;
 					}
 					for ( var i in list) {
 						var inAtt = list[i];
 						if (!this.isInAttribute(inAtt)) {
+							return false;
+						}
+					}
+					return true;
+				},
+
+				/**
+				 * Checks whether the specified data match the expected.
+				 *
+				 * @protected
+				 * @alias canHandle
+				 * @memberof Interpreter#
+				 * @param {AttributeValueList|Array.<AttributeValue>} _outAttributeValues Data that should be verified.
+				 */
+				'protected canHandleOutAttributeValues' : function(_outAttributeValues) {
+					var list = [];
+					if (_outAttributeValues instanceof Array) {
+						list = _outAttributeValues;
+					} else if (Class.isA(AttributeValueList, _outAttributeValues)) {
+						list = _outAttributeValues.getItems();
+					}
+					if (list.length == 0 || _outAttributeValues.size() != this.getOutAttributeTypes().size()) {
+						return false;
+					}
+					for ( var i in list) {
+						var inAtt = list[i];
+						if (!this.isOutAttribute(inAtt)) {
 							return false;
 						}
 					}
@@ -6789,7 +6822,7 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		 * @alias getComponentsByAttributes
 		 * @memberof Discoverer#
 		 * @param {AttributeTypeList} _attributeTypeList list of searched attributes
-		 * @param {boolean} _all choice of the verification mode
+		 * @param {boolean} _all choise of the verification mode
          * @param {Array} _componentTypes Components types to search for
 		 * @returns {Array}
 		 */
@@ -6840,7 +6873,7 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		},
 
 		/**
-		 * Helper: Verifies whether a component description contains at least one searched attribute.
+		 * Helper: Verifies whether a component description contains at least on searched attributes.
 		 * 
 		 * @private
 		 * @alias containsAtLeastOneAttribute

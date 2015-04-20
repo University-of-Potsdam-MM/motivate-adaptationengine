@@ -26,24 +26,21 @@ define(['easejs', 'contactJS'],
                 );
             },
 
-            'protected interpretData' : function(_attributeValues, _function) {
-                var unixTimeMilliseconds = _attributeValues.getValueForAttributeType(this.inAttributeTypes.getItems()[0]);
-                var theDate = new Date(unixTimeMilliseconds*1000);
+            'protected interpretData' : function(_inAttributeValues, _outAttributeValues, _callback) {
+                var formattedTime = _outAttributeValues.getItems()[0];
+
+                var unixTimeSeconds = _inAttributeValues.getValueForAttributeType(this.inAttributeTypes.getItems()[0]);
+                var theDate = new Date(unixTimeSeconds*1000);
 
                 var year = theDate.getFullYear();
                 var month = theDate.getMonth() + 1 < 10 ? "0"+(theDate.getMonth()+1) : theDate.getMonth()+1;
                 var day = theDate.getDate();
 
-                this.setOutAttribute(
-                    'CI_CURRENT_FORMATTED_TIME',
-                    'STRING',
-                    year+""+month+""+day,
-                    [new contactJS.Parameter().withKey("CP_FORMAT").withValue("YYYYMMDD")]
-                );
+                formattedTime.setValue(year+""+month+""+day);
 
-                if (_function && typeof(_function) == 'function'){
-                    _function();
-                }
+                _callback([
+                    formattedTime
+                ]);
             }
         });
 

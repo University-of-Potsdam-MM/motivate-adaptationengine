@@ -33,7 +33,7 @@ define(['easejs', 'contactJS'],
                 );
             },
 
-            'protected interpretData' : function(_inAttributeValues, _outAttributeValues, _function) {
+            'protected interpretData' : function(_inAttributeValues, _outAttributeValues, _callback) {
                 var distanceValue = _outAttributeValues.getItems()[0];
 
                 var startingPointLatitude = _inAttributeValues.getValueForAttributeType(this.inAttributeTypes.getItems()[0]);
@@ -61,13 +61,9 @@ define(['easejs', 'contactJS'],
 
                 distanceValue.setValue(getDistanceFromLatLonInKm(startingPointLatitude, startingPointLongitude, endPointLatitude, endPointLongitude));
 
-                var interpretedData = new contactJS.AttributeValueList().withItems([
-                      distanceValue
+                _callback([
+                    distanceValue
                 ]);
-
-                if (_function && typeof(_function) == 'function') {
-                    _function(interpretedData);
-                }
             }
         });
 
