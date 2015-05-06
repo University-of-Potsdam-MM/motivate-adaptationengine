@@ -9,35 +9,32 @@ define(['easejs', 'contactJS'],
             'public name' : 'DistanceInterpreter',
 
             'protected initInAttributes' : function() {
-                this.inAttributeTypes.put(
-                    new contactJS.AttributeType()
+                this.setInAttributes([
+                    new contactJS.Attribute()
                         .withName('CI_USER_LOCATION_LATITUDE')
-                        .withType('FLOAT')
-                );
-
-                this.inAttributeTypes.put(
-                    new contactJS.AttributeType()
+                        .withType('FLOAT'),
+                    new contactJS.Attribute()
                         .withName('CI_USER_LOCATION_LONGITUDE')
                         .withType('FLOAT')
-                );
+                ]);
             },
 
             'protected initOutAttributes' : function() {
-                this.outAttributeTypes.put(
-                    new contactJS.AttributeType()
+                this.setOutAttributes([
+                    new contactJS.Attribute()
                         .withName('CI_USER_LOCATION_DISTANCE')
                         .withType('FLOAT')
                         .withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("PV_INPUT"))
                         .withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("PV_INPUT"))
                         .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"))
-                );
+                ]);
             },
 
             'protected interpretData' : function(_inAttributeValues, _outAttributeValues, _callback) {
                 var distanceValue = _outAttributeValues.getItems()[0];
 
-                var startingPointLatitude = _inAttributeValues.getValueForAttributeType(this.inAttributeTypes.getItems()[0]);
-                var startingPointLongitude = _inAttributeValues.getValueForAttributeType(this.inAttributeTypes.getItems()[1]);
+                var startingPointLatitude = _inAttributeValues.getValueForAttributeWithTypeOf(this.inAttributes.getItems()[0]);
+                var startingPointLongitude = _inAttributeValues.getValueForAttributeWithTypeOf(this.inAttributes.getItems()[1]);
                 var endPointLatitude = distanceValue.getParameters().getItems()[0].getValue();
                 var endPointLongitude = distanceValue.getParameters().getItems()[1].getValue();
 

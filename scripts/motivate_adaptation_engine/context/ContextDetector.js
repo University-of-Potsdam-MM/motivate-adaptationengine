@@ -1,5 +1,5 @@
-define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_UnixTime', 'MoWI_GeoLocation', 'MoIN_Address', 'MoIN_ISO8601', 'MoWI_FakeCelsiusTemperature', 'MoIN_CelsiusToFahrenheit', 'MoIN_Seconds', 'MoIN_Distance',
-    'lib/parser/constraint/parser'], function(nools, $, ContextInformation, contactJS, UnixTimeWidget, UnixTimeInterpreter, GeoLocationWidget, AddressInterpreter, ISO8601Interpreter, FakeCelsiusTemperatureWidget, CelsiusToFahrenheitInterpreter, SecondsInterpreter, DistanceInterpreter) {
+define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters',
+    'lib/parser/constraint/parser'], function(nools, $, ContextInformation, contactJS, widgets, interpreters) {
 
     var ContextDetector = (function() {
 
@@ -28,7 +28,7 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_U
                 }
             };
 
-            this._discoverer = new contactJS.Discoverer([
+            this._discoverer = new contactJS.Discoverer(widgets, interpreters, [
                     //new Translation(_fromAttributeType, _toAttributeType)
             ]);
 
@@ -43,35 +43,35 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_U
 
             //TODO: Dynamic Configuration
             // (CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:MILLISECONDS]
-            var attributeTypeUnixTimeMilliseconds = contactJS.AttributeType().withName('CI_CURRENT_UNIX_TIME').withType('INTEGER').withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"));
+            var attributeTypeUnixTimeMilliseconds = contactJS.Attribute().withName('CI_CURRENT_UNIX_TIME').withType('INTEGER').withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"));
             // (CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:SECONDS]
-            var attributeTypeUnixTimeSeconds = contactJS.AttributeType().withName('CI_CURRENT_UNIX_TIME').withType('INTEGER').withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"));
+            var attributeTypeUnixTimeSeconds = contactJS.Attribute().withName('CI_CURRENT_UNIX_TIME').withType('INTEGER').withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"));
             // (CI_USER_LOCATION_LATITUDE:FLOAT)
-            var attributeTypeLatitude = contactJS.AttributeType().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT');
+            var attributeTypeLatitude = contactJS.Attribute().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT');
             // (CI_USER_LOCATION_LONGITUDE:FLOAT)
-            var attributeTypeLongitude = contactJS.AttributeType().withName('CI_USER_LOCATION_LONGITUDE').withType('FLOAT');
+            var attributeTypeLongitude = contactJS.Attribute().withName('CI_USER_LOCATION_LONGITUDE').withType('FLOAT');
             // (CI_USER_LOCATION_ADDRESS:STRING)
-            var attributeTypeAddress = contactJS.AttributeType().withName('CI_USER_LOCATION_ADDRESS').withType('STRING');
+            var attributeTypeAddress = contactJS.Attribute().withName('CI_USER_LOCATION_ADDRESS').withType('STRING');
             // (CI_CURRENT_FORMATTED_TIME:STRING)#[CP_FORMAT:YYYYMMDD]
-            var attributeFormattedTime = contactJS.AttributeType().withName('CI_CURRENT_FORMATTED_TIME').withType('STRING').withParameter(new contactJS.Parameter().withKey("CP_FORMAT").withValue("YYYYMMDD"));
+            var attributeFormattedTime = contactJS.Attribute().withName('CI_CURRENT_FORMATTED_TIME').withType('STRING').withParameter(new contactJS.Parameter().withKey("CP_FORMAT").withValue("YYYYMMDD"));
             // (CI_CURRENT_TEMPERATURE:FLOAT)#[CP_TEMPERATURE_SCALE:FAHRENHEIT]
-            var attributeTemperatureFahrenheit = contactJS.AttributeType().withName('CI_CURRENT_TEMPERATURE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("FAHRENHEIT"));
+            var attributeTemperatureFahrenheit = contactJS.Attribute().withName('CI_CURRENT_TEMPERATURE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("FAHRENHEIT"));
             // (CI_USER_LOCATION_DISTANCE:FLOAT)#[CP_TARGET_LATITUDE:52][CP_TARGET_LONGITUDE:13][CP_UNIT:KILOMETERS]
-            var attributeDistanceKilometers = contactJS.AttributeType().withName('CI_USER_LOCATION_DISTANCE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("52.38834")).withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("13.09817")).withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"));
-            var attributeDistanceKilometers2 = contactJS.AttributeType().withName('CI_USER_LOCATION_DISTANCE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("20")).withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("20")).withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"));
+            var attributeDistanceKilometers = contactJS.Attribute().withName('CI_USER_LOCATION_DISTANCE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("52.38834")).withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("13.09817")).withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"));
+            var attributeDistanceKilometers2 = contactJS.Attribute().withName('CI_USER_LOCATION_DISTANCE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("20")).withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("20")).withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"));
 
             // Add widgets
-            new UnixTimeWidget(this._discoverer);
-            new GeoLocationWidget(this._discoverer);
-            new FakeCelsiusTemperatureWidget(this._discoverer);
+            new widgets[0](this._discoverer);
+            new widgets[1](this._discoverer);
+            new widgets[2](this._discoverer);
 
             // Add interpreters
-            new UnixTimeInterpreter(this._discoverer);
-            new AddressInterpreter(this._discoverer);
-            new ISO8601Interpreter(this._discoverer);
-            new CelsiusToFahrenheitInterpreter(this._discoverer);
-            //new SecondsInterpreter(this._discoverer);
-            new DistanceInterpreter(this._discoverer);
+            new interpreters[0](this._discoverer);
+            new interpreters[1](this._discoverer);
+            new interpreters[2](this._discoverer);
+            new interpreters[3](this._discoverer);
+            new interpreters[4](this._discoverer);
+            new interpreters[5](this._discoverer);
 
             var theAggregator = new contactJS.Aggregator(this._discoverer, [
                 attributeFormattedTime
@@ -82,6 +82,7 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'MoWI_UnixTime', 'MoIN_U
 
         /**
          * Sets a function as the callback for the provided callback name.
+         *
          * @alias setCallback
          * @memberof ContextDetector#
          * @param callbackName {string} The name of the callback.

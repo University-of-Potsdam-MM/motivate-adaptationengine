@@ -9,27 +9,27 @@ define(['easejs', 'contactJS'],
             'public name' : 'UnixTimeInterpreter',
 
             'protected initInAttributes' : function() {
-                this.inAttributeTypes.put(
-                    new contactJS.AttributeType()
-                    .withName('CI_CURRENT_UNIX_TIME')
-                    .withType('INTEGER')
-                    .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"))
-                );
+                this.setInAttributes([
+                    new contactJS.Attribute()
+                        .withName('CI_CURRENT_UNIX_TIME')
+                        .withType('INTEGER')
+                        .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"))
+                ]);
             },
 
             'protected initOutAttributes' : function() {
-                this.outAttributeTypes.put(
-                    new contactJS.AttributeType()
-                    .withName('CI_CURRENT_UNIX_TIME')
-                    .withType('INTEGER')
-                    .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"))
-                );
+                this.setOutAttributes([
+                    new contactJS.Attribute()
+                        .withName('CI_CURRENT_UNIX_TIME')
+                        .withType('INTEGER')
+                        .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"))
+                ]);
             },
 
             'protected interpretData' : function(_inAttributeValues, _outAttributeValues, _callback) {
                 var unixSecondsValue = _outAttributeValues.getItems()[0];
 
-                unixSecondsValue.setValue(Math.floor(_inAttributeValues.getValueForAttributeType(this.inAttributeTypes.getItems()[0]) / 1000));
+                unixSecondsValue.setValue(Math.floor(_inAttributeValues.getValueForAttributeWithTypeOf(this.inAttributes.getItems()[0]) / 1000));
 
                 _callback([
                     unixSecondsValue

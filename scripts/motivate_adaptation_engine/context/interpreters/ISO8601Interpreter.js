@@ -9,27 +9,27 @@ define(['easejs', 'contactJS'],
             'public name' : 'ISO8601Interpreter',
 
             'protected initInAttributes' : function() {
-                this.inAttributeTypes.put(
-                    new contactJS.AttributeType()
+                this.setInAttributes([
+                    new contactJS.Attribute()
                         .withName('CI_CURRENT_UNIX_TIME')
                         .withType('INTEGER')
                         .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"))
-                );
+                ]);
             },
 
             'protected initOutAttributes' : function() {
-                this.outAttributeTypes.put(
-                    new contactJS.AttributeType()
+                this.setOutAttributes([
+                    new contactJS.Attribute()
                         .withName('CI_CURRENT_FORMATTED_TIME')
                         .withType('STRING')
                         .withParameter(new contactJS.Parameter().withKey("CP_FORMAT").withValue("YYYYMMDD"))
-                );
+                ]);
             },
 
             'protected interpretData' : function(_inAttributeValues, _outAttributeValues, _callback) {
                 var formattedTime = _outAttributeValues.getItems()[0];
 
-                var unixTimeSeconds = _inAttributeValues.getValueForAttributeType(this.inAttributeTypes.getItems()[0]);
+                var unixTimeSeconds = _inAttributeValues.getValueForAttributeWithTypeOf(this.inAttributes.getItems()[0]);
                 var theDate = new Date(unixTimeSeconds*1000);
 
                 var year = theDate.getFullYear();

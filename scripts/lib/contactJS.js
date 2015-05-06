@@ -520,8 +520,6 @@ define('abstractList',[ 'easejs' ], function(easejs) {
 	 * @requires easejs
 	 */
 	var AbstractList = AbstractClass('AbstractList', {
-
-
 		/**
 		 * @alias items
 		 * @protected
@@ -589,19 +587,6 @@ define('abstractList',[ 'easejs' ], function(easejs) {
 		 * @param {*} list List that should be compared.
 		 */
 		'abstract public equals' : [ 'list' ],
-
-		/**
-		 * Verifies whether an item exists for the specified key.
-		 * 
-		 * @public
-		 * @alias containsKey
-		 * @memberof AbstractList#
-		 * @param {string} _key Key that should be verified.
-		 * @returns {boolean}
-		 */
-		'public containsKey' : function(_key) {
-			return !!(typeof _key !== 'undefined' && typeof this.items[_key] !== 'undefined');
-		},
 
 		/**
 		 * Returns the item for the specified key.
@@ -865,8 +850,7 @@ define('parameterList',[ 'easejs', 'abstractList', 'parameter' ],
 		 * @requires AbstractList
 		 * @requires Parameter
 		 */
-		var ParameterList = Class('ParameterList').extend(AbstractList,{
-
+		var ParameterList = Class('ParameterList').extend(AbstractList, {
 			/**
 			 * @alias counter
 			 * @protected
@@ -1010,854 +994,713 @@ define('parameterList',[ 'easejs', 'abstractList', 'parameter' ],
 /**
  * This module represents an AttributeType.
  * AttributeTypes defines name, type (string, double,...) an associated parameter of an attribute.
- * 
+ *
  * @module AttributeType
  * @fileOverview
  */
-define('attributeType',['easejs',
+define('attribute',['easejs',
         'parameterList'],
     function(easejs,
-    		ParameterList){
-    	var Class = easejs.Class;
-		var AttributeType = Class('AttributeType',{
-			/**
-			 * @alias name
-			 * @protected
-			 * @type {string}
-			 * @memberof AttributeType#
-			 * @desc Name of the Attribute
-			 */
-			'protected name' : '', 
-			/**
-			 * @alias type
-			 * @protected
-			 * @type {string}
-			 * @memberof AttributeType#
-			 * @desc Defines the type of the Attribute (i.e String, Double,...)
-			 */
-			'protected type' : '', 
-			/**
-			 * @alias parameterList
-			 * @protected
-			 * @type {ParameterList}
-			 * @memberof AttributeType#
-			 * @desc Name of the Attribute
-			 */
-			'protected parameterList' : [],
+             ParameterList){
 
-			/**
-			 * Constructor: Initializes the ParameterList.
-			 * 
-			 * @class AttributeType
-			 * @classdesc AttributeTypes defines name, type (string, double,...) an associated parameter of an attribute.
-			 * @requires easejs
-			 * @requires ParameterList
-			 * @constructs AttributeType
-			 */
-			'public __construct' : function(){
-				this.parameterList = new ParameterList();
-			},
+        /**
+         * @class Attribute
+         * @classdesc AttributeValue extends AttributeTypes and adds the associated
+         *            value.
+         * @requires easejs
+         * @requires ParameterList
+         */
+        var Class = easejs.Class;
+        var Attribute = Class('Attribute',{
+            /**
+             * @alias name
+             * @protected
+             * @type {string}
+             * @memberof AttributeType#
+             * @desc Name of the Attribute
+             */
+            'protected name' : '',
 
-			/**
-			 * Builder for name.
-			 * 
-			 * @public
-			 * @alias withName
-			 * @memberof AttributeType#
-			 * @param {String} _name Name
-			 * @returns {AttributeType}
-			 */
-    		'public withName' : function(_name){
-    			this.setName(_name);
-    			return this;
-    		},
+            /**
+             * @alias type
+             * @protected
+             * @type {string}
+             * @memberof AttributeType#
+             * @desc Defines the type of the Attribute (i.e String, Double,...)
+             */
+            'protected type' : '',
 
-    		/**
-			 * Builder for type.
-			 * 
-			 * @public
-			 * @alias withType
-			 * @memberof AttributeType#
-			 * @param {String} _type Type
-			 * @returns {AttributeType}
-			 */
-    		'public withType' : function(_type){
-    			this.setType(_type);
-    			return this;
-    		},
-    		
-    		/**
-			 * Builder for parameterList.
-			 * 
-			 * @public
-			 * @alias withParameters
-			 * @memberof AttributeType#
-			 * @param {(ParameterList|Array)} _parameterList ParameterList
-			 * @returns {AttributeType}
-			 */
-    		'public withParameters' : function(_parameterList){
-    			this.setParameters(_parameterList);
-    			return this;
-    		},
-    		
-    		/**
-			 * Builder for one parameter.
-			 * 
-			 * @public
-			 * @alias withParameters
-			 * @memberof AttributeType#
-			 * @param {Parameter} _parameter Parameter
-			 * @returns {AttributeType}
-			 */
-    		'public withParameter' : function(_parameter){
-    			this.addParameter(_parameter);
-    			return this;
-    		},
+            /**
+             * @alias parameterList
+             * @protected
+             * @type {ParameterList}
+             * @memberof AttributeType#
+             * @desc Name of the Attribute
+             */
+            'protected parameterList' : [],
 
-    		/**
-			 * Returns the name.
-			 * 
-			 * @public
-			 * @alias getName
-			 * @memberof AttributeType#
-			 * @returns {string}
-			 */
-			'public getName' : function(){
-				return this.name;
-			},
-			
-			/**
-			 * Returns the type.
-			 * 
-			 * @public
-			 * @alias getType
-			 * @memberof AttributeType#
-			 * @returns {string}
-			 */
-			'public getType' : function(){
-				return this.type;
-			},
-			
-			/**
-			 * Returns the parameters.
-			 * 
-			 * @public
-			 * @alias getParameters
-			 * @memberof AttributeType#
-			 * @returns {ParameterList}
-			 */
-			'public getParameters' : function(){
-				return this.parameterList;
-			},
+            /**
+             * @alias value
+             * @protected
+             * @type {string}
+             * @memberof AttributeValue#
+             */
+            'protected value' : 'NO_VALUE',
 
-			/**
-			 * Sets the name.
-			 * 
-			 * @public
-			 * @alias setName
-			 * @memberof AttributeType#
-			 * @param {string} _name Name
-			 */
-			'public setName' : function(_name){
-				if(typeof _name === 'string'){
-					this.name = _name;
+            /**
+             * @alias timestamp
+             * @protected
+             * @type {Date}
+             * @memberof AttributeValue#
+             * @desc Time when the value was set.
+             */
+            'protected timestamp' : '',
+
+            /**
+             * Constructor: Initializes the ParameterList.
+             *
+             * @class AttributeType
+             * @classdesc AttributeTypes defines name, type (string, double,...) an associated parameter of an attribute.
+             * @requires easejs
+             * @requires ParameterList
+             * @constructs AttributeType
+             */
+            'public __construct' : function(){
+                this.parameterList = new ParameterList();
+            },
+
+            /**
+             * Builder for name.
+             *
+             * @public
+             * @alias withName
+             * @memberof AttributeType#
+             * @param {String} _name Name
+             * @returns {AttributeType}
+             */
+            'public withName' : function(_name){
+                this.setName(_name);
+                return this;
+            },
+
+            /**
+             * Builder for type.
+             *
+             * @public
+             * @alias withType
+             * @memberof AttributeType#
+             * @param {String} _type Type
+             * @returns {AttributeType}
+             */
+            'public withType' : function(_type){
+                this.setType(_type);
+                return this;
+            },
+
+            /**
+             * Builder for one parameter.
+             *
+             * @public
+             * @alias withParameters
+             * @memberof AttributeType#
+             * @param {Parameter} _parameter Parameter
+             * @returns {AttributeType}
+             */
+            'public withParameter' : function(_parameter){
+                this.addParameter(_parameter);
+                return this;
+            },
+
+            /**
+             * Builder for parameterList.
+             *
+             * @public
+             * @alias withParameters
+             * @memberof AttributeType#
+             * @param {(ParameterList|Array)} _parameterList ParameterList
+             * @returns {AttributeType}
+             */
+            'public withParameters' : function(_parameterList){
+                this.setParameters(_parameterList);
+                return this;
+            },
+
+            /**
+             * Builder for value.
+             *
+             * @public
+             * @alias withValue
+             * @memberof AttributeValue#
+             * @param {String} _value value
+             * @returns {AttributeValue}
+             */
+            'public withValue' : function(_value) {
+                this.setValue(_value);
+                this.setTimestamp(Date.now());
+                return this;
+            },
+
+            /**
+             * Builder for timestamp.
+             *
+             * @public
+             * @alias withTimestamp
+             * @memberof AttributeValue#
+             * @param {Date} _timestamp timestamp
+             * @returns {AttributeValue}
+             */
+            'public withTimestamp' : function(_timestamp) {
+                this.setTimestamp(_timestamp);
+                return this;
+            },
+
+            /**
+             * Returns the name.
+             *
+             * @public
+             * @alias getName
+             * @memberof AttributeType#
+             * @returns {string}
+             */
+            'public getName' : function(){
+                return this.name;
+            },
+
+            /**
+             * Returns the type.
+             *
+             * @public
+             * @alias getType
+             * @memberof AttributeType#
+             * @returns {string}
+             */
+            'public getType' : function(){
+                return this.type;
+            },
+
+            /**
+             * Returns the parameters.
+             *
+             * @public
+             * @alias getParameters
+             * @memberof AttributeType#
+             * @returns {ParameterList}
+             */
+            'public getParameters' : function(){
+                return this.parameterList;
+            },
+
+            /**
+             * Sets the name.
+             *
+             * @public
+             * @alias setName
+             * @memberof AttributeType#
+             * @param {string} _name Name
+             */
+            'public setName' : function(_name){
+                if(typeof _name === 'string'){
+                    this.name = _name;
                 }
             },
 
-			/**
-			 * Sets the type.
-			 * 
-			 * @public
-			 * @alias setType
-			 * @memberof AttributeType#
-			 * @param {string} _type Type
-			 */
-			'public setType' : function(_type){
-				if(typeof _type === 'string'){
-					this.type = _type;
+            /**
+             * Sets the type.
+             *
+             * @public
+             * @alias setType
+             * @memberof AttributeType#
+             * @param {string} _type Type
+             */
+            'public setType' : function(_type){
+                if(typeof _type === 'string'){
+                    this.type = _type;
                 }
             },
-			
-			/**
-			 * Adds a parameter.
-			 * 
-			 * @public
-			 * @alias addParameter
-			 * @memberof AttributeType#
-			 * @param {Parameter} _parameter Parameter
-			 */
-			'public addParameter' : function(_parameter){
-					this.parameterList.put(_parameter);
-			},
-			
-			/**
-			 * Adds a list of Parameter.
-			 * 
-			 * @public
-			 * @alias setParameters
-			 * @memberof AttributeType#
-			 * @param {ParameterList} _parameters ParameterList
-			 */
-			'public setParameters' : function(_parameters){
-				this.parameterList.putAll(_parameters);
-			},
 
+            /**
+             * Adds a parameter.
+             *
+             * @public
+             * @alias addParameter
+             * @memberof AttributeType#
+             * @param {Parameter} _parameter Parameter
+             */
+            'public addParameter' : function(_parameter){
+                this.parameterList.put(_parameter);
+            },
+
+            /**
+             * Adds a list of Parameter.
+             *
+             * @public
+             * @alias setParameters
+             * @memberof AttributeType#
+             * @param {ParameterList} _parameters ParameterList
+             */
+            'public setParameters' : function(_parameters){
+                this.parameterList.putAll(_parameters);
+            },
+
+            /**
+             * Returns true if the attribute is parameterized.
+             *
+             * @public
+             * @alias hasParameters
+             * @memberof Attribute#
+             * @returns {boolean}
+             */
             'public hasParameters' : function() {
                 return this.parameterList.size() > 0;
             },
 
-			/**
-			 * Compares this instance with the given one.
-			 * 
-			 * @virtual
-			 * @public
-			 * @alias equals
-			 * @memberof AttributeType#
-			 * @param {AttributeType} _attributeType AttributeType that should be compared
-			 * @returns {boolean}
-			 */
-			'virtual public equals' : function(_attributeType) {
-				if (Class.isA(AttributeType, _attributeType)) {
-                    if (this.getName() == _attributeType.getName() &&
-                        this.getType() == _attributeType.getType() &&
-                        this.getParameters().equals(_attributeType.getParameters()))
-                    return true;
-                }
-                return false;
-			},
+            /**
+             * Sets the value.
+             *
+             * @public
+             * @alias setValue
+             * @memberof AttributeValue#
+             * @param {string} _value value
+             */
+            'public setValue' : function(_value) {
+                this.value = _value;
+            },
 
+            /**
+             * Returns the value.
+             *
+             * @public
+             * @alias getValue
+             * @memberof AttributeValue#
+             * @returns {string}
+             */
+            'public getValue' : function() {
+                return this.value;
+            },
+
+            /**
+             * Sets the timestamp.
+             *
+             * @public
+             * @alias setTimestamp
+             * @memberof AttributeValue#
+             * @param {Date} _timestamp timestamp
+             */
+            'public setTimestamp' : function(_time) {
+                this.timestamp = _time;
+            },
+
+            /**
+             * Returns the timestamp.
+             *
+             * @public
+             * @alias getTimestamp
+             * @memberof AttributeValue#
+             * @returns {string}
+             */
+            'public getTimestamp' : function() {
+                return this.timestamp;
+            },
+
+            /**
+             *
+             * @public
+             * @alias hasInputParameter
+             * @memberof Attribute#
+             * @returns {boolean}
+             */
             'public hasInputParameter': function() {
                 return this.hasParameters() && this.parameterList.hasInputParameter();
             },
 
-			/**
-			 * Returns an identifier that uniquely describes the attribute type and its parameters.
-			 * The identifier can be used to compare two attribute types. <br/>
-			 * Format: (AttributeName:AttributeType)#[FirstParameterName:FirstParameterValue]…
-			 *
-			 * @public
-			 * @alias toString
-			 * @memberof AttributeType#
-			 * @returns {String}
-			 * @example (CI_USER_LOCATION_DISTANCE:FLOAT)#[CP_TARGET_LATITUDE:52][CP_TARGET_LONGITUDE:13][CP_UNIT:KILOMETERS]
-			 */
-            'virtual public toString': function() {
+            /**
+             * Compares this instance with the given one.
+             *
+             * @public
+             * @alias equalsTypeOf
+             * @memberof Attribute#
+             * @param {Attribute} _attribute Attribute that should be compared.
+             * @returns {boolean}
+             */
+            'public equalsTypeOf' : function(_attribute) {
+                if (Class.isA(Attribute, _attribute)) {
+                    if (this.getName() == _attribute.getName() && this.getType() == _attribute.getType() && this.getParameters().equals(_attribute.getParameters())) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+
+            /**
+             *
+             *
+             * @public
+             * @alias equalsValueOf
+             * @memberof Attribute#
+             * @param _attribute
+             * @returns {boolean}
+             */
+            'public equalsValueOf' : function(_attribute) {
+                if (Class.isA(Attribute, _attribute)) {
+                    if (this.equalsTypeOf(_attribute) && this.getValue() == _attribute.getValue()) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+
+            /**
+             * Returns an identifier that uniquely describes the attribute type and its parameters.
+             * The identifier can be used to compare two attribute types. <br/>
+             * Format: (AttributeName:AttributeType)#[FirstParameterName:FirstParameterValue]…
+             *
+             * @public
+             * @alias toString
+             * @memberof AttributeType#
+             * @returns {String}
+             * @example (CI_USER_LOCATION_DISTANCE:FLOAT)#[CP_TARGET_LATITUDE:52][CP_TARGET_LONGITUDE:13][CP_UNIT:KILOMETERS]
+             */
+            'public toString': function(_typeOnly) {
                 var identifier = "("+this.name+":"+this.type+")";
                 if (this.hasParameters()) {
                     identifier += "#";
                     for (var index in this.parameterList.getItems()) {
-						var theParameter = this.parameterList.getItems()[index];
-						identifier += theParameter.toString();
-					}
+                        var theParameter = this.parameterList.getItems()[index];
+                        identifier += theParameter.toString();
+                    }
                 }
+                if (!_typeOnly) identifier += ":"+this.getValue();
                 return identifier;
             }
-
         });
 
-		return AttributeType;
-	
-});
+        return Attribute;
+
+    });
 /**
- * This module represents an AttributeValue. AttributeValue extends
- * AttributeTypes and adds the associated value.
- * 
- * @module AttributeValue
+ * This module represents an AttributeList. It is a subclass of AbstractList.
+ *
+ * @module AttributeList
  * @fileOverview
  */
-define('attributeValue',[ 'easejs', 'attributeType' ], function(easejs, AttributeType) {
-	var Class = easejs.Class;
+define('attributeList',['easejs', 'abstractList', 'attribute', 'parameterList' ],
+    function(easejs, AbstractList, Attribute, ParameterList) {
+        var Class = easejs.Class;
 
-	/**
-	 * @class AttributeValue
-	 * @classdesc AttributeValue extends AttributeTypes and adds the associated
-	 *            value.
-	 * @requires easejs
-	 * @requires AttributeType
-	 */
-	var AttributeValue = Class('AttributeValue').extend(
-			AttributeType,
-			{
-				/**
-				 * @alias value
-				 * @protected
-				 * @type {string}
-				 * @memberof AttributeValue#
-				 */
-				'protected value' : '',
-				/**
-				 * @alias timestamp
-				 * @protected
-				 * @type {Date}
-				 * @memberof AttributeValue#
-				 * @desc Time when the value was set.
-				 */
-				'protected timestamp' : '',
+        /**
+         * @class AttributeList
+         * @classdesc This class represents a list for Attribute.
+         * @extends AbstractList
+         * @requires easejs
+         * @requires AbstractList
+         * @requires Attribute
+         */
+        var AttributeList = Class('AttributeList').extend(AbstractList,	{
+            /**
+             * @alias items
+             * @protected
+             * @type {Array.<Attribute>}
+             * @memberof AttributeList#
+             * @desc ItemList
+             */
+            'protected items' : [],
 
-				/**
-				 * Builder for value.
-				 *
-				 * @public
-				 * @alias withValue
-				 * @memberof AttributeValue#
-				 * @param {String} _value value
-				 * @returns {AttributeValue}
-				 */
-				'public withValue' : function(_value) {
-					this.setValue(_value);
-					this.setTimestamp(Date.now());
-					return this;
-				},
-
-				/**
-				 * Builder for timestamp.
-				 *
-				 * @public
-				 * @alias withTimestamp
-				 * @memberof AttributeValue#
-				 * @param {Date} _timestamp timestamp
-				 * @returns {AttributeValue}
-				 */
-				'public withTimestamp' : function(_timestamp) {
-					this.setTimestamp(_timestamp);
-					return this;
-				},
-
-				/**
-				 * Sets the value.
-				 *
-				 * @public
-				 * @alias setValue
-				 * @memberof AttributeValue#
-				 * @param {string} _value value
-				 */
-				'public setValue' : function(_value) {
-					this.value = _value;
-				},
-
-				/**
-				 * Returns the value.
-				 *
-				 * @public
-				 * @alias getValue
-				 * @memberof AttributeValue#
-				 * @returns {string}
-				 */
-				'public getValue' : function() {
-					return this.value;
-				},
-
-				/**
-				 * Sets the timestamp.
-				 *
-				 * @public
-				 * @alias setTimestamp
-				 * @memberof AttributeValue#
-				 * @param {Date} _timestamp timestamp
-				 */
-				'public setTimestamp' : function(_time) {
-					this.timestamp = _time;
-				},
-
-				/**
-				 * Returns the timestamp.
-				 *
-				 * @public
-				 * @alias getTimestamp
-				 * @memberof AttributeValue#
-				 * @returns {string}
-				 */
-				'public getTimestamp' : function() {
-					return this.timestamp;
-				},
-
-				/**
-				 * Compares this instance with the given one.
-				 *
-				 * @public
-				 * @alias equals
-				 * @memberof AttributeValue#
-				 * @param {AttributeValue} _attributeValue AttributeValue that should be compared
-				 * @returns {boolean}
-				 */
-				'override public equals' : function(_attributeValue) {
-					if (Class.isA(AttributeValue, _attributeValue)) {
-						if (_attributeValue.getAttributeType().equals(this.getAttributeType()) &&
-							_attributeValue.getValue() == this.getValue()) {
-							return true;
-						}
-					}
-					return false;
-				},
-
-				/**
-				 * Returns the AttributeType of an AttributeValue.
-				 *
-				 * @public
-				 * @alias getAttributeType
-				 * @memberof AttributeValue#
-				 * @returns {AttributeType}
-				 */
-				'public getAttributeType' : function() {
-                    return new AttributeType().withName(this.name)
-                        .withType(this.type).withParameters(
-                        this.parameterList);
-				},
-
-				/**
-				 * Builds a new AttributeValue from the given type.
-				 *
-				 * @public
-				 * @alias buildFromAttributeType
-				 * @memberof AttributeValue#
-				 * @param {AttributeType} _attributeType AttributeType for build process.
-				 * @returns {AttributeValue}
-				 */
-				'public buildFromAttributeType' : function(_attributeType) {
-					if (Class.isA(AttributeType, _attributeType)) {
-                        return new AttributeValue().withName(_attributeType.getName())
-                            .withType(_attributeType.getType()).withParameters(_attributeType.getParameters()).withValue('NO_VALUE');
-					}
-					return null;
-				},
-
-				/**
-				 * Returns a string that describes the attribute type and its value.
-				 *
-				 * @public
-				 * @override
-				 * @alias toString
-				 * @memberof AttributeValue#
-				 * @returns {string}
-				 */
-                'override public toString': function() {
-                    return this.__super().toString()+":"+this.getValue();
+            /**
+             * Builder for item list.
+             *
+             * @public
+             * @alias withItems
+             * @memberof AttributeList#
+             * @param {(AttributeList)} _attributeList AttributeList
+             * @returns {AttributeList}
+             */
+            'public withItems' : function(_attributeList) {
+                var list = [];
+                if (_attributeList instanceof Array) {
+                    list = _attributeList;
+                } else if (Class.isA(AttributeList, _attributeList)) {
+                    list = _attributeList.getItems();
                 }
-			});
+                this.items = list;
+                return this;
+            },
 
-	return AttributeValue;
-});
-/**
- * This module represents an AttributeTypeList. It is a subclass of AbstractList.
- * 
- * @module AttributeTypeList
- * @fileOverview
- */
-define('attributeTypeList',[ 'easejs', 'abstractList', 'attributeType', 'parameterList' ],
-	function(easejs, AbstractList, AttributeType, ParameterList) {
-		var Class = easejs.Class;
-		/**
-		 * @class AttributeTypeList
-		 * @classdesc This class represents a list for AttributeType.
-		 * @extends AbstractList
-		 * @requires easejs
-		 * @requires AbstractList
-		 * @requires AttributeType
-		 */
-		var AttributeTypeList = Class('AttributeTypeList').extend(AbstractList,	{
+            /**
+             * Adds the specified item to the itemList.
+             *
+             * @public
+             * @alias put
+             * @memberof AttributeList#
+             * @param {AttributeType} _attribute AttributeType
+             * @param {boolean} _multipleInstances
+             */
+            'public put' : function(_attribute, _multipleInstances) {
+                _multipleInstances = typeof _multipleInstances == "undefined" ? false : _multipleInstances;
+                if (Class.isA(Attribute, _attribute)) {
+                    if (_multipleInstances || !(this.containsTypeOf(_attribute))) {
+                        this.items.push(_attribute);
+                    } else {
+                        this.updateValue(_attribute);
+                    }
+                }
+            },
 
-			/**
-			 * @alias items
-			 * @protected
-			 * @type {AttributeTypeList}
-			 * @memberof AttributeTypeList#
-			 * @desc ItemList
-			 */
-			'protected items' : [],
+            /**
+             * Adds all items in the specified list to the
+             * itemList.
+             *
+             * @public
+             * @alias putAll
+             * @memberof AttributeList#
+             * @param {(AttributeList|Array)} _attributeList AttributeList
+             */
+            'public putAll' : function(_attributeList) {
+                var list = [];
+                if (_attributeList instanceof Array) {
+                    list = _attributeList;
+                } else if (Class.isA(AttributeList,	_attributeList)) {
+                    list = _attributeList.getItems();
+                }
+                for ( var i in list) {
+                    this.put(list[i]);
+                }
+            },
 
-			/**
-			 * Builder for item list.
-			 * 
-			 * @public
-			 * @alias withItems
-			 * @memberof AttributeTypeList#
-			 * @param {(AttributeTypeList)} _attributeTypeList AttributeTypeList
-			 * @returns {AttributeTypeList}
-			 */
-			'public withItems' : function(_attributeTypeList) {
-				var list = [];
-				if (_attributeTypeList instanceof Array) {
-					list = _attributeTypeList;
-				} else if (Class.isA(AttributeTypeList, _attributeTypeList)) {
-					list = _attributeTypeList.getItems();
-				}
-				this.items = list;
-				return this;
-			},
+            /**
+             *
+             * @param {Attribute} _attribute
+             * @param {?boolean} _typeOnly
+             * @returns {*}
+             */
+            'public contains': function(_attribute, _typeOnly) {
+                _typeOnly = typeof _typeOnly == "undefined" ? false : _typeOnly;
+                return _typeOnly ? this.containsTypeOf(_attribute) : this.containsValueOf(_attribute);
+            },
 
-			/**
-			 * Adds the specified item to the itemList.
-			 * 
-			 * @public
-			 * @alias put
-			 * @memberof AttributeTypeList#
-			 * @param {AttributeType} _attributeType AttributeType
-			 */
-			'public put' : function(_attributeType, _multipleInstances) {
-				var _multipleInstances = typeof _multipleInstances == "undefined" ? false : _multipleInstances;
-				if (Class.isA(AttributeType, _attributeType)) {
-					if (_multipleInstances || !(this.contains(_attributeType))) {
-						this.items.push(_attributeType);
-					}
-				}
-			},
+            /**
+             * Verifies whether the given item is included
+             * in this list.
+             *
+             * @public
+             * @alias containsTypeOf
+             * @memberof AttributeList#
+             * @param {AttributeType} _attribute AttributeType that should be verified.
+             * @returns {boolean}
+             */
+            'public containsTypeOf' : function(_attribute) {
+                if (Class.isA(Attribute, _attribute)) {
+                    for (var index in this.items) {
+                        var tmp = this.items[index];
+                        if (tmp.equalsTypeOf(_attribute)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            },
 
-			/**
-			 * Adds all items in the specified list to the
-			 * itemList.
-			 * 
-			 * @public
-			 * @alias putAll
-			 * @memberof AttributeTypeList#
-			 * @param {(AttributeTypeList|Array)} _attributeTypeList AttributeTypeList
-			 */
-			'public putAll' : function(_attributeTypeList) {
-				var list = [];
-				if (_attributeTypeList instanceof Array) {
-					list = _attributeTypeList;
-				} else if (Class.isA(AttributeTypeList,	_attributeTypeList)) {
-					list = _attributeTypeList.getItems();
-				}
-				for ( var i in list) {
-					this.put(list[i]);
-				}
-			},
+            /**
+             * Verifies whether the given item is included
+             * in the list.
+             *
+             * @public
+             * @alias containsValueOf
+             * @memberof AttributeList#
+             * @param {Attribute} _attribute AttributeValue that should be verified.
+             * @returns {boolean}
+             */
+            'public containsValueOf' : function(_attribute) {
+                if (Class.isA(Attribute, _attribute)) {
+                    for (var index in this.items) {
+                        var tmp = this.items[index];
+                        if (tmp.equalsValueOf(_attribute)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            },
 
-			/**
-			 * Verifies whether the given item is included
-			 * in this list.
-			 * 
-			 * @public
-			 * @alias contains
-			 * @memberof AttributeTypeList#
-			 * @param {AttributeType} _item AttributeType that should be verified.
-			 * @returns {boolean}
-			 */
-			'public contains' : function(_item) {
-				if (Class.isA(AttributeType, _item)) {
-					for (var index in this.items) {
-						var tmp = this.items[index];
-						if (tmp.equals(_item)) {
-							return true;
-						}
-					}
-				}
-				return false;
-			},
+            'public equals': function(_attributeList, _typeOnly) {
+                _typeOnly = typeof _typeOnly == "undefined" ? false : _typeOnly;
+                return _typeOnly ? this.equalsTypesIn(_attributeList) : this.equalsValuesIn(_attributeList);
+            },
 
+            /**
+             * Compare the specified AttributeList with this instance.
+             *
+             * @public
+             * @alias equalsTypesIn
+             * @memberof AttributeList#
+             * @param {AttributeList} _attributeList AttributeList that should be compared.
+             * @returns {boolean}
+             */
+            'public equalsTypesIn' : function(_attributeList) {
+                if (Class.isA(AttributeList, _attributeList)	&& _attributeList.size() == this.size()) {
+                    for (var index in _attributeList.getItems()) {
+                        var theAttributeType = _attributeList.getItems()[index];
+                        if (!this.containsTypeOf(theAttributeType)) return false;
+                    }
+                    return true;
+                }
+                return false;
+            },
 
-			/**
-			 * Compare the specified AttributeTypeList with this instance.
-			 * 
-			 * @public
-			 * @alias equals
-			 * @memberof AttributeTypeList#
-			 * @param {AttributeTypeList} _list AttributeTypeList that should be compared.
-			 * @returns {boolean}
-			 */
-			'public equals' : function(_list) {
-				if (Class.isA(AttributeTypeList, _list)	&& _list.size() == this.size()) {
-					for (var index in _list.getItems()) {
-						var theAttributeType = _list.getItems()[index];
-						if (!this.contains(theAttributeType)) return false;
-					}
-					return true;
-				}
-				return false;
-			},
+            /**
+             * Compare the specified AttributeList with
+             * this instance.
+             *
+             * @public
+             * @alias equalsValuesIn
+             * @memberof AttributeList#
+             * @param {AttributeList} _attributeList AttributeList that should be compared.
+             * @returns {boolean}
+             */
+            'public equalsValuesIn' : function(_attributeList) {
+                if (Class.isA(AttributeList, _attributeList) && _attributeList.size() == this.size()) {
+                    for (var index in _attributeList.getItems()) {
+                        var theAttribute = _attributeList.getItems()[index];
+                        if (!this.containsValueOf(theAttribute)) return false;
+                    }
+                    return true;
+                }
+                return false;
+            },
 
-			/**
-			 * Creates a clone of the current list.
-			 *
-			 * @public
-			 * @alias clone
-			 * @memberof AttributeTypeList#
-			 * @returns {AttributeTypeList}
-			 */
-            'public clone': function() {
-                var newList = new AttributeTypeList();
+            /**
+             * Returns only this values that matches to the
+             * given type.
+             *
+             * @public
+             * @alias getSubset
+             * @memberof AttributeList#
+             * @param {(AttributeList|Array)} _attributeList Attributes that should be returned.
+             * @returns {AttributeList}
+             */
+            'public getSubset' : function(_attributeList) {
+                var response = new AttributeList();
+                var list = [];
+                if (_attributeList instanceof Array) {
+                    list = _attributeList;
+                } else if (Class.isA(AttributeList,	_attributeList)) {
+                    list = _attributeList.getItems();
+                }
+                for (var i in list) {
+                    var attribute = list[i];
+                    if (Class.isA(Attribute, attribute)) {
+                        var attribute = this.getAttributeWithTypeOf(attribute);
+                        if (typeof attribute != "NO_VALUE") {
+                            response.put(attribute);
+                        }
+                    }
+                }
+                return response;
+            },
+
+            /**
+             * Returns a subset without the given types.
+             *
+             * @public
+             * @alias getSubsetWithoutItems
+             * @memberof AttributeList#
+             * @param {(AttributeList|Array)} _attributeList AttributeTypes that should not be included
+             * @returns {AttributeList}
+             */
+            'public getSubsetWithoutItems' : function(_attributeList) {
+                var response = this;
+                var list = [];
+                if (_attributeList instanceof Array) {
+                    list = _attributeList;
+                } else if (Class.isA(AttributeList,	_attributeList)) {
+                    list = _attributeList.getItems();
+                }
+                for (var i in list) {
+                    var attribute = list[i];
+                    if (Class.isA(Attribute, attribute)) {
+                        response.removeAttributeWithTypeOf(attribute);
+                    }
+                }
+                return response;
+            },
+
+            /**
+             * Creates a clone of the current list.
+             *
+             * @public
+             * @alias clone
+             * @memberof AttributeList#
+             * @returns {AttributeList}
+             */
+            'public clone': function(_typeOnly) {
+                var newList = new AttributeList();
                 for (var index in this.items) {
-                    var oldAttributeType = this.items[index];
-                    var newAttributeType = new AttributeType().
-                        withName(oldAttributeType.getName()).
-                        withType(oldAttributeType.getType()).
-                        withParameters(oldAttributeType.getParameters());
-                    newList.put(newAttributeType);
+                    var oldAttribute = this.items[index];
+                    var newAttribute = new Attribute().withName(oldAttribute.getName()).withType(oldAttribute.getType()).withParameters(oldAttribute.getParameters());
+                    if (!_typeOnly) newAttribute.setValue(oldAttribute.getValue());
+                    newList.put(newAttribute);
                 }
                 return newList;
             },
 
-			'public removeAttributeType': function(_attributeType, _allOccurrences) {
-				_allOccurrences = typeof _allOccurrences == "undefined" ? false : _allOccurrences;
-				for (var index in this.items) {
-					var theAttributeType = this.items[index];
-					if (theAttributeType.equals(_attributeType)) {
-						this.items.splice(index, 1);
-					}
-				}
-				if (_allOccurrences && this.contains(_attributeType)) this.removeAttributeType(_attributeType, _allOccurrences);
-			},
-
-			'public hasAttributesWithInputParameters': function() {
-				for (var index in this.items) {
-					var theAttributeType = this.items[index];
-					if (theAttributeType.hasInputParameter()) return true;
-				}
-				return false;
-			},
-
-			'public getAttributesWithInputParameters': function() {
-				var list = new AttributeTypeList();
-				for (var index in this.items) {
-					var theAttributeType = this.items[index];
-					if (theAttributeType.hasInputParameter()) list.put(theAttributeType);
-				}
-				return list;
-			}
-        });
-
-		return AttributeTypeList;
-	});
-/**
- * This module represents a AttributeValueList. It is a subclass of
- * AbstractList.
- * 
- * @module AttributeValueList
- * @fileOverview
- */
-define('attributeValueList',['easejs', 'abstractList', 'attributeValue', 'attributeType', 'attributeTypeList', 'parameterList'],
-	function(easejs, AbstractList, AttributeValue, AttributeType, AttributeTypeList, ParameterList) {
-		var Class = easejs.Class;
-
-		/**
-		 * @class AttributeValueList
-		 * @classdesc This class represents a list for AttributeValue.
-		 * @extends AbstractList
-		 * @requires easejs
-		 * @requires AbstractList
-		 * @requires AttributeValue
-		 * @requires AttributeType
-		 * @requires AttributeTypeList)
-		 */
-		var AttributeValueList = Class('AttributeValueList').extend(AbstractList,{
-
-			/**
-			 * @alias items
-			 * @protected
-			 * @type {AttributeValueList}
-			 * @memberof AttributeValueList#
-			 * @desc ItemList.
-			 */
-			'protected items' : [],
-
-			/**
-			 * Builder for item list.
-			 * 
-			 * @public
-			 * @alias withItems
-			 * @memberof AttributeValueList#
-			 * @param {(AttributeValueListst|Array)} _attributeValueList AttributeValueList
-			 * @returns {AttributeValueList}
-			 */
-			'public withItems' : function(_attributeValueList) {
-				var list = [];
-				if (_attributeValueList instanceof Array) {
-					list = _attributeValueList;
-				} else if (Class.isA(AttributeValueList,
-						_attributeValueList)) {
-					list = _attributeValueList.getItems();
-				}
-				this.items = list;
-				return this;
-			},
-
-			/**
-			 * Add the specified item to this itemList.
-			 * 
-			 * @public
-			 * @alias put
-			 * @memberof AttributeValueList#
-			 * @param {AttributeValue} _attributeValue AttributeValue
-			 */
-			'public put' : function(_attributeValue, _multipleInstances) {
-				if (Class.isA(AttributeValue, _attributeValue)) {
-					if (_multipleInstances || !(this.containsAttributeType(_attributeValue.getAttributeType()))) {
-						this.items.push(_attributeValue);
-					} else {
-						this.updateValue(_attributeValue);
-					}
-				}
-			},
-
-			/**
-			 * Adds all items in the specified list to this.
-			 * itemList
-			 * 
-			 * @public
-			 * @alias putAll
-			 * @memberof AttributeValueList#
-			 * @param {AttributeValueList} _attributeValueList AttributeValueList
-			 */
-			'public putAll' : function(_attributeValueList) {
-				var list = [];
-				if (_attributeValueList instanceof Array) {
-					list = _attributeValueList;
-				} else if (Class.isA(AttributeValueList, _attributeValueList)) {
-					list = _attributeValueList.getItems();
-				}
-				for (var i in list) {
-					this.put(list[i]);
-				}
-			},
-
-			/**
-			 * Verifies whether the given item is included
-			 * in the list.
-			 * 
-			 * @public
-			 * @alias contains
-			 * @memberof AttributeValueList#
-			 * @param {AttributeValue} _attributeValue AttributeValue that should be verified.
-			 * @returns {boolean}
-			 */
-			'public contains' : function(_attributeValue) {
-				if (Class.isA(AttributeValue, _attributeValue)) {
-					for (var index in this.items) {
-						var tmp = this.items[index];
-						if (tmp.equals(_attributeValue)) {
-							return true;
-						}
-					}
-				}
-				return false;
-			},
-
-			'public containsAttributeType': function(_attributeType) {
-				if (Class.isA(AttributeType, _attributeType)) {
-					for (var index in this.items) {
-						var tmp = this.items[index].getAttributeType();
-						if (tmp.equals(_attributeType)) {
-							return true;
-						}
-					}
-				}
-				return false;
-			},
-
-			/**
-			 * Compare the specified AttributeValueList with
-			 * this instance.
-			 * 
-			 * @public
-			 * @alias equals
-			 * @memberof AttributeValueList#
-			 * @param {AttributeValueList} _list AttributeValueList that should be compared.
-			 * @returns {boolean}
-			 */
-			'public equals' : function(_list) {
-				if (Class.isA(AttributeValueList, _list) && _list.size() == this.size()) {
-					for (var index in _list.getItems()) {
-						var theAttributeValue = _list.getItems()[index];
-						if (!this.contains(theAttributeValue)) return false;
-					}
-					return true;
-				}
-				return false;
-			},
-
-			/**
-			 * Returns only this values that matches to the
-			 * given type.
-			 * 
-			 * @public
-			 * @alias getSubset
-			 * @memberof AttributeValueList#
-			 * @param {(AttributeTypeList|Array)} _attributeTypeList AttributeTypes that should be returned.
-			 * @returns {AttributeValueList}
-			 */
-			'public getSubset' : function(_attributeTypeList) {
-				var response = new AttributeValueList();
-				var list = [];
-				if (_attributeTypeList instanceof Array) {
-					list = _attributeTypeList;
-				} else if (Class.isA(AttributeTypeList,	_attributeTypeList)) {
-					list = _attributeTypeList.getItems();
-				}
-				for ( var i in list) {
-					var attributeType = list[i];
-					if (Class.isA(AttributeType, attributeType)) {
-						var attribute = this.getValueObjectForAttributeType(attributeType);
-						if (typeof attribute != "undefined") {
-							response.put(attribute);
-						}
-					}
-				}
-				return response;
-			},
-			
-			/**
-			 * Returns a subset without the given types.
-			 * 
-			 * @public
-			 * @alias getSubsetWithoutItems
-			 * @memberof AttributeValueList#
-			 * @param {(AttributeTypeList|Array)} _attributeTypeList AttributeTypes that should not be included
-			 * @returns {AttributeValueList}
-			 */
-			'public getSubsetWithoutItems' : function(_attributeTypeList) {
-				var response = this;
-				var list = [];
-				if (_attributeTypeList instanceof Array) {
-					list = _attributeTypeList;
-				} else if (Class.isA(AttributeTypeList,	_attributeTypeList)) {
-					list = _attributeTypeList.getItems();
-				}
-				for (var i in list) {
-					var attributeType = list[i];
-					if (Class.isA(AttributeType, attributeType)) {
-						response.removeAttributeValuesWithAttributeType(attributeType);
-					}
-				}
-				return response;
-			},
-
-			/**
-			 * Returns the attribute value that matches the provided attribute type.
-			 *
-			 * @public
-			 * @alias getValueForAttributeType
-			 * @memberof AttributeValueList#
-			 * @param {AttributeType} _attributeType
-			 * @returns {AttributeValue}
-			 */
-            'public getValueForAttributeType': function(_attributeType) {
-				return this.getValueObjectForAttributeType(_attributeType).getValue();
+            'public removeAttributeWithTypeOf': function(_attribute, _allOccurrences) {
+                _allOccurrences = typeof _allOccurrences == "undefined" ? false : _allOccurrences;
+                for (var index in this.items) {
+                    var theAttribute = this.items[index];
+                    if (theAttribute.equalsTypeOf(_attribute)) {
+                        this.items.splice(index, 1);
+                    }
+                }
+                if (_allOccurrences && this.contains(_attribute)) this.removeAttributeWithTypeOf(_attribute, _allOccurrences);
             },
 
-			'public getValueObjectForAttributeType': function(_attributeType) {
-				for (var index in this.getItems()) {
-					var theAttributeValue = this.getItems()[index];
-					if (theAttributeValue.getAttributeType().equals(_attributeType)) return theAttributeValue;
-				}
-			},
+            'public hasAttributesWithInputParameters': function() {
+                for (var index in this.items) {
+                    var theAttribute = this.items[index];
+                    if (theAttribute.hasInputParameter()) return true;
+                }
+                return false;
+            },
 
-			'public removeAttributeValuesWithAttributeType': function(_attributeType) {
-				for (var index in this.items) {
-					var theAttributeValue = this.items[index];
-					if (theAttributeValue.getAttributeType().equals(_attributeType)) this.items.splice(index, 1);
-				}
-			},
+            'public getAttributesWithInputParameters': function() {
+                var list = new AttributeList();
+                for (var index in this.items) {
+                    var theAttribute = this.items[index];
+                    if (theAttribute.hasInputParameter()) list.put(theAttribute);
+                }
+                return list;
+            },
 
-			'public updateValue': function(_attributeValue) {
-				for (var index in this.items) {
-					var theAttributeValue = this.items[index];
-					if (theAttributeValue.getAttributeType().equals(_attributeValue.getAttributeType())) this.items[index] = _attributeValue;
-				}
-			}
-		});
+            /**
+             * Returns the attribute value that matches the provided attribute type.
+             *
+             * @public
+             * @alias getValueForAttributeWithTypeOf
+             * @memberof AttributeList#
+             * @param {AttributeType} _attribute
+             * @returns {Attribute}
+             */
+            'public getValueForAttributeWithTypeOf': function(_attribute) {
+                return this.getAttributeWithTypeOf(_attribute).getValue();
+            },
 
-		return AttributeValueList;
-	});
+            'public getAttributeWithTypeOf': function(_attribute) {
+                for (var index in this.getItems()) {
+                    var theAttribute = this.getItems()[index];
+                    if (theAttribute.equalsTypeOf(_attribute)) return theAttribute;
+                }
+            },
+
+            'public updateValue': function(_attribute) {
+                for (var index in this.items) {
+                    var theAttribute = this.items[index];
+                    if (theAttribute.equalsTypeOf(_attribute)) this.items[index] = _attribute;
+                }
+            }
+
+        });
+
+        return AttributeList;
+});
 /**
  * This module representing a Storage.
  * The Storage handles the access to the database.
@@ -1865,9 +1708,9 @@ define('attributeValueList',['easejs', 'abstractList', 'attributeValue', 'attrib
  * @module Widget
  * @fileOverview
  */
-define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
+define('storage',['easejs', 'attribute', 'attributeList',
         'retrievalResult', 'parameter', 'parameterList'],
- 	function( easejs, AttributeValue, AttributeValueList, AttributeType,
+ 	function( easejs, Attribute, AttributeList,
  			RetrievalResult, Parameter, ParameterList){
  	var Class = easejs.Class;
 	var Storage =  Class('Storage',		
@@ -1892,7 +1735,7 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 		/**
 		 * @alias data
 		 * @private
-		 * @type {AttributeValueList}
+		 * @type {AttributeList}
 		 * @memberof Storage#
 		 * @desc Cache before storing the new data in the database.
 		 */
@@ -1948,8 +1791,8 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 		 * @class Storage
 		 * @classdesc Storage handles the access to the database.
 		 * @requires easejs
-		 * @requires AttributeValue
-		 * @requires AttributeValueList
+		 * @requires Attribute
+		 * @requires AttributeList
 		 * @requires Parameter
 		 * @requires ParameterList
 		 * @requires RetrievalResult
@@ -1959,7 +1802,7 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 		'public __construct' : function(_name, _time, _counter){
 			this.initStorage(_name);
 			this.attributes = new RetrievalResult();
-			this.data = new AttributeValueList();
+			this.data = new AttributeList();
 			this.dataCount = 0;
 			this.lastFlush = new Date();
 			if(_time && _time === parseInt(_time) && _time!=0)
@@ -2042,18 +1885,18 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 		 * @private
 		 * @alias insertIntoTable
 		 * @memberof Storage#
-		 * @param {AttributeValue} _attributeValue Attribute that should be stored.
+		 * @param {Attribute} _attribute Attribute that should be stored.
 		 * @param {?function} _function For alternative actions, if an asynchronous function is used.
 		 */	
-		'private insertIntoTable' : function(_attributeValue, _function){
-			if(this.db && _attributeValue && Class.isA(AttributeValue, _attributeValue)){
-				var tableName = this.tableName(_attributeValue);
+		'private insertIntoTable' : function(_attribute, _function){
+			if(this.db && _attribute && Class.isA(Attribute, _attribute)){
+				var tableName = this.tableName(_attribute);
 				var statement = 'INSERT INTO "' + tableName
 									 + '" (value_, type_, created_) VALUES ("'
-									 + _attributeValue.getValue() + '", "' 
-									 + _attributeValue.getType() + '", "'
-									 + _attributeValue.getTimestamp() + '")';
-				console.log('INSERT INTO "'+tableName+'" VALUES ('+_attributeValue.getValue()+", "+_attributeValue.getType()+", "+_attributeValue.getTimestamp());
+									 + _attribute.getValue() + '", "'
+									 + _attribute.getType() + '", "'
+									 + _attribute.getTimestamp() + '")';
+				console.log('INSERT INTO "'+tableName+'" VALUES ('+_attribute.getValue()+", "+_attribute.getType()+", "+_attribute.getTimestamp());
 				if(_function && typeof(_function) == 'function'){
 					this.db.transaction(function(tx){tx.executeSql(statement);}, this.errorCB, _function);	
 				} else {
@@ -2158,7 +2001,7 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 		 * @returns {boolean}
 		 */	
 		'private tableExists' : function(_attribute){
-			if(Class.isA(AttributeValue, _attribute) || Class.isA(AttributeType, _attribute)){
+			if(Class.isA(Attribute, _attribute)){
 				var name = this.tableName(_attribute);
 				return this.attributeNames.indexOf(name) > -1;				
 			} else if(typeof _attribute === 'string'){
@@ -2177,11 +2020,16 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 		 * @param {?function} _function For additional actions, if an asynchronous function is used.
 		 */	
 		'public retrieveAttributes' : function(_tableName, _function){
+			console.log("retrieveAttributes from "+_tableName);
+
 			if(this.db){
 				var self = this;	
 				self.flushStorage();
-				this.db.transaction(function(_tx){self.queryValues(_tx,_tableName,self, _function);},
-		    						function(error){self.errorCB(error);} );	
+				this.db.transaction(function(_tx) {
+					self.queryValues(_tx,_tableName,self, _function);
+				}, function(error) {
+					self.errorCB(error);
+				});
 			}
 		},
 		
@@ -2197,9 +2045,10 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 		 * @param {@this} self
 		 * @param {?function} _function For additional actions, if an asynchronous function is used.
 		 */	
-		'private queryValues' : function(_tx,_tableName,self, _function){
-			if(self.tableExists(_tableName)){	
-				var statement = 'SELECT * FROM ' + _tableName;
+		'private queryValues' : function(_tx, _tableName, self, _function){
+			if(self.tableExists(_tableName)){
+				console.log('SELECT * FROM "' +_tableName+"'");
+				var statement = 'SELECT * FROM "' + _tableName+'"';
 				_tx.executeSql(statement, [], 
 					function(_tx,results){self.queryValuesSuccess(_tx,results,_tableName, self, _function);}, 
 					function(error){self.errorCB(error);});			
@@ -2228,7 +2077,7 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 			var attributeName = this.resolveAttributeName(_tableName);
 			var parameterList = this.resolveParameters(_tableName);
 			for(var i=0; i<len; i++){
-				var attribute = new AttributeValue().
+				var attribute = new Attribute().
 								withName(attributeName).withValue(results.rows.item(i).value_).
 								withType(results.rows.item(i).type_).
 								withTimestamp(results.rows.item(i).created_).
@@ -2271,11 +2120,11 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 		 * @private 
 		 * @alias addData
 		 * @memberof Storage#
-		 * @param {AttributeValue} _attributeValue Value that should be stored.
+		 * @param {Attribute} _attribute Value that should be stored.
 		 */		
-		'private addData' : function(_attributeValue){
-			if(Class.isA(AttributeValue, _attributeValue)){
-				this.data.put(_attributeValue);
+		'private addData' : function(_attribute){
+			if(Class.isA(Attribute, _attribute)){
+				this.data.put(_attribute);
 				this.dataCount++;
 			}
 		},
@@ -2307,7 +2156,7 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 		 * @memberof Storage#
 		 */	
 		'private resetForFlush' : function(){
-			this.data = new AttributeValueList();
+			this.data = new AttributeList();
 			this.dataCount = 0;
 			this.lastFlush = new Date();
 		},
@@ -2395,7 +2244,7 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 		 * @returns{String}
 		 */
 		'private tableName' : function(_attribute){
-			return _attribute.getAttributeType().toString();
+			return _attribute.toString(true);
 		},
 		
 		/**
@@ -2443,8 +2292,8 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
  * @module Callback
  * @fileOverview
  */
-define('callback',['easejs', 'attributeType', 'attributeTypeList'],
- 	function(easejs, AttributeType, AttributeTypeList){
+define('callback',['easejs', 'attribute', 'attributeList'],
+ 	function(easejs, Attribute, AttributeList){
  	var Class = easejs.Class;
  	
 	var Callback = Class('Callback',
@@ -2481,7 +2330,7 @@ define('callback',['easejs', 'attributeType', 'attributeTypeList'],
 		 */
 		'public __construct': function()
         {
-			this.attributeTypes = new AttributeTypeList();
+			this.attributeTypes = new AttributeList();
         },
 
         /**
@@ -2556,19 +2405,19 @@ define('callback',['easejs', 'attributeType', 'attributeTypeList'],
 		 * @public
 		 * @alias setAttributeTypes
 		 * @memberof Callback#
-		 * @param {AttributeTypeList} _attributeTypes AttributeTypeList
+		 * @param {AttributeList} _attributes AttributeTypeList
 		 */
-		'public setAttributeTypes' : function(_attributeTypes){
+		'public setAttributeTypes' : function(_attributes){
 			var list = [];
-			if(_attributeTypes instanceof Array){
-				list = _attributeTypes;
-			} else if (Class.isA( AttributeTypeList, _attributeTypes)) {
-				list = _attributeTypes.getItems();
+			if(_attributes instanceof Array){
+				list = _attributes;
+			} else if (Class.isA( AttributeList, _attributes)) {
+				list = _attributes.getItems();
 			}
 			for(var i in list){
-				var attributeType = list[i];
-				if(Class.isA( AttributeType, attributeType )){
-					this.attributeTypes.put(attributeType);
+				var theAttribute = list[i];
+				if(Class.isA(Attribute, theAttribute)){
+					this.attributeTypes.put(theAttribute);
 				}
 			}
 		},
@@ -2579,14 +2428,14 @@ define('callback',['easejs', 'attributeType', 'attributeTypeList'],
 		 * @public
 		 * @alias addAttributeType
 		 * @memberof Callback#
-		 * @param {AttributeType} _attributeType AttributeType
+		 * @param {AttributeType} _attribute AttributeType
 		 */
-		'public addAttributeType' : function(_attributeType){
-			if(Class.isA( AttributeType, _attributeType )){
-				if(!this.attributeTypes.contains(_attributeType)){
-					this.attributeTypes.put(_attributeType);	
+		'public addAttributeType' : function(_attribute){
+			if(Class.isA(Attribute, _attribute )){
+				if(!this.attributeTypes.containsTypeOf(_attribute)){
+					this.attributeTypes.put(_attribute);
 				}
-			};
+			}
 		},
 
 		/**
@@ -2598,9 +2447,9 @@ define('callback',['easejs', 'attributeType', 'attributeTypeList'],
 		 * @param {AttributeType} _attributeType AttributeType
 		 */
 		'public removeAttributeType' : function(_attributeType){
-			if(Class.isA( AttributeType, _attributeType )){
+			if(Class.isA(Attribute, _attributeType )){
 				this.attributeTypes.removeItem(_attributeType.getName());
-			};
+			}
 		},
 		
 		/**
@@ -2647,9 +2496,7 @@ define('callbackList',['easejs', 'abstractList', 'callback'],
 	 * @requires AbstractList
 	 * @requires Callback
 	 */
-	var CallbackList = Class('CallbackList').
-					extend(AbstractList,{
-
+	var CallbackList = Class('CallbackList').extend(AbstractList,{
 		/**
 		 * @alias counter
 		 * @protected
@@ -2677,18 +2524,10 @@ define('callbackList',['easejs', 'abstractList', 'callback'],
 		 * @returns {CallbackList}
 		 */
 		'public withItems': function(_callbackList){
-			var list = [];
-			if(_callbackList instanceof Array){
-				list = _callbackList;
+			if (_callbackList instanceof Array) {
+				this.items = _callbackList;
 			} else if (Class.isA(CallbackList, _callbackList)) {
-				list = _callbackList.getItems();
-			}
-			for(var i in list){
-				var callback = list[i];
-				if(Class.isA( Callback, callback )){
-					this.items[callback.getName()] = callback;
-					this.counter++;
-				}
+				this.items = _callbackList.getItems();
 			}
 			return this;
 		},
@@ -2702,11 +2541,10 @@ define('callbackList',['easejs', 'abstractList', 'callback'],
 		 * @param {Callback} _callback Callback
 		 */
 		'public put' : function(_callback){
-			if(Class.isA(Callback, _callback)){
-				if(!(this.containsKey(_callback.getName()))){
-					this.counter++;
+			if (Class.isA(Callback, _callback)) {
+				if (!(this.contains(_callback))) {
+					this.items.push(_callback);
 				}
-				this.items[_callback.getName()] = _callback;
 			}
 		},
 
@@ -2721,19 +2559,13 @@ define('callbackList',['easejs', 'abstractList', 'callback'],
 		 */
 		'public putAll' : function(_callbackList){
 			var list = [];
-			if(_callbackList instanceof Array){
+			if (_callbackList instanceof Array) {
 				list = _callbackList;
-			} else if (Class.isA(CallbackList, _callbackList)) {
+			} else if (Class.isA(CallbackList,	_callbackList)) {
 				list = _callbackList.getItems();
 			}
-			for(var i in list){
-				var callback = list[i];
-				if(Class.isA(Callback, callback)){
-					if(!(this.containsKey(callback.getName()))){
-						this.counter++;
-					}
-					this.items[callback.getName()] = callback;
-				}
+			for (var i in list) {
+				this.put(list[i]);
 			}
 		},
 
@@ -2744,16 +2576,18 @@ define('callbackList',['easejs', 'abstractList', 'callback'],
 		 * @public
 		 * @alias contains
 		 * @memberof CallbackList#
-		 * @param {Callback} _item CallbackType that should be verified.
+		 * @param {Callback} _callback CallbackType that should be verified.
 		 * @returns {boolean}
 		 */
-		'public contains' : function(_item){
-			if(Class.isA(Callback,_item)){
-				var tmp = this.getItem(_item.getName());
-				if(!(typeof tmp === 'undefined') && tmp.equals(_item)){
-					return true;
+		'public contains' : function(_callback){
+			if (Class.isA(Callback, _callback)) {
+				for (var index in this.items) {
+					var tmp = this.items[index];
+					if (tmp.equals(_callback)) {
+						return true;
+					}
 				}
-			} 
+			}
 			return false;
 		},
 		
@@ -2762,20 +2596,17 @@ define('callbackList',['easejs', 'abstractList', 'callback'],
 		 * @public
 		 * @alias equals
 		 * @memberof CallbackList#
-		 * @param {CallbackList} _list CallbackList that should be compared.
+		 * @param {CallbackList} _callbackList CallbackList that should be compared.
 		 * @returns {boolean}
 		 */
-		'public equals' : function(_list){
-			if(Class.isA(CallbackList,_list) && _list.size() == this.size()){
-				var items = _list.getItems();
-				for(var i in items){
-					var item = items[i];
-					if(!this.contains(item)){
-						return false;
-					}
+		'public equals' : function(_callbackList){
+			if (Class.isA(CallbackList, _callbackList) && _callbackList.size() == this.size()) {
+				for (var index in _callbackList.getItems()) {
+					var theCallback = _callbackList.getItems()[index];
+					if (!this.contains(theCallback)) return false;
 				}
 				return true;
-			} 
+			}
 			return false;
 		}
 
@@ -2827,8 +2658,8 @@ define('conditionMethod',['easejs'],
  * @module Condition
  * @fileOverview
  */
-define('condition',['easejs','attributeType','attributeValue', 'conditionMethod'],
- 	function(easejs, AttributeType, AttributeValue, ConditionMethod){
+define('condition',['easejs','attribute', 'conditionMethod'],
+ 	function(easejs, Attribute, ConditionMethod){
  	var Class = easejs.Class;
  	/**
 	 * @class Condition
@@ -2947,11 +2778,11 @@ define('condition',['easejs','attributeType','attributeValue', 'conditionMethod'
 		 * @public
 		 * @alias setAttributeType
 		 * @memberof Condition#
-		 * @param {AttributeType} _attributeType AttributeType
+		 * @param {Attribute} _attribute AttributeType
 		 */
-		'public setAttributeType' : function(_attributeType){
-			if(Class.isA(AttributeType,_attributeType)){
-				this.attributeType = _attributeType;
+		'public setAttributeType' : function(_attribute){
+			if(Class.isA(Attribute, _attribute)){
+				this.attributeType = _attribute;
 			}
 		},
 
@@ -3035,21 +2866,20 @@ define('condition',['easejs','attributeType','attributeValue', 'conditionMethod'
 		 * @public
 		 * @alias compare
 		 * @memberof Condition#
-		 * @param {AttributeValue} _newAttributeValue new Attribute that should be compared
-		 * @param {AttributeValue} _oldAttributeValue old Attribute 
+		 * @param {Attribute} _newAttributeValue new Attribute that should be compared
+		 * @param {Attribute} _oldAttributeValue old Attribute
 		 * @returns {boolean}
 		 */
 		'public compare' : function(_newAttributeValue, _oldAttributeValue){
-			if(!this.attributeType.equals(_newAttributeValue.getAttributeType())
-					&& !this.attributeType.equals(_oldAttributeValue.getAttributeType())){
+			if(!this.attributeType.equalsTypeOf(_newAttributeValue)&& !this.attributeType.equalsTypeOf(_oldAttributeValue)){
 				return false;
-			};
+			}
 			if(!this.comparisonMethod){
 				return false;
-			};
-			if(Class.isA(AttributeValue,_newAttributeValue) && Class.isA(AttributeValue,_oldAttributeValue)){
+			}
+			if(Class.isA(Attribute, _newAttributeValue) && Class.isA(Attribute, _oldAttributeValue)){
 				return this.comparisonMethod.process(this.referenceValue, _newAttributeValue.getValue(), _oldAttributeValue.getValue());
-			};
+			}
 			return false;
 		},
 		
@@ -3066,7 +2896,7 @@ define('condition',['easejs','attributeType','attributeValue', 'conditionMethod'
 			if(Class.isA(Condition, _condition)){
 				if(_condition.getName() == this.getName()
 						&& _condition.getReferenceValue() == this.getReferenceValue()
-						&& _condition.getAttributeType().equals(this.attributeType)
+						&& _condition.getAttributeType().equalsTypeOf(this.attributeType)
 						&& _condition.getComparisonMethod() === this.comparisonMethod){
 					return true;
 				};
@@ -3127,18 +2957,10 @@ define('conditionList',['easejs','abstractList', 'condition'],
 		 * @returns {ConditionList}
 		 */
 		'public withItems': function(_conditionList){
-			var list = new Array();
-			if(_conditionList instanceof Array){
-				list = _conditionList;
+			if (_conditionList instanceof Array) {
+				this.items = _conditionList;
 			} else if (Class.isA(ConditionList, _conditionList)) {
-				list = _conditionList.getItems();
-			}
-			for(var i in list){
-				var condition = list[i];
-				if(Class.isA( Condition, condition )){
-					this.items[condition.getName()] = condition;
-					this.counter++;
-				}
+				this.items = _conditionList.getItems();
 			}
 			return this;
 		},		
@@ -3152,11 +2974,9 @@ define('conditionList',['easejs','abstractList', 'condition'],
 		 * @param {Condition} _condition Condition
 		 */
 		'public put' : function(_condition){
-			if(Class.isA(Condition, _condition)){
-				if(!(this.containsKey(_condition.getName()))){
-					this.counter++;
-				}
-				this.items[_condition.getName()] = _condition;
+			if (Class.isA(Condition, _condition)) {
+				if (!(this.contains(_condition))) {
+					this.items.push(_condition);}
 			}
 		},
 
@@ -3170,20 +2990,14 @@ define('conditionList',['easejs','abstractList', 'condition'],
 		 * @param {(ConditioneList|Array)} _conditionList ConditionList
 		 */
 		'public putAll' : function(_conditionList){
-			var list = new Array();
-			if(_conditionList instanceof Array){
+			var list = [];
+			if (_conditionList instanceof Array) {
 				list = _conditionList;
-			} else if (Class.isA(ConditionList, _conditionList)) {
+			} else if (Class.isA(ConditionList,	_conditionList)) {
 				list = _conditionList.getItems();
 			}
-			for(var i in list){
-				var condition = list[i];
-				if(Class.isA(Condition, condition)){
-					if(!(this.containsKey(condition.getName()))){
-						this.counter++;
-					}
-					this.items[condition.getName()] = condition;
-				}
+			for (var i in list) {
+				this.put(list[i]);
 			}
 		},
 
@@ -3194,16 +3008,18 @@ define('conditionList',['easejs','abstractList', 'condition'],
 		 * @public
 		 * @alias contains
 		 * @memberof ConditionList#
-		 * @param {Condition} _item Condition that should be verified.
+		 * @param {Condition} _condition Condition that should be verified.
 		 * @returns {boolean}
 		 */
-		'public contains' : function(_item){
-			if(Class.isA(Condition,_item)){
-				var tmp = this.getItem(_item.getName());
-				if(!(typeof tmp === 'undefined') && tmp.equals(_item)){
-					return true;
+		'public contains' : function(_condition){
+			if (Class.isA(Condition, _condition)) {
+				for (var index in this.items) {
+					var theCondition = this.items[index];
+					if (theCondition.equals(_condition)) {
+						return true;
+					}
 				}
-			} 
+			}
 			return false;
 		},
 		
@@ -3213,24 +3029,19 @@ define('conditionList',['easejs','abstractList', 'condition'],
 		 * @public
 		 * @alias equals
 		 * @memberof ConditionList#
-		 * @param {ConditionList} _list ConditionList that should be compared.
+		 * @param {ConditionList} _conditionList ConditionList that should be compared.
 		 * @returns {boolean}
 		 */
-		'public equals' : function(_list){
-			if(Class.isA(ConditionList,_list) && _list.size() == this.size()){
-				var items = _list.getItems();
-				for(var i in items){
-					var item = items[i];
-					if(!this.contains(item)){
-						return false;
-					}
+		'public equals' : function(_conditionList){
+			if (Class.isA(ConditionList, _conditionList) && _conditionList.size() == this.size()) {
+				for (var index in _conditionList.getItems()) {
+					var theCondition = _conditionList.getItems()[index];
+					if (!this.contains(theCondition)) return false;
 				}
 				return true;
-			} 
+			}
 			return false;
-		},
-
-
+		}
 
 	});
 
@@ -3242,8 +3053,8 @@ define('conditionList',['easejs','abstractList', 'condition'],
  * @module Subscriber
  * @fileOverview
  */
-define('subscriber',['easejs', 'attributeTypeList', 'callbackList', 'condition', 'conditionList'],
- 	function(easejs, AttributeTypeList, CallbackList, Condition, ConditionList){
+define('subscriber',['easejs', 'attributeList', 'callbackList', 'condition', 'conditionList'],
+ 	function(easejs, AttributeList, CallbackList, Condition, ConditionList){
 
  	/*
  	* Callback: name and associated Attributes
@@ -3311,8 +3122,8 @@ define('subscriber',['easejs', 'attributeTypeList', 'callbackList', 'condition',
 		'virtual public __construct': function()
         {
 			this.subscriptionCallbacks = new CallbackList();
-			this.subscriptionCallbacks = new AttributeTypeList();
-			this.attributesSubset = new AttributeTypeList();
+			this.subscriptionCallbacks = new AttributeList();
+			this.attributesSubset = new AttributeList();
 			this.conditions = new ConditionList();
         },
 			
@@ -3410,7 +3221,7 @@ define('subscriber',['easejs', 'attributeTypeList', 'callbackList', 'condition',
 		'public setSubscriberName' : function(_subscriberName){
 			if(typeof _subscriberName === 'string'){
 				this.subscriberName = _subscriberName;
-			};
+			}
 			
 		},
 		
@@ -3463,7 +3274,7 @@ define('subscriber',['easejs', 'attributeTypeList', 'callbackList', 'condition',
 		'public setSubscriptionCallbacks' : function(_subscriptionCallbacks){
 			if(Class.isA(CallbackList, _subscriptionCallbacks)){
 				this.subscriptionCallbacks = _subscriptionCallbacks;
-			};
+			}
 		},
 		
 		/**
@@ -3484,12 +3295,12 @@ define('subscriber',['easejs', 'attributeTypeList', 'callbackList', 'condition',
 		 * @public
 		 * @alias setAttributesSubset
 		 * @memberof Subscriber#
-		 * @param {AttributeTypeList} _attributesSubset attributesSubset
+		 * @param {AttributeList} _attributesSubset attributesSubset
 		 */
 		'public setAttributesSubset' : function(_attributesSubset){
-			if(Class.isA(AttributeTypeList, _attributesSubset)){
+			if(Class.isA(AttributeList, _attributesSubset)){
 				this.attributesSubset = _attributesSubset;
-			};
+			}
 		},
 		
 		/**
@@ -3628,23 +3439,14 @@ define('subscriberList',['easejs', 'abstractList', 'subscriber'],
 		 * @public
 		 * @alias withItems
 		 * @memberof SubscriberList#
-		 * @param {(SubscriberList|Array)}
-		 *            _subscriberList SubscriberList
+		 * @param {(SubscriberList|Array)} _subscriberList SubscriberList
 		 * @returns {SubscriberList}
 		 */
 		'public withItems': function(_subscriberList){
-			var list = new Array();
-			if(_subscriberList instanceof Array){
-				list = _subscriberList;
-			} else if (Class.isA( SubscriberList, _subscriberList)) {
-				list = _subscriberList.getItems();
-			}
-			for(var i in list){
-				var subscriber = list[i];
-				if(Class.isA( Subscriber, subscriber )){
-					this.items[subscriber.getSubscriberId()] = subscriber;
-					this.counter++;
-				}
+			if (_subscriberList instanceof Array) {
+				this.items = _subscriberList;
+			} else if (Class.isA(SubscriberList, _subscriberList)) {
+				this.items = _subscriberList.getItems();
 			}
 			return this;
 		},
@@ -3655,15 +3457,12 @@ define('subscriberList',['easejs', 'abstractList', 'subscriber'],
 		 * @public
 		 * @alias put
 		 * @memberof SubscriberList#
-		 * @param {Subscriber}
-		 *            _subscriber Subscriber
+		 * @param {Subscriber} _subscriber Subscriber
 		 */
 		'public put' : function(_subscriber){
-			if(Class.isA(Subscriber, _subscriber)){
-				if(!(this.containsKey(_subscriber.getSubscriberId()))){
-					this.counter++;
-				}
-				this.items[_subscriber.getSubscriberId()] = _subscriber;
+			if (Class.isA(Subscriber, _subscriber)) {
+				if (!(this.contains(_subscriber))) {
+					this.items.push(_subscriber);}
 			}
 		},
 
@@ -3676,20 +3475,14 @@ define('subscriberList',['easejs', 'abstractList', 'subscriber'],
 		 * @param {(SubscriberList|Array)} _subscriberList SubscriberList
 		 */
 		'public putAll' : function(_subscriberList){
-			var list = new Array();
-			if(_subscriberList instanceof Array){
+			var list = [];
+			if (_subscriberList instanceof Array) {
 				list = _subscriberList;
-			} else if (Class.isA(SubscriberList, _subscriberList)) {
+			} else if (Class.isA(SubscriberList,	_subscriberList)) {
 				list = _subscriberList.getItems();
 			}
-			for(var i in list){
-				var subscriber = list[i];
-				if(Class.isA(Subscriber, subscriber)){
-					if(!(this.containsKey(subscriber.getSubscriberId()))){
-						this.counter++;
-					}
-					this.items[subscriber.getSubscriberId()] = subscriber;
-				}
+			for (var i in list) {
+				this.put(list[i]);
 			}
 		},
 
@@ -3699,17 +3492,18 @@ define('subscriberList',['easejs', 'abstractList', 'subscriber'],
 		 * @public
 		 * @alias contains
 		 * @memberof SubscriberList#
-		 * @param {Subscriber}
-		 *            _item Subscriber that should be verified.
+		 * @param {Subscriber}_subscriber Subscriber that should be verified.
 		 * @returns {boolean}
 		 */
-		'public contains' : function(_item){
-			if(Class.isA(Subscriber,_item)){
-				var tmp = this.getItem(_item.getSubscriberId());
-				if(!(typeof tmp === 'undefined') && tmp.equals(_item)){
-					return true;
+		'public contains' : function(_subscriber){
+			if (Class.isA(Subscriber, _subscriber)) {
+				for (var index in this.items) {
+					var tmp = this.items[index];
+					if (tmp.equals(_subscriber)) {
+						return true;
+					}
 				}
-			} 
+			}
 			return false;
 		},
 		
@@ -3718,254 +3512,29 @@ define('subscriberList',['easejs', 'abstractList', 'subscriber'],
 		 * @public
 		 * @alias equals
 		 * @memberof SubscriberList#
-		 * @param {SubscriberList} _list SubscriberList that should be compared.
+		 * @param {SubscriberList} _subscriberList SubscriberList that should be compared.
 		 * @returns {boolean}
 		 */
-		'public equals' : function(_list){
-			if(Class.isA(SubscriberList,_list) && _list.size() == this.size()){
-				var items = _list.getItems();
-				for(var i in items){
-					var item = items[i];
-					if(!this.contains(item)){
-						return false;
-					}
+		'public equals' : function(_subscriberList) {
+			if (Class.isA(SubscriberList, _subscriberList) && _subscriberList.size() == this.size()) {
+				for (var index in _subscriberList.getItems()) {
+					var theSubscriber = _subscriberList.getItems()[index];
+					if (!this.contains(theSubscriber)) return false;
 				}
 				return true;
-			} 
+			}
 			return false;
 		},
 
+			'public removeSubscriberWithId': function(_subscriberId) {
+				for (var index in this.items) {
+					var theSubscriber = this.items[index];
+					if (theSubscriber.getSubscriberId() == _subscriberId) this.items.splice(index, 1);
+				}
+			}
 	});
 
 	return SubscriberList;
-});
-/**
- * This module represents the WidgetDescription. 
- * It describes the most important information for the communication with a specific widget. 
- * 
- * @module WidgetDescription
- * @fileOverview
- */
-define('widgetDescription',['easejs', 'attributeTypeList'],
-    function(easejs, AttributeTypeList){
-    	var Class = easejs.Class;
-		var WidgetDescription = Class('WidgetDescription',{
-			
-			/**
-			 * @alias id
-			 * @protected
-			 * @type {string}
-			 * @memberof WidgetDescription#
-			 * @desc Id of the Widget that are described by this object.
-			 */
-			'protected id' : '', 
-			/**
-			 * @alias name
-			 * @protected
-			 * @type {string}
-			 * @memberof WidgetDescription#
-			 * @desc Name of the Widget that are described by this object.
-			 */
-			'protected name' : '', 
-			/**
-			 * @alias outAttributeTypes
-			 * @protected
-			 * @type {AttributeTypeList}
-			 * @memberof WidgetDescription#
-			 * @desc List of attributeTypes that are provided.
-			 */
-			'protected outAttributeTypes' : [],
-            /**
-             * @alias callbackNames
-             * @protected
-             * @type {array}
-             * @memberof WidgetDescription#
-             * @desc Array of available callback names.
-             */
-            'protected callbackNames' : [],
-
-			/**
-			 * Constructor: Initializes the inAttributeTypes.
-			 * 
-			 * @virtual
-			 * @class WidgetDescription
-			 * @classdesc The description of a Widget and the communication with it.
-			 * @requires easejs
-			 * @requires AttributeTypeList
-			 * @constructs WidgetDescription
-			 */
-			'virtual public __construct' : function(){
-				this.outAttributeTypes = new AttributeTypeList();
-			},
-
-			/**
-			 * Builder for name
-			 * 
-			 * @public
-			 * @alias withName
-			 * @memberof WidgetDescription#
-			 * @param {string} _name Name of the Widget that are described by this object.
-			 * @returns {WidgetDescription}
-			 */
-    		'public withName' : function(_name){
-    			this.setName(_name);
-    			return this;
-    		},
-
-    		/**
-			 * Builder for id
-			 * 
-			 * @public
-			 * @alias withId
-			 * @memberof WidgetDescription#
-			 * @param {string} _id Id of the Widget that are described by this object.
-			 * @returns {WidgetDescription}
-			 */
-    		'public withId' : function(_id){
-    			this.setId(_id);
-    			return this;
-    		},
-    		
-    		/**
-			 * Builder for outAttributeType list
-			 * 
-			 * @public
-			 * @alias withOutAttributeTypes
-			 * @memberof WidgetDescription#
-			 * @param {(AttributeTypeList|Array)} _outAttributeTypes List of AttributeType that are provided
-			 * @returns {WidgetDescription}
-			 */
-    		'public withOutAttributeTypes' : function(_outAttributeTypes){
-    			this.setOutAttributeTypes(_outAttributeTypes);
-    			return this;
-    		},
-    		
-    		/**
-			 * Builder for outAttributeType
-			 * 
-			 * @public
-			 * @alias withInAttributeType
-			 * @memberof WidgetDescription#
-			 * @param {AttributeType} _outAttributeType AttributeType that are provided
-			 * @returns {WidgetDescription}
-			 */
-    		'public withOutAttributeType' : function(_outAttributeType){
-    			this.setOutAttributeType(_outAttributeType);
-    			return this;
-    		},
-
-    		/**
-			 * Returns the name of the described widget.
-			 * 
-			 * @public
-			 * @alias getName
-			 * @memberof WidgetDescription#
-			 * @returns {String}
-			 */
-			'public getName' : function(){
-				return this.name;
-			},
-			
-			/**
-			 * Returns the id of the described widget.
-			 * 
-			 * @public
-			 * @alias getId
-			 * @memberof WidgetDescription#
-			 * @returns {String}
-			 */
-			'public getId' : function(){
-				return this.id;
-			},
-			
-			/**
-			 * Returns outAttributeTypes of the widget.
-			 * 
-			 * @public
-			 * @alias getOutAttributeTypes
-			 * @memberof WidgetDescription#
-			 * @returns {AttributeTypeList}
-			 */
-			'public getOutAttributeTypes' : function(){
-				return this.outAttributeTypes;
-			},
-
-			/**
-			 * Sets the name of the described widget.
-			 * 
-			 * @public
-			 * @alias setName
-			 * @memberof WidgetDescription#
-			 * @params {String} _name Name of the described widget
-			 */
-			'public setName' : function(_name){
-				if(typeof _name === 'string'){
-					this.name = _name;
-				}
-			},
-
-			/**
-			 * Sets the id of the described widget.
-			 * 
-			 * @public
-			 * @alias setId
-			 * @memberof WidgetDescription#
-			 * @params {String} _id Id of the described widget
-			 */
-			'public setId' : function(_id){
-				if(typeof _id === 'string') {
-					this.id = _id;
-				}
-			},
-			
-			/**
-			 * Adds an outAttributeType to the list
-			 * 
-			 * @public
-			 * @alias addOutAttributeType
-			 * @memberof WidgetDescription#
-			 * @param {AttributeType} _outAttributeType AttributeType that are provided
-			 */
-			'public addOutAttributeType' : function(_outAttributeType){
-					this.outAttributeTypes.put(_outAttributeType);
-			},
-			
-			/**
-			 * Adds outAttributeTypes that are provided by the Widget
-			 * 
-			 * @public
-			 * @alias addOutAttributeTypes
-			 * @memberof WidgetDescription#
-			 * @param {(AttributeTypeList|Array)} _outAttributeTypes List of AttributeType that are provided
-			 */
-			'public addOutAttributeTypes' : function(_outAttributeTypes){
-				this.outAttributeTypes.putAll(_outAttributeTypes);
-			},
-
-            'public setCallbackNames' : function(_callbackNames) {
-                this.callbackNames = _callbackNames;
-            },
-
-            'public addCallbackName' : function(_callbackName) {
-                this.callbackNames.push(_callbackName);
-            },
-
-			/**
-			 * Returns true if the widget can satisfy the requested attribute type.
-			 *
-			 * @public
-			 * @alias doesSatisfyAttributeType
-			 * @memberof WidgetDescription#
-			 * @param {AttributeType} _attributeType
-			 * @returns {boolean}
-			 */
-            'public doesSatisfyAttributeType': function(_attributeType) {
-                return this.getOutAttributeTypes().contains(_attributeType);
-            }
-		});
-
-        return WidgetDescription;
-	
 });
 /**
  * This module representing a Context Widget.
@@ -3973,12 +3542,10 @@ define('widgetDescription',['easejs', 'attributeTypeList'],
  * @module Widget
  * @fileOverview
  */
-define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
-		 'attributeValue', 'attributeTypeList', 'attributeValueList', 'conditionList',
-		 'subscriber', 'subscriberList', 'widgetDescription'],
-	function(easejs, MathUuid, Callback, CallbackList, AttributeType,
-			AttributeValue, AttributeTypeList, AttributeValueList, ConditionList,
-			Subscriber, SubscriberList, WidgetDescription) {
+define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
+		 'attributeList', 'conditionList', 'subscriber', 'subscriberList'],
+	function(easejs, MathUuid, Callback, CallbackList, Attribute,
+			AttributeList, ConditionList, Subscriber, SubscriberList) {
 		
 		var AbstractClass = easejs.AbstractClass;
 		var Class = easejs.Class;
@@ -3999,48 +3566,32 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			* @desc ID of the Widget. Will be generated.
 			*/
 			'public id' : '',
-			/**
-			* @alias attributeTypes
-			* @protected
-			* @type {AttributeTypeList}
-			* @memberof Widget#
-			* @desc Types of all available attributes.
-			*/
-			'protected attributeTypes' : [],
-			/**
-			* @alias constantAttributeTypes
-			* @protected
-			* @type {AttributeTypeList}
-			* @memberof Widget#
-			* @desc Types of all available ConstantAttributes.
-			*/
-			'protected constantAttributeTypes' : [],
 
 			/**
 			 * @alias attributes
 			 * @protected
-			 * @type {AttributeValueList}
+			 * @type {AttributeList}
 			 * @memberof Widget#
 			 * @desc All available Attributes and their values.
 			 */
-			'protected attributes' : [],
+			'protected outAttributes' : [],
 			/**
 			 * @alias oldAttributes
 			 * @protected
-			 * @type {AttributeValueList}
+			 * @type {AttributeList}
 			 * @memberof Widget#
 			 * @desc This temporary variable is used for storing the old attribute values. 
 			 * 			So these can be used to check conditions.
 			 */
-			'protected oldAttributes' : [],
+			'protected oldOutAttributes' : [],
 			/**
 			 * @alias constantAttributes
 			 * @protected
-			 * @type {AttributeValueList}
+			 * @type {AttributeList}
 			 * @memberof Widget#
 			 * @desc All available constant Attributes and their values.
 			 */
-			'protected constantAttributes' : [],
+			'protected constantOutAttributes' : [],
 			/**
 			 * @alias callbacks
 			 * @protected
@@ -4079,10 +3630,8 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * @requires MathUuid
 			 * @requires Callback
 			 * @requires CallbackList
-			 * @requires AttributeType
-			 * @requires AttributeValue
-			 * @requires AttributeTypeList
-			 * @requires AttributeValueList
+			 * @requires Attribute
+			 * @requires AttributeList
 			 * @requires ConditionList
 			 * @requires Subscriber
 			 * @requires SubscriberList
@@ -4094,10 +3643,8 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 				this.id = Math.uuid();
                 this.discoverer = _discoverer;
                 this.register();
-				this.attributeTypes = new AttributeTypeList();
-				this.constantAttributeTypes = new AttributeTypeList();
-				this.attributes = new AttributeValueList();
-				this.constantAttributes = new AttributeValueList();
+				this.outAttributes = new AttributeList();
+				this.constantOutAttributes = new AttributeList();
 				this.subscribers = new SubscriberList();
 				this.callbacks = new CallbackList();
 				this.init(_attributeTypes);
@@ -4145,12 +3692,16 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * Returns the available AttributeTypes.
 			 * 
 			 * @public
-			 * @alias getAttributeTypes
+			 * @alias getAttributes
 			 * @memberof Widget#
-			 * @returns {AttributeTypeList}
+			 * @returns {AttributeList}
 			 */
-			'public getAttributeTypes' : function() {
-				return this.attributeTypes;
+			'public getOutAttributes' : function(_attributeList) {
+				if (Class.isA(AttributeList, _attributeList)) {
+					return this.outAttributes.getSubset(_attributeList);
+				} else {
+					return this.outAttributes;
+				}
 			},
 
 			/**
@@ -4160,27 +3711,14 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * @public
 			 * @alias getWidgetConstantAttributeTypes
 			 * @memberof Widget#
-			 * @returns {AttributeTypeList}
+			 * @returns {AttributeList}
 			 */
-			'public getWidgetConstantAttributeTypes' : function() {
-				return this.constantAttributeTypes;
-			},
-
-			/**
-			 * Returns the last acquired attribute values.
-			 * 
-			 * @public
-			 * @alias getAttributes
-			 * @memberof Widget#
-             * @param {AttributeTypeList} _attributeTypeList
-			 * @returns {AttributeValueList}
-			 */
-			'public getAttributeValues' : function(_attributeTypeList) {
-                if (Class.isA(AttributeTypeList, _attributeTypeList)) {
-                    return this.attributes.getSubset(_attributeTypeList);
-                } else {
-                    return this.attributes;
-                }
+			'public getConstantOutAttributes' : function(_attributeList) {
+				if (Class.isA(AttributeList, _attributeList)) {
+					return this.constantOutAttributes.getSubset(_attributeList);
+				} else {
+					return this.constantOutAttributes;
+				}
 			},
 
             /**
@@ -4189,8 +3727,8 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
              * @param {AttributeType} _attributeType The attribute type to return the last value for.
              * @returns {*}
              */
-            'public getAttributeValue': function(_attributeType) {
-                return this.getAttributeValues().getItemForAttributeType(_attributeType).getValue();
+            'public getValueForAttributeWithTypeOf': function(_attributeType) {
+                return this.getOutAttributes().getAttributeWithTypeOf(_attributeType).getValue();
             },
 			
 			/**
@@ -4199,22 +3737,10 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * @private
 			 * @alias getOldAttributes
 			 * @memberof Widget#
-			 * @returns {AttributeValueList}
+			 * @returns {AttributeList}
 			 */
 			'public getOldAttributes' : function() {
-				return this.oldAttributes;
-			},
-
-			/**
-			 * Returns the ConstantAttributes.
-			 * 
-			 * @public
-			 * @alias getConstantAttributes
-			 * @memberof Widget#
-			 * @returns {AttributeValueList}
-			 */
-			'public getConstantAttributes' : function() {
-				return this.constantAttributes;
+				return this.oldOutAttributes;
 			},
 
 			/**
@@ -4296,12 +3822,10 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * @protected
 			 * @alias setAttributes
 			 * @memberof Widget#
-			 * @param {(AttributeValueList|Array)}
-			 *            _attributes List or Array of
-			 *            AttributeValues
+			 * @param {(AttributeList|Array)} _attributes List or Array of AttributeValues
 			 */
-			'protected setAttributes' : function(_attributes) {
-				var list = new Array();
+			'protected setOutAttributes' : function(_attributes) {
+				var list = [];
 				if (_attributes instanceof Array) {
 					list = _attributes.reduce(function(o, v, i) {
                         o[i] = v;
@@ -4310,12 +3834,12 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 				} else if (Class.isA(AttributeValueList,_attributes)) {
 					list = _attributes.getItems();
 				}
-				this.oldAttributes = this.attributes;
+				this.oldOutAttributes = this.outAttributes;
 				for ( var i in list) {
 					var attribute = list[i];
 					if (Class.isA(AttributeValue, attribute)) {
 						attribute.setTimestamp(this.getCurrentTime());
-						this.attributes.put(attribute);
+						this.outAttributes.put(attribute);
 
 						var type = new AttributeType().withName(attribute.getName())
 													.withType(attribute.getType())
@@ -4332,25 +3856,18 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * updated.
 			 * 
 			 * @public
-			 * @alias addAttribute
+			 * @alias addOutAttribute
 			 * @memberof Widget#
-			 * @param {AttributeValue}
-			 *            _attribute AttributeValue
+			 * @param {Attribute} _attribute AttributeValue
 			 */
-			'public addAttribute' : function(_attribute) {
-				if (Class.isA(AttributeValue, _attribute)) {
-					if (!this.attributes.contains(_attribute)) {
-
-						var type = new AttributeType().withName(_attribute.getName())
-													.withType(_attribute.getType())
-													.withParameters(_attribute.getParameters());
-						this.attributeTypes.put(type);
-
+			'public addOutAttribute' : function(_attribute, _multipleInstances) {
+				_multipleInstances = typeof _multipleInstances == "undefined" ? false : _multipleInstances;
+				if (Class.isA(Attribute, _attribute)) {
+					if (!this.outAttributes.containsTypeOf(_attribute)) {
+						this.oldOutAttributes = this.outAttributes;
+						_attribute.setTimestamp(this.getCurrentTime());
+						this.outAttributes.put(_attribute, _multipleInstances);
 					}
-					this.oldAttributes = this.attributes;
-
-					_attribute.setTimestamp(this.getCurrentTime());
-					this.attributes.put(_attribute);
 				}
 			},
 
@@ -4359,14 +3876,12 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * associated AttributeTypes.
 			 * 
 			 * @protected
-			 * @alias setConstantAttributes
+			 * @alias setConstantOutAttributes
 			 * @memberof Widget#
-			 * @param {(AttributeValueList|Array)}
-			 *            _constantAttributes List or Array of
-			 *            AttributeValues
+			 * @param {(AttributeList|Array)} _constantAttributes List or Array of AttributeValues
 			 */
-			'protected setConstantAttributes' : function(_constantAttributes) {
-				var list = new Array();
+			'protected setConstantOutAttributes' : function(_constantAttributes) {
+				var list = [];
 				if (_constantAttributes instanceof Array) {
 					list = _constantAttributes;
 				} else if (Class.isA(AttributeValueList,_constantAttributes)) {
@@ -4392,12 +3907,11 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * updated.
 			 * 
 			 * @protected
-			 * @alias addConstantAttribute
+			 * @alias addConstantOutAttribute
 			 * @memberof Widget#
-			 * @param {AttributeValue}
-			 *            _constantAttribute AttributeValue
+			 * @param {AttributeValue} _constantAttribute AttributeValue
 			 */
-			'protected addConstantAttribute' : function(_constantAttribute) {
+			'protected addConstantOutAttribute' : function(_constantAttribute) {
 				if (Class.isA(AttributeValue, _constantAttribute)) {
 					if (!this.constantAttributes
 							.contains(_constantAttribute)) {
@@ -4500,7 +4014,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * @param {Subscriber} _subscriber Subscriber
 			 */
 			'public removeSubscriber' : function(_subscriberId) {
-					this.subscribers.removeItem(_subscriberId);
+					this.subscribers.removeSubscriberWithId(_subscriberId);
 			},
 
 			/**
@@ -4520,14 +4034,13 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * provided Attribute.
 			 * 
 			 * @protected
-			 * @alias isAttribute
+			 * @alias isOutAttribute
 			 * @memberof Widget#
-			 * @param {AttributeValue}
-			 *            _attribute
+			 * @param {Attribute} _attribute
 			 * @returns {boolean}
 			 */
-			'protected isAttribute' : function(_attribute) {
-				return !!this.attributeTypes.contains(_attribute.getAttributeType());
+			'protected isOutAttribute' : function(_attribute) {
+				return !!this.outAttributes.containsTypeOf(_attribute);
 			},
 
 			/**
@@ -4539,7 +4052,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * @alias initAttributes
 			 * @memberof Widget#
 			 */
-			'abstract protected initAttributes' : [],
+			'abstract protected initOutAttributes' : [],
 			
 			/**
 			 * Initializes the provided ConstantAttributes.
@@ -4550,7 +4063,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * @alias initConstantAttributes
 			 * @memberof Widget#
 			 */
-			'abstract protected initConstantAttributes' : [],
+			'abstract protected initConstantOutAttributes' : [],
 
 			/**
 			 * Initializes the provided Callbacks.
@@ -4572,8 +4085,8 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * @memberof Widget#
 			 */
 			'protected init' : function(_attributeTypes) {
-				this.initAttributes();
-				this.initConstantAttributes();
+				this.initOutAttributes();
+				this.initConstantOutAttributes();
 				this.initCallbacks();
 
                 this.didFinishInitialization(_attributeTypes);
@@ -4645,20 +4158,20 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * @public
 			 * @alias putData
 			 * @memberof Widget#
-			 * @param {(AttributeValueList|Array)} _data Data that should be entered.
+			 * @param {(AttributeList|Array)} _data Data that should be entered.
 			 * 
 			 */
 			'virtual public putData' : function(_data) {
 				var list = [];
 				if (_data instanceof Array) {
 					list = _data;
-				} else if (Class.isA(AttributeValueList, _data)) {
+				} else if (Class.isA(AttributeList, _data)) {
 					list = _data.getItems();
 				}
 				for ( var i in list) {
 					var x = list[i];
-					if (Class.isA(AttributeValue, x) && this.isAttribute(x)) {
-						this.addAttribute(x);
+					if (Class.isA(Attribute, x) && this.isOutAttribute(x)) {
+						this.addOutAttribute(x);
 					}
 				}
 
@@ -4671,12 +4184,12 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * @public
 			 * @alias queryWidget
 			 * @memberof Widget#
-			 * @returns {AttributeValueList}
+			 * @returns {AttributeList}
 			 */
 			'public queryWidget' : function() {
-				var response = new AttributeValueList();
-				response.putAll(this.getAttributeValues());
-				response.putAll(this.getConstantAttributes());
+				var response = new AttributeList();
+				response.putAll(this.getOutAttributes());
+				response.putAll(this.getConstantOutAttributes());
 				return response;
 			},
 
@@ -4688,17 +4201,14 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * @alias updateAndQueryWidget
 			 * @memberof Widget#
 			 * @param {?function} _function For alternative  actions, because an asynchronous function can be used.
-			 * @returns {?AttributeValueList}
+			 * @returns {?AttributeList}
 			 */
 			'virtual public updateAndQueryWidget' : function(_function) {
 				if(_function && typeof(_function) === 'function'){
 					this.queryGenerator(_function);
 				} else {
 					this.queryGenerator();
-					var response = new AttributeValueList();
-					response.putAll(this.getAttributeValues());
-					response.putAll(this.getConstantAttributes());
-					return response;
+					return this.queryWidget();
 				}
 			},
 
@@ -4708,19 +4218,19 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * @protected
 			 * @alias sendToSubscriber
 			 * @memberof Widget#
-			 * @param {string} _callbackName Name of the searched Callback.
+			 * @param {string} _callback Name of the searched Callback.
 			 */
 			'protected sendToSubscriber' : function(_callback) {
 				if (_callback && Class.isA(Callback, _callback)) {
 					var subscriberList = this.subscribers.getItems();
-					for ( var i in subscriberList) {
+					for (var i in subscriberList) {
 						var subscriber = subscriberList[i];
-						if (subscriber.getSubscriptionCallbacks().containsKey( _callback.getName())) {
+						if (subscriber.getSubscriptionCallbacks().contains(_callback)) {
 							if(this.dataValid(subscriber.getConditions())){
 								var subscriberInstance = this.discoverer.getComponent(subscriber.getSubscriberId());
 								var callSubset =  _callback.getAttributeTypes();
 								var subscriberSubset = subscriber.getAttributesSubset();
-								var data = this.attributes.getSubset(callSubset);
+								var data = this.outAttributes.getSubset(callSubset);
 								if (subscriberSubset && subscriberSubset.size() > 0) {
 									data = data.getSubset(subscriberSubset);
 								}
@@ -4748,7 +4258,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 				}
 				if (!_conditions.isEmpty()) {
 					var items = _condition.getItems();
-					for ( var i in items) {
+					for (var i in items) {
 						var condition = items[i];
 						var conditionAttributeType = condition.getAttributeType();
 						var conditionAttributeTypeList = new AttributeTypeList()
@@ -4759,25 +4269,6 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 					}
 				}
 				return false;
-			},
-
-			/**
-			 * Returns the description of this component.
-			 * @virtual
-			 * @public
-			 * @alias getDescription
-			 * @memberof Widget#
-			 * @returns {WidgetDescription} 
-			 */
-			'virtual public getDescription' : function() {
-				var description = new WidgetDescription().withId(this.id).withName(this.name);
-				description.addOutAttributeTypes(this.attributeTypes);
-				description.addOutAttributeTypes(this.constantAttributeTypes);
-                var widgetCallbacks = this.callbacks.getItems();
-                for(var i in widgetCallbacks) {
-                    description.addCallbackName(widgetCallbacks[i].getName());
-                }
-				return description;
 			},
 
 			/**
@@ -4822,132 +4313,24 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 				if (this.discoverer) {
 					this.discoverer.registerNewComponent(this);
 				}
-			}
-			
-//			/**
-//			 * Unregisters the component to the associated discoverer
-//			 * and deletes the reference.
-//			 * 
-//			 * @public
-//			 * @alias register
-//			 * @memberof Widget#
-//			 */
-//			'protected unregister' : function() {
-//				if (this.discoverer) {
-//					this.discoverer.unregisterComponent(this.getId());
-//					this.discoverer = null;
-//				}
-//			},
+			},
 
+			/**
+			 * Returns true if the widget can satisfy the requested attribute type.
+			 *
+			 * @public
+			 * @alias doesSatisfyAttributeType
+			 * @memberof WidgetDescription#
+			 * @param {AttributeType} _attribute
+			 * @returns {boolean}
+			 */
+
+			'virtual public doesSatisfyAttributeType': function(_attribute) {
+				return this.outAttributes.containsTypeOf(_attribute);
+			}
 		});
 
 		return Widget;
-});
-/**
- * This module represents the InterpreterDescription. 
- * It describes the most important information for the communication with a specific interpreter. 
- * 
- * @module InterpreterDescription
- * @fileOverview
- */
-define('interpreterDescription',['easejs','attributeTypeList','widgetDescription'],
-    function(easejs,AttributeTypeList,WidgetDescription){
-    	var Class = easejs.Class;
-		var InterpreterDescription = Class('InterpreterDescription').
-						extend(WidgetDescription, {
-			/**
-			* @alias inAttributeTypes
-			* @private
-			* @type {AttributeTypeList}
-			* @memberof InterpreterDescription#
-			* @desc List of all Attributes that are expected for interpretation.
-			*/
-			'private inAttributeTypes' : [], 
-
-			/**
-			 * Constructor: Calls the constructor of the WidgetDescription
-			 * and initializes the inAttributeTypes.
-			 * 
-			 * @class InterpreterDescription
-			 * @classdesc The description of an interpreter and the communication with it.
-			 * @extends WidgetDescription
-			 * @requires easejs
-			 * @requires AttributeTypeList
-			 * @requires WidgetDescription
-			 * @constructs InterpreterDescription
-			 */
-			'override public __construct' : function(){
-				this.__super();
-				this.inAttributeTypes = new AttributeTypeList();
-			},
-			
-			/**
-			 * Builder for inAttributeType list
-			 * 
-			 * @public
-			 * @alias withInAttributeTypes
-			 * @memberof InterpreterDescription#
-			 * @param {(AttributeTypeList|Array)} _inAttributeTypes List of AttributeType that are expected
-			 * @returns {InterpreterDescription}
-			 */
-    		'public withInAttributeTypes' : function(_inAttributeTypes){
-    			this.setInAttributeTypes(_inAttributeTypes);
-    			return this;
-    		},
-    		
-    		/**
-			 * Builder for inAttributeType
-			 * 
-			 * @public
-			 * @alias withInAttributeType
-			 * @memberof InterpreterDescription#
-			 * @param {AttributeType} _inAttributeType AttributeType that are expected
-			 * @returns {InterpreterDescription}
-			 */
-    		'public withInAttributeType' : function(_inAttributeType){
-    			this.setInAttributeType(_inAttributeType);
-    			return this;
-    		},
-
-    		/**
-			 * Returns inAttributeTypes of the interpreter
-			 * 
-			 * @public
-			 * @alias getInAttributeTypes
-			 * @memberof InterpreterDescription#
-			 * @returns {AttributeTypeList}
-			 */
-			'public getInAttributeTypes' : function(){
-				return this.inAttributeTypes;
-			},
-
-			/**
-			 * Adds an inAttributeType to the list
-			 * 
-			 * @public
-			 * @alias setInAttributeType
-			 * @memberof InterpreterDescription#
-			 * @param {AttributeType} _inAttributeType AttributeType that are expected
-			 */
-			'public setInAttributeType' : function(_inAttributeType){
-					this.inAttributeTypes.put(_inAttributeType);
-			},
-			
-			/**
-			 * Adds inAttributeTypes that are expected
-			 * 
-			 * @public
-			 * @alias setInAttributeTypes
-			 * @memberof InterpreterDescription#
-			 * @param {(AttributeTypeList|Array)} _inAttributeTypes List of AttributeType that are expected
-			 */
-			'public setInAttributeTypes' : function(_inAttributeTypes){
-				this.inAttributeTypes.putAll(_inAttributeTypes);
-			}
-
-            });
-
-        return InterpreterDescription;
 });
 /**
  * This module represents a InterpreterResult.
@@ -4955,8 +4338,8 @@ define('interpreterDescription',['easejs','attributeTypeList','widgetDescription
  * @module InterpreterResult
  * @fileOverview
  */
-define('interpreterResult',['easejs', 'attributeValueList'],
-    function(easejs, AttributeValueList){
+define('interpreterResult',['easejs', 'attributeList'],
+    function(easejs, AttributeList){
     	var Class = easejs.Class;
     	
 		var InterpreterResult = Class('InterpreterResult',{
@@ -5140,10 +4523,8 @@ define('interpreterResult',['easejs', 'attributeValueList'],
  * @module Interpreter
  * @fileOverview
  */
-define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
-		'attributeValue', 'attributeValueList', 'interpreterDescription', 'interpreterResult' ],
-		function(easejs, MathUuid, AttributeType, AttributeTypeList,
-				AttributeValue, AttributeValueList, InterpreterDescription, InterpreterResult) {
+define('interpreter',[ 'easejs', 'MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
+		function(easejs, MathUuid, Attribute, AttributeList, InterpreterResult) {
 			var Class = easejs.Class;
 			var AbstractClass = easejs.AbstractClass;
 			var Interpreter = AbstractClass('Interpreter',
@@ -5165,37 +4546,21 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 				 */
 				'public id' : '',
 				/**
-				 * @alias inAttributeTypes
+				 * @alias inAttributes
 				 * @protected
-				 * @type {AttributeTypeList}
+				 * @type {AttributeList}
 				 * @memberof Interpreter#
 				 * @desc Types of all attributes that can be handled.
 				 */
-				'protected inAttributeTypes' : [],
+				'protected inAttributes' : [],
 				/**
-				 * @alias outAttributeTypes
+				 * @alias outAttributes
 				 * @protected
-				 * @type {AttributeTypeList}
+				 * @type {AttributeList}
 				 * @memberof Interpreter#
 				 * @desc Types of all attributes that will be returned.
 				 */
-				'protected outAttributeTypes' : [],
-				/**
-				 * @alias inAttributeValues
-				 * @protected
-				 * @type {AttributeValueList}
-				 * @memberof Interpreter#
-				 * @desc List of the data that should be interpreted.
-				 */
-				'protected inAttributeValues' : [],
-				/**
-				 * @alias outAttributeValues
-				 * @protected
-				 * @type {AttributeValueList}
-				 * @memberof Interpreter#
-				 * @desc List of interpreted data.
-				 */
-				'protected outAttributeValues' : [],
+				'protected outAttributes' : [],
 				/**
 				 * @alias lastInterpretation
 				 * @protected
@@ -5221,10 +4586,8 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 				 * @classdesc The Widget handles the access to sensors.
 				 * @requires easejs
 				 * @requires MathUuid
-				 * @requires AttributeType
-				 * @requires AttributeValue
-				 * @requires AttributeTypeList
-				 * @requires AttributeValueList
+				 * @requires Attribute
+				 * @requires AttributeList
 				 * @requires InterpreterDescription
 				 * @constructs Interpreter
 				 */
@@ -5232,10 +4595,8 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 					this.id = Math.uuid();
                     this.discoverer = _discoverer;
                     this.register();
-					this.inAttributeTypes = new AttributeTypeList();
-					this.outAttributeTypes = new AttributeTypeList();
-					this.inAttributeValues = new AttributeValueList();
-					this.outAttributeValues = new AttributeValueList();
+					this.inAttributes = new AttributeList();
+					this.outAttributes = new AttributeList();
 					this.initInterpreter();
 				},
 				
@@ -5315,10 +4676,10 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 				 * @public
 				 * @alias getInAttributeTypes
 				 * @memberof Interpreter#
-				 * @returns {AttributeTypeList} 
+				 * @returns {AttributeList}
 				 */
-				'public getInAttributeTypes' : function() {
-					return this.inAttributeTypes;
+				'public getInAttributes' : function() {
+					return this.inAttributes;
 				},
 
 				/**
@@ -5327,53 +4688,46 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 				 * @protected
 				 * @alias setInAttribute
 				 * @memberof Interpreter#
-				 * @param {string} _name name of the attribute
-				 * @param {string} _type type of the attribute
-				 * @param {string} _value value of the attribute
-				 * @param {ParameterList|Array} _parameter Parameter of the attribute.
 				 */
-				'protected setInAttribute' : function(_name, _type, _value,	_parameters) {
-					var attributeValue = new AttributeValue().withName(_name)
-							.withValue(_value).withType(_type).withParameters(_parameters);
-					if (this.isInAttribute(attributeValue)) {
-						this.inAttributeValues.put(attributeValue);
-					}
+				'protected setInAttribute' : function(_attribute) {
+					this.inAttributes.put(_attribute);
 				},
 
 				/**
 				 * Sets an inAttributes.
 				 * 
 				 * @protected
-				 * @alias setInAttributeValues
+				 * @alias setInAttributes
 				 * @memberof Interpreter#
-				 * @param {(AttributeValueList|Array)} _attributeValueList Attributes to set.
+				 * @param {(AttributeList|Array)} _attributeList Attributes to set.
 				 */
-				'protected setInAttributeValues' : function(_attributeValueList) {
-					this.inAttributeValues = new AttributeValueList().withItems(_attributeValueList);
+				'protected setInAttributes' : function(_attributeList) {
+					this.inAttributes = new AttributeList().withItems(_attributeList);
 				},
+
 				/**
 				 * Verifies whether the specified attribute is contained in inAttributeList.
 				 * 
 				 * @protected
 				 * @alias isInAttribute
 				 * @memberof Interpreter#
-				 * @param {AttributeValue} _attribute Attribute that should be verified.
+				 * @param {Attribute} _attribute Attribute that should be verified.
 				 * @return {boolean}
 				 */
 				'protected isInAttribute' : function(_attribute) {
-					return !!this.inAttributeTypes.contains(_attribute.getAttributeType());
+					return !!this.inAttributes.containsTypeOf(_attribute);
 				},
 
 				/**
 				 * Returns the provided outAttributeTypes.
 				 * 
 				 * @public
-				 * @alias getOutAttributeTypes
+				 * @alias getOutAttributes
 				 * @memberof Interpreter#
-				 * @returns {AttributeTypeList} 
+				 * @returns {AttributeList}
 				 */
-				'public getOutAttributeTypes' : function() {
-					return this.outAttributeTypes;
+				'public getOutAttributes' : function() {
+					return this.outAttributes;
 				},
 
 				/**
@@ -5382,17 +4736,21 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 				 * @protected
 				 * @alias setOutAttribute
 				 * @memberof Interpreter#
-				 * @param {string} _name name of the attribute
-				 * @param {string} _type type of the attribute
-				 * @param {string} _value value of the attribute
-				 * @param {ParameterList|Array} _parameters Parameter of the attribute.
 				 */
-				'protected setOutAttribute' : function(_name, _type, _value,_parameters) {
-					var attributeValue = new AttributeValue().withName(_name)
-							.withValue(_value).withType(_type).withParameters(_parameters);
-					if (this.isOutAttribute(attributeValue)) {
-						this.outAttributeValues.put(attributeValue);
-					}
+				'protected setOutAttribute' : function(_attribute) {
+					this.outAttributes.put(_attribute);
+				},
+
+				/**
+				 * Sets an outAttributes.
+				 *
+				 * @protected
+				 * @alias setOutAttributes
+				 * @memberof Interpreter#
+				 * @param {(AttributeList|Array)} _attributeList Attributes to set.
+				 */
+				'protected setOutAttributes' : function(_attributeList) {
+					this.outAttributes = new AttributeList().withItems(_attributeList);
 				},
 
 				/**
@@ -5401,11 +4759,11 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 				 * @protected
 				 * @alias isOutAttribute
 				 * @memberof Interpreter#
-				 * @param {AttributeValue} _attribute Attribute that should be verified.
+				 * @param {Attribute} _attribute Attribute that should be verified.
 				 * @return {boolean}
 				 */
 				'protected isOutAttribute' : function(_attribute) {
-					return !!this.outAttributeTypes.contains(_attribute.getAttributeType());
+					return !!this.outAttributes.containsTypeOf(_attribute);
 				},
 
 				/**
@@ -5414,21 +4772,22 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 				 * @public
 				 * @alias callInterpreter
 				 * @memberof Interpreter#
-				 * @param {AttributeValueList} _inAttributeValues Data that should be interpreted.
+				 * @param {AttributeList} _inAttributeValues Data that should be interpreted.
+				 * @param {AttributeList} _outAttributeValues
 				 * @param {?function} _function For additional actions, if an asynchronous function is used.
 				 */
 				'public callInterpreter' : function(_inAttributeValues, _outAttributeValues, _function) {
 					var self = this;
 
-					if (!_inAttributeValues || !this.canHandleInAttributeValues(_inAttributeValues)) throw "Empty input attribute list or unhandled input attribute.";
-					if (!_outAttributeValues || !this.canHandleOutAttributeValues(_outAttributeValues)) throw "Empty output attribute list or unhandled output attribute.";
+					if (!_inAttributeValues || !this.canHandleInAttributes(_inAttributeValues)) throw "Empty input attribute list or unhandled input attribute.";
+					if (!_outAttributeValues || !this.canHandleOutAttributes(_outAttributeValues)) throw "Empty output attribute list or unhandled output attribute.";
 
 					this.interpretData(_inAttributeValues, _outAttributeValues, function(interpretedData) {
-						var response = new AttributeValueList().withItems(interpretedData);
+						var response = new AttributeList().withItems(interpretedData);
 
-						if (!self.canHandleOutAttributeValues(response)) throw "Unhandled output attribute generated.";
+						if (!self.canHandleOutAttributes(response)) throw "Unhandled output attribute generated.";
 
-						self.setInAttributeValues(_inAttributeValues);
+						self.setInAttributes(_inAttributeValues);
 						self.lastInterpretation = new Date();
 
 						if (_function && typeof(_function) == 'function'){
@@ -5445,27 +4804,27 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 				 * @public
 				 * @alias interpretData
 				 * @memberof Interpreter#
-				 * @param {AttributeValueList} _data Data that should be interpreted.
+				 * @param {AttributeList} _data Data that should be interpreted.
 				 * @param {?function} _function For additional actions, if an asynchronous function is used.
 				 */
-				'abstract protected interpretData' : ['_inAttributeValues', '_outAttributeValues', '_callback'],
+				'abstract protected interpretData' : ['_inAttributes', '_outAttributes', '_callback'],
 
 				/**
 				 * Checks whether the specified data match the expected.
 				 * 
 				 * @protected
-				 * @alias canHandleInAttributeValues
+				 * @alias canHandleInAttributes
 				 * @memberof Interpreter#
-				 * @param {AttributeValueList|Array.<AttributeValue>} _inAttributeValues Data that should be verified.
+				 * @param {AttributeList|Array.<Attribute>} _inAttributes Data that should be verified.
 				 */
-				'protected canHandleInAttributeValues' : function(_inAttributeValues) {
+				'protected canHandleInAttributes' : function(_inAttributes) {
 					var list = [];
-					if (_inAttributeValues instanceof Array) {
-						list = _inAttributeValues;
-					} else if (Class.isA(AttributeValueList, _inAttributeValues)) {
-						list = _inAttributeValues.getItems();
+					if (_inAttributes instanceof Array) {
+						list = _inAttributes;
+					} else if (Class.isA(AttributeList, _inAttributes)) {
+						list = _inAttributes.getItems();
 					}
-					if (list.length == 0 || _inAttributeValues.size() != this.getInAttributeTypes().size()) {
+					if (list.length == 0 || _inAttributes.size() != this.getInAttributes().size()) {
 						return false;
 					}
 					for ( var i in list) {
@@ -5481,18 +4840,18 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 				 * Checks whether the specified data match the expected.
 				 *
 				 * @protected
-				 * @alias canHandle
+				 * @alias canHandleOutAttributes
 				 * @memberof Interpreter#
-				 * @param {AttributeValueList|Array.<AttributeValue>} _outAttributeValues Data that should be verified.
+				 * @param {AttributeList|Array.<Attribute>} _outAttributes Data that should be verified.
 				 */
-				'protected canHandleOutAttributeValues' : function(_outAttributeValues) {
+				'protected canHandleOutAttributes' : function(_outAttributes) {
 					var list = [];
-					if (_outAttributeValues instanceof Array) {
-						list = _outAttributeValues;
-					} else if (Class.isA(AttributeValueList, _outAttributeValues)) {
-						list = _outAttributeValues.getItems();
+					if (_outAttributes instanceof Array) {
+						list = _outAttributes;
+					} else if (Class.isA(AttributeList, _outAttributes)) {
+						list = _outAttributes.getItems();
 					}
-					if (list.length == 0 || _outAttributeValues.size() != this.getOutAttributeTypes().size()) {
+					if (list.length == 0 || _outAttributes.size() != this.getOutAttributes().size()) {
 						return false;
 					}
 					for ( var i in list) {
@@ -5525,10 +4884,9 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 				 * @returns {InterpreterDescription} 
 				 */
 				'virtual public getDescription' : function() {
-					var description = new InterpreterDescription().withId(
-							this.id).withName(this.name);
-					description.addOutAttributeTypes(this.outAttributeTypes);
-					description.setInAttributeTypes(this.inAttributeTypes);
+					var description = new InterpreterDescription().withId(this.id).withName(this.name);
+					description.addOutAttributeTypes(this.outAttributes);
+					description.setInAttributeTypes(this.inAttributes);
 					return description;
 				},
 
@@ -5557,7 +4915,6 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 					if (this.discoverer) {
 						this.discoverer.registerNewComponent(this);
 					}
-
 				},
 
 				/**
@@ -5565,28 +4922,16 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 				 * @returns {boolean}
 				 */
 				'public hasOutAttributesWithInputParameters': function() {
-					return this.outAttributeTypes.hasAttributesWithInputParameters();
+					return this.outAttributes.hasAttributesWithInputParameters();
 				},
 
 				'public getOutAttributesWithInputParameters': function() {
-					return this.outAttributeTypes.getAttributesWithInputParameters();
-				}
-				
-//				/**
-//				 * Unregisters the component to the associated discoverer
-//				 * and deletes the reference.
-//				 * 
-//				 * @public
-//				 * @alias register
-//				 * @memberof Widget#
-//				 */
-//				'protected unregister' : function() {
-//					if (this.discoverer) {
-//						this.discoverer.unregisterComponent(this.getId());
-//						this.discoverer = null;
-//					}
-//				},
+					return this.outAttributes.getAttributesWithInputParameters();
+				},
 
+				'public doesSatisfyAttributeType': function(_attribute) {
+					return this.outAttributes.containsTypeOf(_attribute);
+				}
 			});
 
 			return Interpreter;
@@ -5594,13 +4939,13 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 /**
  * Created by tobias on 15.04.15.
  */
-define('interpretation',['easejs', 'interpreter', 'attributeTypeList'],
-    function(easejs, Interpreter, AttributeTypeList) {
+define('interpretation',['easejs', 'interpreter', 'attributeList'],
+    function(easejs, Interpreter, AttributeList) {
         var Class = easejs.Class;
         var Interpretation = Class('Interpretation', {
             'public interpreterId' : null,
-            'public inAttributeTypes' : new AttributeTypeList(),
-            'public outAttributeTypes' : new AttributeTypeList(),
+            'public inAttributeTypes' : new AttributeList(),
+            'public outAttributeTypes' : new AttributeList(),
 
             'public __construct' : function(_interpreterId, _inAttributes, _outAttributes){
                 this.interpreterId = _interpreterId;
@@ -5621,11 +4966,11 @@ define('interpretation',['easejs', 'interpreter', 'attributeTypeList'],
  * @fileOverview
  */
 define('aggregator',['easejs', 'MathUuid','widget',
-        'attributeType', 'attributeValue', 'attributeValueList', 'subscriber', 
-        'subscriberList', 'callbackList', 'storage', 'widgetDescription', 'interpreter', 'attributeTypeList', 'interpretation'],
- 	function(easejs, MathUuid, Widget, AttributeType,
- 			AttributeValue, AttributeValueList, Subscriber, SubscriberList,
- 			CallbackList, Storage, WidgetDescription, Interpreter, AttributeTypeList, Interpretation){
+        'attribute', 'attributeList', 'subscriber',
+        'subscriberList', 'callbackList', 'storage', 'interpreter', 'interpretation'],
+ 	function(easejs, MathUuid, Widget, Attribute,
+ 			AttributeList, Subscriber, SubscriberList,
+ 			CallbackList, Storage, Interpreter, Interpretation){
 
  	var Class = easejs.Class;
 	var Aggregator =  Class('Aggregator').
@@ -5683,21 +5028,20 @@ define('aggregator',['easejs', 'MathUuid','widget',
 		 * @requires easejs
 		 * @requires MathUuid
 		 * @requires CallbackList
-		 * @requires AttributeType
-		 * @requires AttributeValue
-		 * @requires AttributeValueList
+		 * @requires Attribute
+		 * @requires AttributeList
 		 * @requires Subscriber
 		 * @requires SubscriberList
 		 * @requires Storage
 		 * @requires Widget
 		 * @constructs Aggregator
 		 */
-		'override virtual public __construct': function(_discoverer, _attributeTypes)
+		'override virtual public __construct': function(_discoverer, _attributes)
         {
 			this.id = Math.uuid();
 			this.widgets = [];
             this.interpretations = [];
-			this.__super(_discoverer, _attributeTypes);
+			this.__super(_discoverer, _attributes);
         },
         
         /**
@@ -5713,22 +5057,6 @@ define('aggregator',['easejs', 'MathUuid','widget',
 		'override public getType' : function(){
 		    return 'Aggregator';
 		 },
-		 
-		/**
-		 * Adds new AttributeTypes, useful when a new Widget is subscribed.
-		 * 
-		 * @protected
-	   	 * @alias addAttributeType
-		 * @memberof Aggregator#
-		 * @param {AttributeType} _attributeType attributeType
-	     */
-		'protected addAttributeType' : function(_attributeType, _multipleInstances){
-			if(Class.isA( AttributeType, _attributeType )){			
-				this.attributeTypes.put(_attributeType, _multipleInstances);
-				var attVal = new AttributeValue().buildFromAttributeType(_attributeType);
-				this.attributes.put(attVal, _multipleInstances);
-            }
-        },
 		
 		/**
 		 * Sets Widget IDs.
@@ -5792,14 +5120,14 @@ define('aggregator',['easejs', 'MathUuid','widget',
 	   	 * @alias initAttributes
 		 * @memberof Aggregator#
 	     */
-		'protected initAttributes' : function(){
+		'protected initOutAttributes' : function(){
 			if(this.widgets.length > 0){
 				var widgetIdList = this.widgets;
 				for(var i in widgetIdList){
 					var widgetId = widgetIdList[i];
 					var widgetInstance = this.discoverer.getComponent(widgetId);
 					if (widgetInstance) {
-						this.setAttributes(widgetInstance.queryAttributes());
+						this.setOutAttributes(widgetInstance.queryAttributes());
 					}
                 }
             }
@@ -5812,7 +5140,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
 	   	 * @alias initConstantAttributes
 		 * @memberof Aggregator#
 	     */
-		'protected initConstantAttributes' : function(){
+		'protected initConstantOutAttributes' : function(){
 			if(this.widgets.length > 0){
                 var widgetIdList = this.widgets;
 				for(var i in widgetIdList){
@@ -5848,10 +5176,10 @@ define('aggregator',['easejs', 'MathUuid','widget',
 		 * @public
 		 * @alias didFinishInitialization
 		 * @memberof Aggregator#
-		 * @param _attributeTypes
+		 * @param _attributes
 		 */
-        'override public didFinishInitialization': function(_attributeTypes) {
-            this.aggregatorSetup(_attributeTypes);
+        'override public didFinishInitialization': function(_attributes) {
+            this.aggregatorSetup(_attributes);
         },
 		
 		/**
@@ -5862,9 +5190,9 @@ define('aggregator',['easejs', 'MathUuid','widget',
 	   	 * @alias aggregatorSetup
 		 * @memberof Aggregator#
 	     */
-		'protected aggregatorSetup' : function(_attributeTypes){
+		'protected aggregatorSetup' : function(_attributes){
 			this.initStorage('DB_'+this.name);
-			this.setAggregatorAttributeValues(_attributeTypes);
+			this.setAggregatorAttributeValues(_attributes);
 			this.setAggregatorConstantAttributeValues();
 			this.setAggregatorCallbacks();
 
@@ -5881,10 +5209,10 @@ define('aggregator',['easejs', 'MathUuid','widget',
 		 * @alias setAggregatorAttributeValues
 		 * @memberof Aggregator#
 		 */
-		'virtual protected setAggregatorAttributeValues' : function(_attributeTypes) {
-            for (var index in _attributeTypes) {
-                var theAttributeType = _attributeTypes[index];
-                this.addAttribute(new AttributeValue().buildFromAttributeType(theAttributeType));
+		'virtual protected setAggregatorAttributeValues' : function(_attributes) {
+            for (var index in _attributes) {
+                var theAttribute = _attributes[index];
+                this.addOutAttribute(theAttribute);
             }
         },
 
@@ -5922,12 +5250,10 @@ define('aggregator',['easejs', 'MathUuid','widget',
 		 * @public
 	   	 * @alias getCurrentData
 		 * @memberof Aggregator#
-		 * @returns {AttributeValueList}
+		 * @returns {AttributeList}
 	     */
 		'public getCurrentData' : function(){
-			var response = new AttributeValueList();
-			response.putAll(this.attributes);
-			return response;
+			return this.outAttributes;
 		},
 		
 		/**
@@ -5979,11 +5305,11 @@ define('aggregator',['easejs', 'MathUuid','widget',
 		 * @public
 	   	 * @alias addWidgetSubscription
 		 * @memberof Aggregator#
-		 * @param {String|Widget|WidgetDescription} _widgetIdOrWidget Widget that should be subscribed.
+		 * @param {String|Widget} _widgetIdOrWidget Widget that should be subscribed.
 		 * @param {CallbackList} _callbackList required Callbacks
 	     */
 		'public addWidgetSubscription' : function(_widgetIdOrWidget, _callbackList){
-            if (Class.isA(Widget, _widgetIdOrWidget) || Class.isA(WidgetDescription, _widgetIdOrWidget)) {
+            if (Class.isA(Widget, _widgetIdOrWidget)) {
                 if (Class.isA(Widget, _widgetIdOrWidget) && (!_callbackList || !Class.isA(CallbackList, _callbackList))) {
                     _callbackList = _widgetIdOrWidget.getCallbackList();
                 }
@@ -6000,7 +5326,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
 						var typeList = singleCallback.getAttributeTypes().getItems();
 						for(var y in typeList){
 							var singleType = typeList[y];
-							this.addAttributeType(singleType);
+							this.addOutAttribute(singleType);
                         }
                     }
                     this.addWidget(_widgetIdOrWidget);
@@ -6018,7 +5344,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
 		 * @param {String} _widgetId Widget that should be removed.
 	     */
 		'public unsubscribeFrom' : function(_widgetId){
-			if(typeof _widgetId == "string"){
+			if(typeof _widgetId == "string") {
 				var widget = this.discoverer.getComponent(_widgetId);
 				if (widget) {
 					console.log('aggregator unsubscribeFrom: ' + widget.getName());
@@ -6035,19 +5361,19 @@ define('aggregator',['easejs', 'MathUuid','widget',
 		 * @public
 	   	 * @alias putData
 		 * @memberof Aggregator#
-		 * @param {(AttributeValueList|Array)}  _data data that shall be input
+		 * @param {(AttributeList|Array)}  _data data that shall be input
 	     */
 		'override public putData' : function(_data){
 			var list = [];
 			if(_data instanceof Array){
 				list = _data;
-			} else if (Class.isA(AttributeValueList, _data)) {
+			} else if (Class.isA(AttributeList, _data)) {
 				list = _data.getItems();
 			}
 			for(var i in list){
 				var x = list[i];
-				if(Class.isA( AttributeValue, x ) && this.isAttribute(x)){
-					this.addAttribute(x);
+				if(Class.isA(Attribute, x ) && this.isOutAttribute(x)){
+					this.addOutAttribute(x);
 					if(this.db){
 						this.store(x);
 					}
@@ -6142,8 +5468,8 @@ define('aggregator',['easejs', 'MathUuid','widget',
 		},
 
 		/**
-		 * Only actualizes the attributeType cache in th database.
-		 * For an alternativ action can be used a callback.
+		 * Only updates the attribute cache in the database.
+		 * For an alternative action a callback can be used.
 		 *
 		 * @public
 	   	 * @alias queryTables
@@ -6202,18 +5528,19 @@ define('aggregator',['easejs', 'MathUuid','widget',
 
 		/**
 		 *
-		 * @private
+		 * @override
+		 * @public
 		 * @alias doesSatisfyAttributeType
-		 * @param _attributeType
+		 * @param _attribute
 		 * @returns {boolean}
 		 */
-        'private doesSatisfyAttributeType': function(_attributeType) {
+        'override public doesSatisfyAttributeType': function(_attribute) {
             var componentUUIDs = this.getComponentUUIDs();
             var doesSatisfy = false;
 
             for (var index in componentUUIDs) {
                 var theComponent = this.discoverer.getComponent(componentUUIDs[index]);
-                if (theComponent.getDescription().doesSatisfyAttributeType(_attributeType)) {
+                if (theComponent.doesSatisfyAttributeType(_attribute)) {
                     doesSatisfy = true;
                 }
             }
@@ -6228,7 +5555,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
 		 * @private
 		 * @alias getComponentsForUnsatisfiedAttributeTypes
 		 * @memberof Aggregator#
-		 * @param {AttributeTypeList} _unsatisfiedAttributes A list of attributes that components should be searched for.
+		 * @param {AttributeList} _unsatisfiedAttributes A list of attributes that components should be searched for.
 		 * @param {boolean} _all If true all attributes must be satisfied by a single component.
 		 * @param {Array} _componentTypes An array of components classes that should be searched for (e.g. Widget, Interpreter and Aggregator).
 		 */
@@ -6245,7 +5572,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
 
 				// if the component was added before, ignore it
                 if (!this.hasComponent(theComponent.getId())) {
-                    var outAttributes = theComponent.getDescription().getOutAttributeTypes().getItems();
+                    var outAttributes = theComponent.getOutAttributes().getItems();
 
                     // if component is a widget and it wasn't added before, subscribe to its callbacks
                     if (Class.isA(Widget, theComponent)) {
@@ -6256,14 +5583,14 @@ define('aggregator',['easejs', 'MathUuid','widget',
                         for (var widgetOutAttributeIndex in outAttributes) {
                             var widgetOutAttribute = outAttributes[widgetOutAttributeIndex];
 							// add the attribute type to the aggregators list of handled attribute types
-                            if (!this.getAttributeTypes().contains(widgetOutAttribute)) this.addAttributeType(widgetOutAttribute);
+                            if (!this.getOutAttributes().containsTypeOf(widgetOutAttribute)) this.addOutAttribute(widgetOutAttribute);
                             console.log("I can now satisfy attribute "+widgetOutAttribute+" with the help of "+theComponent.getName()+"! That was easy :)");
-                            _unsatisfiedAttributes.removeAttributeType(widgetOutAttribute);
+                            _unsatisfiedAttributes.removeAttributeWithTypeOf(widgetOutAttribute);
                         }
                     } else if (Class.isA(Interpreter, theComponent)) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
                         console.log("It's an interpreter.");
 
-                        var inAttributes = theComponent.getInAttributeTypes().getItems();
+                        var inAttributes = theComponent.getInAttributes().getItems();
                         var canSatisfyInAttributes = true;
 
 						// iterate over the attributes needed to satisfy the interpreter
@@ -6275,7 +5602,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
 							// if required attribute is not already satisfied by the aggregator search for components that do
                             if (!this.doesSatisfyAttributeType(theInAttribute)) {
                                 console.log("It seems that I can't satisfy "+theInAttribute+", but I will search for components that can.");
-                                var newAttributeList = new AttributeTypeList();
+                                var newAttributeList = new AttributeList();
                                 newAttributeList.put(theInAttribute);
                                 this.getComponentsForUnsatisfiedAttributeTypes(newAttributeList, false, [Widget, Interpreter]);
 								// if the attribute still can't be satisfied drop the interpreter
@@ -6296,18 +5623,18 @@ define('aggregator',['easejs', 'MathUuid','widget',
 								// add the attribute type to the aggregators list of handled attribute types
 								for (var unsatisfiedAttributeIndex in _unsatisfiedAttributes.getItems()) {
 									var theUnsatisfiedAttribute = _unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
-									if (theUnsatisfiedAttribute.equals(interpreterOutAttribute)) {
-										this.addAttributeType(theUnsatisfiedAttribute);
+									if (theUnsatisfiedAttribute.equalsTypeOf(interpreterOutAttribute)) {
+										this.addOutAttribute(theUnsatisfiedAttribute);
 										console.log("I can now satisfy attribute "+theUnsatisfiedAttribute+" with the help of "+theComponent.getName()+"! Great!");
-										this.interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributeTypes(), new AttributeTypeList().withItems([theUnsatisfiedAttribute])));
+										this.interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
 									}
 								}
-								_unsatisfiedAttributes.removeAttributeType(interpreterOutAttribute, true);
+								_unsatisfiedAttributes.removeAttributeWithTypeOf(interpreterOutAttribute, true);
                             }
 						} else {
                             console.log("Found interpreter but can't satisfy required attributes.");
-                            for (var j in theComponent.getDescription().getInAttributeTypes().getItems()) {
-                                console.log("Missing "+theComponent.getDescription().getInAttributeTypes().getItems()[j]+".");
+                            for (var j in theComponent.getInAttributes().getItems()) {
+                                console.log("Missing "+theComponent.getInAttributes().getItems()[j]+".");
                             }
                         }
                     }
@@ -6326,7 +5653,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
 		 * @memberof Aggregator#
 		 */
         'virtual public didFinishSetup': function() {
-            unsatisfiedAttributes = this.getAttributeTypes().clone();
+            unsatisfiedAttributes = this.getOutAttributes().clone();
 
             // get all widgets that satisfy attribute types
             this.getComponentsForUnsatisfiedAttributeTypes(unsatisfiedAttributes, false, [Widget]);
@@ -6334,7 +5661,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
             this.getComponentsForUnsatisfiedAttributeTypes(unsatisfiedAttributes, false, [Interpreter]);
 
 			console.log("Unsatisfied attributes: "+unsatisfiedAttributes.size());
-			console.log("Satisfied attributes: "+this.getAttributeTypes().size());
+			console.log("Satisfied attributes: "+this.getOutAttributes().size());
 			console.log("Interpretations "+this.interpretations.length);
         },
 
@@ -6358,14 +5685,14 @@ define('aggregator',['easejs', 'MathUuid','widget',
                         completedQueriesCounter++;
                         if (completedQueriesCounter == self.widgets.length) {
                             if (_callback && typeof(_callback) == 'function') {
-                                _callback(self.getAttributeValues());
+                                _callback(self.getOutAttributes());
                             }
                         }
                     });
                 }
             } else {
 				if (_callback && typeof(_callback) == 'function') {
-                    _callback(self.getAttributeValues());
+                    _callback(self.getOutAttributes());
                 }
             }
         },
@@ -6386,15 +5713,15 @@ define('aggregator',['easejs', 'MathUuid','widget',
 				for (var index in this.interpretations) {
 					var theInterpretation = this.interpretations[index];
 					var theInterpreterId = theInterpretation.interpreterId;
-					var interpretationInAttributeValues = this.getAttributeValues(theInterpretation.inAttributeTypes);
-					var interpretationOutAttributeValues = this.getAttributeValues(theInterpretation.outAttributeTypes);
+					var interpretationInAttributeValues = this.getOutAttributes(theInterpretation.inAttributeTypes);
+					var interpretationOutAttributeValues = this.getOutAttributes(theInterpretation.outAttributeTypes);
 
 					self.interpretData(theInterpreterId, interpretationInAttributeValues, interpretationOutAttributeValues, function(_interpretedData) {
 						for (var j in _interpretedData.getItems()) {
 							var theInterpretedData = _interpretedData.getItems()[j];
 
-							self.addAttribute(theInterpretedData);
-							if(self.db){
+							self.addOutAttribute(theInterpretedData);
+							if (self.db){
 								self.store(theInterpretedData);
 							}
 						}
@@ -6402,14 +5729,14 @@ define('aggregator',['easejs', 'MathUuid','widget',
 						completedQueriesCounter++;
 						if (completedQueriesCounter == self.interpretations.length) {
 							if (_callback && typeof(_callback) == 'function') {
-								_callback(self.getAttributeValues());
+								_callback(self.getOutAttributes());
 							}
 						}
 					});
 				}
 			} else {
 				if (_callback && typeof(_callback) == 'function') {
-					_callback(self.getAttributeValues());
+					_callback(self.getOutAttributes());
 				}
 			}
         },
@@ -6525,8 +5852,8 @@ define('unequals',['easejs', 'conditionMethod'],
  * @module Discoverer
  * @fileOverview
  */
-define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'aggregator' ], function(easejs,
-		AttributeTypeList, Widget, Interpreter, Aggregator) {
+define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], function(easejs,
+		AttributeList, Widget, Interpreter, Aggregator) {
 	var Class = easejs.Class;
 	
 	var Discoverer = Class('Discoverer', {
@@ -6538,7 +5865,7 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		 * @memberof Discoverer#
 		 * @desc List of available Widgets.
 		 */
-		'private widgets' : {},
+		'private widgets' : [],
 		
 		/**
 		 * @alias aggregators
@@ -6547,16 +5874,16 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		 * @memberof Discoverer#
 		 * @desc List of available Aggregators.
 		 */
-		'private aggregators' : {},
+		'private aggregators' : [],
 		
 		/**
-		 * @alias interpreter
+		 * @alias interpreters
 		 * @private
 		 * @type {Object}
 		 * @memberof Discoverer#
 		 * @desc List of available Interpreter.
 		 */
-		'private interpreter' : {},
+		'private interpreters' : [],
 
 		/**
 		 * Constructor: All known components given in the associated functions will be registered as startup.
@@ -6564,11 +5891,11 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		 * @class Discoverer
 		 * @classdesc The Discoverer handles requests for components and attributes. 
 		 * @requires easejs
-		 * @requires AttributeTypeList
+		 * @requires AttributeList
 		 * @constructs Discoverer
 		 */
 		'public __construct' : function() {
-			this.register();
+
 		},
 
 		/**
@@ -6584,53 +5911,6 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 			return 'Discoverer';
 		},
 
-		/*
-		 * single call for registering the different categories of components
-		 */
-		/**
-		 * Single call for registration of the different categories of components.
-		 * Calls: registerWidgets(), registerAggregators(), registerInterpreter()
-		 * 
-		 * @private
-		 * @alias register
-		 * @memberof Discoverer#
-		 */
-		'private register' : function() {
-			this.registerWidgets();
-			this.registerAggregators();
-			this.registerInterpreter();
-		},
-
-		/**
-		 * Registers all specified widgets.
-		 * 
-		 * @private
-		 * @alias registerWidgets
-		 * @memberof Discoverer#
-		 */
-		'private registerWidgets' : function() {
-		},
-
-		/**
-		 * Registers all specified aggregators.
-		 * 
-		 * @private
-		 * @alias registerAggregators
-		 * @memberof Discoverer#
-		 */
-		'private registerAggregators' : function() {
-		},
-
-		/**
-		 * Registers all specified interpreters.
-		 * 
-		 * @private
-		 * @alias registerInterpreter
-		 * @memberof Discoverer#
-		 */
-		'private registerInterpreter' : function() {
-		},
-
 		/**
 		 * Registers the specified component.
 		 * 
@@ -6640,10 +5920,9 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		 * @param {Widget|Aggregator|Interpreter} _component the component that should be registered 
 		 */
 		'public registerNewComponent' : function(_component) {
-			var category = this.identificationHelper(_component);			
-			if (category) {
-				this.registryHelper(category, _component);
-			}
+			if (_component.getType() == "Widget" && this.getWidget(_component.getId()) == null) this.widgets.push(_component);
+			if (_component.getType() == "Interpreter" && this.getInterpreter(_component.getId()) == null) this.interpreters.push(_component);
+			if (_component.getType() == "Aggregator" && this.getAggregator(_component.getId()) == null) this.aggregators.push(_component);
 		},
 
 		/**
@@ -6655,10 +5934,17 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		 * @param {string} _id id of the component that should be registered 
 		 */
 		'public unregisterComponent' : function(_id) {
-			var component = this.getComponent(_id);
-			var category = this.identificationHelper(component);
-			if (category) {
-				category.splice(_id, 1);
+			for (var wi in this.widgets) {
+				var theWidget = this.widgets[wi];
+				if (_id == theWidget.getId()) this.widgets.splice(wi, 1);
+			}
+			for (var ii in this.interpreters) {
+				var theInterpreter = this.interpreters[ii];
+				if (_id == theInterpreter.getId()) this.interpreters.splice(ii, 1);
+			}
+			for (var ai in this.aggregators) {
+				var theAggregator= this.aggregators[ai];
+				if (_id == theAggregator.getId()) this.aggregators.splice(ai, 1);
 			}
 		},
 
@@ -6672,12 +5958,11 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		 * @returns {?Widget}
 		 */
 		'public getWidget' : function(_id) {
-			var widget =  this.widgets[_id];
-			if(!widget){
-				delete(this.widgets[_id]);
-				return null;
+			for (var index in this.widgets) {
+				var theWidget = this.widgets[index];
+				if (theWidget.getId() == _id) return theWidget;
 			}
-			return widget;
+			return null;
 		},
 
 		/**
@@ -6690,12 +5975,11 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		 * @returns {Aggregator}
 		 */
 		'public getAggregator' : function(_id) {
-			var aggregator = this.aggregators[_id];
-			if(!aggregator ){
-				delete(this.aggregators[_id]);
-				return null;
+			for (var index in this.aggregators) {
+				var theAggregator = this.aggregators[index];
+				if (theAggregator.getId() == _id) return theAggregator;
 			}
-			return aggregator;
+			return null;
 		},
 
 		/**
@@ -6708,13 +5992,31 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		 * @returns {Interpreter}
 		 */
 		'public getInterpreter' : function(_id) {
-			var interpret = this.interpreter[_id];
-			if(!interpret){
-                delete(this.interpreter[_id]);
-				return null;
+			for (var index in this.interpreters) {
+				var theInterpreter = this.interpreters[index];
+				if (theInterpreter.getId() == _id) return theInterpreter;
 			}
-			return interpret;
+			return null;
 		},
+
+		/**
+		 * Returns all registered components (widget, aggregator and interpreter).
+		 *
+		 * @public
+		 * @alias getComponents
+		 * @memberof Discoverer#
+		 * @param {Array} _componentTypes Component types to get descriptions for. Defaults to Widget, Interpreter and Aggregator.
+		 * @returns {Array}
+		 */
+		'public getComponents' : function(_componentTypes) {
+			if (typeof _componentTypes == "undefined") _componentTypes = [Widget, Interpreter, Aggregator];
+			var response = [];
+			if (jQuery.inArray(Widget, _componentTypes) != -1) response = response.concat(this.widgets);
+			if (jQuery.inArray(Aggregator, _componentTypes) != -1) response = response.concat(this.aggregators);
+			if (jQuery.inArray(Interpreter, _componentTypes) != -1) response = response.concat(this.interpreters);
+			return response;
+		},
+
 
 		/**
 		 * Returns the instance (widget, aggregator or interpreter) for the specified id.
@@ -6742,78 +6044,6 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		},
 
 		/**
-		 * Returns the description of all registered widgets.
-		 * 
-		 * @public
-		 * @alias getWidgetDescriptions
-		 * @memberof Discoverer#
-		 * @returns {Array}
-		 */
-		'private getWidgetDescriptions' : function() {
-			var widgetDescription = [];
-			var widgets = this.widgets;
-			for (var i in widgets) {
-				var singleWidget = widgets[i];
-				widgetDescription.push(singleWidget.getDescription());
-			}
-			return widgetDescription;
-		},
-
-		/**
-		 * Returns the description of all registered aggregators.
-		 * 
-		 * @public
-		 * @alias getAggregatorDescriptions
-		 * @memberof Discoverer#
-		 * @returns {Array}
-		 */
-		'private getAggregatorDescriptions' : function() {
-			var aggregatorDescription = [];
-			var aggregators = this.aggregators;
-			for (var i in aggregators) {
-				var singleAggregator = aggregators[i];
-				aggregatorDescription.push(singleAggregator.getDescription());
-			}
-			return aggregatorDescription;
-		},
-
-		/**
-		 * Returns the description of all registered interpreter.
-		 * 
-		 * @public
-		 * @alias getInterpreterDescriptions
-		 * @memberof Discoverer#
-		 * @returns {Array}
-		 */
-		'private getInterpreterDescriptions' : function() {
-			var interpreterDescription = [];
-			var interpreters = this.interpreter;
-			for ( var i in interpreters) {
-				var singleInterpreter = interpreters[i];
-				interpreterDescription.push(singleInterpreter.getDescription());
-			}
-			return interpreterDescription;
-		},
-
-		/**
-		 * Returns the description of all registered components (widget, aggregator and interpreter).
-		 * 
-		 * @public
-		 * @alias getDescriptions
-		 * @memberof Discoverer#
-         * @param {Array} _componentTypes Component types to get descriptions for. Defaults to Widget, Interpreter and Aggregator.
-		 * @returns {Array}
-		 */
-		'public getDescriptions' : function(_componentTypes) {
-            if (typeof _componentTypes == "undefined") _componentTypes = [Widget, Interpreter, Aggregator];
-			var response = [];
-			if (jQuery.inArray(Widget, _componentTypes) != -1) response = response.concat(this.getWidgetDescriptions());
-            if (jQuery.inArray(Aggregator, _componentTypes) != -1) response = response.concat(this.getAggregatorDescriptions());
-            if (jQuery.inArray(Interpreter, _componentTypes) != -1) response = response.concat(this.getInterpreterDescriptions());
-			return response;
-		},
-
-		/**
 		 * Returns all components that have the specified attribute as
 		 * outAttribute. It can be chosen between the verification of 
 		 * all attributes or at least one attribute.
@@ -6821,28 +6051,28 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		 * @public
 		 * @alias getComponentsByAttributes
 		 * @memberof Discoverer#
-		 * @param {AttributeTypeList} _attributeTypeList list of searched attributes
+		 * @param {AttributeList} _attributeList list of searched attributes
 		 * @param {boolean} _all choise of the verification mode
          * @param {Array} _componentTypes Components types to search for
 		 * @returns {Array}
 		 */
-		'public getComponentsByAttributes' : function(_attributeTypeList, _all, _componentTypes) {
+		'public getComponentsByAttributes' : function(_attributeList, _all, _componentTypes) {
 			var componentList = [];
 			var list = {};
             if (typeof _componentTypes == "undefined") _componentTypes = [Widget, Interpreter, Aggregator];
-			if (_attributeTypeList instanceof Array) {
-				list = _attributeTypeList;
-			} else if (Class.isA(AttributeTypeList, _attributeTypeList)) {
-				list = _attributeTypeList.getItems();
+			if (_attributeList instanceof Array) {
+				list = _attributeList;
+			} else if (Class.isA(AttributeList, _attributeList)) {
+				list = _attributeList.getItems();
 			}
 			if (typeof list != "undefined") {
-				var descriptions = this.getDescriptions(_componentTypes);
-				for (var i in descriptions) {
-					var description = descriptions[i];
-						if(_all && this.containsAllAttributes(description, list)){
-							componentList.push(this.getComponent(description.getId()));
-						} else if(!_all && this.containsAtLeastOneAttribute(description, list)){
-							componentList.push(this.getComponent(description.getId()));
+				var components = this.getComponents(_componentTypes);
+				for (var i in components) {
+					var theComponent = components[i];
+						if(_all && this.containsAllAttributes(theComponent, list)) {
+							componentList.push(theComponent);
+						} else if(!_all && this.containsAtLeastOneAttribute(theComponent, list)) {
+							componentList.push(theComponent);
 					}
 				}
 			}
@@ -6858,14 +6088,14 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		 * @private
 		 * @alias containsAllAttributes
 		 * @memberof Discoverer#
-		 * @param {(WidgetDescription|InterpreterDescription)} _description description of a component
+		 * @param {(WidgetDescription|InterpreterDescription)} _component description of a component
 		 * @param {Array} _list searched attributes
 		 * @returns {boolean}
 		 */
-		'private containsAllAttributes' : function(_description,_list) {
+		'private containsAllAttributes' : function(_component, _list) {
 			for ( var j in _list) {
 				var attribute = _list[j];
-				if (!_description.doesSatisfyAttributeType(attribute)) {
+				if (!_component.doesSatisfyAttributeType(attribute)) {
 					return false;
 				}
 			}
@@ -6878,58 +6108,19 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		 * @private
 		 * @alias containsAtLeastOneAttribute
 		 * @memberof Discoverer#
-		 * @param {(WidgetDescription|InterpreterDescription)} _description description of a component
+		 * @param {(WidgetDescription|InterpreterDescription)} _component description of a component
 		 * @param {Array} _list searched attributes
 		 * @returns {boolean}
 		 */
-		'private containsAtLeastOneAttribute' : function(_description, _list) {
+		'private containsAtLeastOneAttribute' : function(_component, _list) {
 			for (var j in _list) {
 				var attribute = _list[j];
-				if (_description.doesSatisfyAttributeType(attribute)) {
+				if (_component.doesSatisfyAttributeType(attribute)) {
 					return true;
 				}
 			}
 			return false;
-		},
-		
-		/**
-		 * Helper: Saves the given component in the category list.
-		 * 
-		 * @private
-		 * @alias registryHelper
-		 * @memberof Discoverer#
-		 * @param {string} _category category of component to register
-		 * @param {(Widget|Aggregator|Interpreter)} _component component that should be registered
-		 */
-		'private registryHelper' : function(_category, _component) {
-			_category[_component.getId()] = _component;
-		},
-
-		/*
-		 * identifies the category of an instance widgets, aggregators,
-		 * interpreter are currently supported
-		 */
-		/**
-		 * Helper: Identifies the category of an instance. Widgets, aggregators,
-		 * interpreter are currently supported.
-		 * 
-		 * @private
-		 * @alias identificationHelper
-		 * @memberof Discoverer#
-		 * @param {(Widget|Aggregator|Interpreter)} _component that should be identified
-		 */
-		'private identificationHelper' : function(_component) {
-			if (_component.getType() == 'Widget') {
-				return this.widgets;
-			} else if (_component.getType() == 'Aggregator') {
-				return this.aggregators;
-			} else if (_component.getType() == 'Interpreter') {
-				return this.interpreter;
-			} else {
-				return null;
-			}
 		}
-
 	});
 
 	return Discoverer;
@@ -6937,10 +6128,8 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 	define('contactJS',['retrievalResult',
 			'storage',
 			'aggregator',
-		    'attributeType',
-		    'attributeValue',
-		    'attributeTypeList',
-		    'attributeValueList',
+		    'attribute',
+		    'attributeList',
 		    'parameter',
 		    'parameterList',		
 		    'condition',
@@ -6948,8 +6137,7 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		    'conditionMethod',
 		    'equals',
             'unequals',
-		    'interpreterDescription',
-		    'widgetDescription',	    
+
 		    'discoverer',
 		    'interpreter',
 		    'interpreterResult',
@@ -6962,10 +6150,8 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 		function(RetrievalResult,
 				Storage,
 				Aggregator,
-			    AttributeType,
-			    AttributeValue,
-			    AttributeTypeList,
-			    AttributeValueList,
+			    Attribute,
+			    AttributeList,
 			    Parameter,
 			    ParameterList,		
 			    Condition,
@@ -6973,8 +6159,6 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 			    ConditionMethod,
 			    Equals,
                 UnEquals,
-			    InterpreterDescription,
-			    WidgetDescription,	    
 			    Discoverer,
 			    Interpreter, 
 			    InterpreterResult,
@@ -6989,15 +6173,13 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 	var contactJS = function(obj) {
 		return obj;
 	};
-	contactJS.VERSION = '1.1.0';
+	contactJS.VERSION = '1.2.0';
 	// Methods
 	contactJS.RetrievalResult = RetrievalResult;
 	contactJS.Storage = Storage;
 	contactJS.Aggregator = Aggregator;
-	contactJS.AttributeType = AttributeType;
-	contactJS.AttributeValue = AttributeValue;
-	contactJS.AttributeTypeList = AttributeTypeList;
-	contactJS.AttributeValueList = AttributeValueList;
+	contactJS.Attribute = Attribute;
+	contactJS.AttributeList = AttributeList;
 	contactJS.Parameter = Parameter;
 	contactJS.ParameterList = ParameterList;
 	contactJS.Condition = Condition;
@@ -7005,14 +6187,12 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'a
 	contactJS.ConditionMethod = ConditionMethod;
 	contactJS.Equals = Equals;
     contactJS.UnEquals = UnEquals;
-	contactJS.InterpreterDescription = InterpreterDescription;
-	contactJS.WidgetDescription = WidgetDescription;
 	contactJS.Discoverer = Discoverer;
 	contactJS.Interpreter = Interpreter;
 	contactJS.InterpreterResult = InterpreterResult;
 	contactJS.Callback = Callback;
 	contactJS.CallbackList = CallbackList;
-	contactJS.Subscriber =Subscriber;
+	contactJS.Subscriber = Subscriber;
 	contactJS.SubscriberList = SubscriberList;
 	contactJS.Widget = Widget;
 	contactJS.AbstractList = AbstractList;

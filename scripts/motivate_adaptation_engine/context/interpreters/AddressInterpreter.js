@@ -9,32 +9,29 @@ define(['easejs', 'contactJS'],
             'public name' : 'AddressInterpreter',
 
             'protected initInAttributes' : function() {
-                this.inAttributeTypes.put(
-                    new contactJS.AttributeType()
+                this.setInAttributes([
+                    new contactJS.Attribute()
                         .withName('CI_USER_LOCATION_LATITUDE')
-                        .withType('FLOAT')
-                );
-
-                this.inAttributeTypes.put(
-                    new contactJS.AttributeType()
+                        .withType('FLOAT'),
+                    new contactJS.Attribute()
                         .withName('CI_USER_LOCATION_LONGITUDE')
                         .withType('FLOAT')
-                );
+                ]);
             },
 
             'protected initOutAttributes' : function() {
-                this.outAttributeTypes.put(
-                    new contactJS.AttributeType()
+                this.setOutAttributes([
+                    new contactJS.Attribute()
                         .withName('CI_USER_LOCATION_ADDRESS')
                         .withType('STRING')
-                );
+                ]);
             },
 
             'protected interpretData' : function(_inAttributeValues, _outAttributeValues, _callback) {
                 var addressValue = _outAttributeValues.getItems()[0];
 
-                var latitude = _inAttributeValues.getValueForAttributeType(this.inAttributeTypes.getItems()[0]);
-                var longitude = _inAttributeValues.getValueForAttributeType(this.inAttributeTypes.getItems()[1]);
+                var latitude = _inAttributeValues.getValueForAttributeWithTypeOf(this.inAttributeTypes.getItems()[0]);
+                var longitude = _inAttributeValues.getValueForAttributeWithTypeOf(this.inAttributeTypes.getItems()[1]);
 
                 if(navigator.onLine){
                     if (latitude && longitude) {
