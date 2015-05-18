@@ -8,12 +8,12 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
         'public name': 'UnixTimeWidget',
 
         'protected initOutAttributes': function () {
-            var unixTime = new contactJS.AttributeValue()
-                .withName('CI_CURRENT_UNIX_TIME')
-                .withType('INTEGER')
-                .withValue('NO_VALUE')
-                .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"));
-            this.addAttribute(unixTime);
+            this.addOutAttribute(
+                new contactJS.Attribute()
+                    .withName('CI_CURRENT_UNIX_TIME')
+                    .withType('INTEGER')
+                    .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"))
+            );
         },
 
         'protected initConstantOutAttributes': function () {
@@ -21,7 +21,7 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
         },
 
         'protected initCallbacks': function () {
-            this.addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getAttributeTypes()));
+            this.addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
         },
 
         'override protected queryGenerator': function (_function) {
@@ -32,8 +32,8 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
                 }
             }
 
-            var response = new contactJS.AttributeValueList();
-            response.put(this.getAttributeValues().getItems()[0].setValue(Date.now()));
+            var response = new contactJS.AttributeList();
+            response.put(this.getOutAttributes().getItems()[0].setValue(Date.now()));
             this.putData(response);
             this.notify();
 

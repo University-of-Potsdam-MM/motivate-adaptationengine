@@ -9,41 +9,38 @@ define(['easejs', 'contactJS'],
             'public name' : 'ISO8601Interpreter',
 
             'protected initInAttributes' : function() {
-                this.inAttributeTypes.put(
-                    new contactJS.AttributeType()
+                this.setInAttributes([
+                    new contactJS.Attribute()
                         .withName('CI_CURRENT_UNIX_TIME')
                         .withType('INTEGER')
                         .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"))
-                );
+                ]);
             },
 
             'protected initOutAttributes' : function() {
-                this.outAttributeTypes.put(
-                    new contactJS.AttributeType()
+                this.setOutAttributes([
+                    new contactJS.Attribute()
                         .withName('CI_CURRENT_FORMATTED_TIME')
                         .withType('STRING')
                         .withParameter(new contactJS.Parameter().withKey("CP_FORMAT").withValue("YYYYMMDD"))
-                );
+                ]);
             },
 
-            'protected interpretData' : function(_attributeValues, _function) {
-                var unixTimeMilliseconds = _attributeValues.getValueForAttributeType(this.inAttributeTypes.getItems()[0]);
-                var theDate = new Date(unixTimeMilliseconds*1000);
+            'protected interpretData' : function(_inAttributeValues, _outAttributeValues, _callback) {
+                var formattedTime = _outAttributeValues.getItems()[0];
+
+                var unixTimeSeconds = _inAttributeValues.getValueForAttributeWithTypeOf(this.inAttributes.getItems()[0]);
+                var theDate = new Date(unixTimeSeconds*1000);
 
                 var year = theDate.getFullYear();
                 var month = theDate.getMonth() + 1 < 10 ? "0"+(theDate.getMonth()+1) : theDate.getMonth()+1;
                 var day = theDate.getDate();
 
-                this.setOutAttribute(
-                    'CI_CURRENT_FORMATTED_TIME',
-                    'STRING',
-                    year+""+month+""+day,
-                    [new contactJS.Parameter().withKey("CP_FORMAT").withValue("YYYYMMDD")]
-                );
+                formattedTime.setValue(year+""+month+""+day);
 
-                if (_function && typeof(_function) == 'function'){
-                    _function();
-                }
+                _callback([
+                    formattedTime
+                ]);
             }
         });
 

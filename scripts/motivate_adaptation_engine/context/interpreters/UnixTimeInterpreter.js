@@ -9,34 +9,31 @@ define(['easejs', 'contactJS'],
             'public name' : 'UnixTimeInterpreter',
 
             'protected initInAttributes' : function() {
-                this.inAttributeTypes.put(
-                    new contactJS.AttributeType()
-                    .withName('CI_CURRENT_UNIX_TIME')
-                    .withType('INTEGER')
-                    .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"))
-                );
+                this.setInAttributes([
+                    new contactJS.Attribute()
+                        .withName('CI_CURRENT_UNIX_TIME')
+                        .withType('INTEGER')
+                        .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"))
+                ]);
             },
 
             'protected initOutAttributes' : function() {
-                this.outAttributeTypes.put(
-                    new contactJS.AttributeType()
-                    .withName('CI_CURRENT_UNIX_TIME')
-                    .withType('INTEGER')
-                    .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"))
-                );
+                this.setOutAttributes([
+                    new contactJS.Attribute()
+                        .withName('CI_CURRENT_UNIX_TIME')
+                        .withType('INTEGER')
+                        .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"))
+                ]);
             },
 
-            'protected interpretData' : function(_attributeValues, _function) {
-                this.setOutAttribute(
-                    'CI_CURRENT_UNIX_TIME',
-                    'INTEGER',
-                    Math.floor(_attributeValues.getValueForAttributeType(this.inAttributeTypes.getItems()[0]) / 1000),
-                    [new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS")]
-                );
+            'protected interpretData' : function(_inAttributeValues, _outAttributeValues, _callback) {
+                var unixSecondsValue = _outAttributeValues.getItems()[0];
 
-                if (_function && typeof(_function) == 'function'){
-                    _function();
-                }
+                unixSecondsValue.setValue(Math.floor(_inAttributeValues.getValueForAttributeWithTypeOf(this.inAttributes.getItems()[0]) / 1000));
+
+                _callback([
+                    unixSecondsValue
+                ]);
             }
         });
 

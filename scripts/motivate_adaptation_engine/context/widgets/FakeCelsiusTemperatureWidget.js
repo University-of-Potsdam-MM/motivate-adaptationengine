@@ -8,11 +8,12 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
         'public name': 'FakeCelsiusTemperatureWidget',
 
         'protected initOutAttributes': function () {
-            this.addAttribute(new contactJS.AttributeValue()
-                .withName('CI_CURRENT_TEMPERATURE')
-                .withType('FLOAT')
-                .withValue('NO_VALUE')
-                .withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("CELSIUS")));
+            this.addOutAttribute(
+                new contactJS.Attribute()
+                    .withName('CI_CURRENT_TEMPERATURE')
+                    .withType('FLOAT')
+                    .withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("CELSIUS"))
+            );
         },
 
         'protected initConstantOutAttributes': function () {
@@ -20,12 +21,12 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
         },
 
         'protected initCallbacks': function () {
-            this.addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getAttributeTypes()));
+            this.addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
         },
 
         'override protected queryGenerator': function (_function) {
-            var response = new contactJS.AttributeValueList();
-            response.put(this.getAttributeValues().getItems()[0].setValue("25"));
+            var response = new contactJS.AttributeList();
+            response.put(this.getAttributes().getItems()[0].setValue("25"));
             this.putData(response);
             this.notify();
 
