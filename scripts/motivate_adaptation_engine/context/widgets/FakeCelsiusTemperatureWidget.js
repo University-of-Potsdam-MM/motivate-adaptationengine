@@ -7,7 +7,7 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
     var FakeCelsiusTemperatureWidget = Class('FakeCelsiusTemperatureWidget').extend(contactJS.Widget, {
         'public name': 'FakeCelsiusTemperatureWidget',
 
-        'protected initAttributes': function () {
+        'protected initOutAttributes': function () {
             this.addAttribute(new contactJS.AttributeValue()
                 .withName('CI_CURRENT_TEMPERATURE')
                 .withType('FLOAT')
@@ -15,7 +15,7 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
                 .withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("CELSIUS")));
         },
 
-        'protected initConstantAttributes': function () {
+        'protected initConstantOutAttributes': function () {
 
         },
 

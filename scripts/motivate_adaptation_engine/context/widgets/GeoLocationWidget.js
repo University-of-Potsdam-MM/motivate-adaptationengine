@@ -7,7 +7,7 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
     var GeoLocationWidget = Class('GeoLocationWidget').extend(contactJS.Widget, {
         'public name': 'GeoLocationWidget',
 
-        'protected initAttributes': function () {
+        'protected initOutAttributes': function () {
             var latitude = new contactJS.AttributeValue()
                 .withName('CI_USER_LOCATION_LATITUDE')
                 .withType('FLOAT')
@@ -22,7 +22,7 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
             this.addAttribute(longitude);
         },
 
-        'protected initConstantAttributes': function () {
+        'protected initConstantOutAttributes': function () {
 
         },
 

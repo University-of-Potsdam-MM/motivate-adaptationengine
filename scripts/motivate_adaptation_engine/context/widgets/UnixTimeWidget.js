@@ -7,7 +7,7 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
     var UnixTimeWidget = Class('UnixTimeWidget').extend(contactJS.Widget, {
         'public name': 'UnixTimeWidget',
 
-        'protected initAttributes': function () {
+        'protected initOutAttributes': function () {
             var unixTime = new contactJS.AttributeValue()
                 .withName('CI_CURRENT_UNIX_TIME')
                 .withType('INTEGER')
@@ -16,7 +16,7 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
             this.addAttribute(unixTime);
         },
 
-        'protected initConstantAttributes': function () {
+        'protected initConstantOutAttributes': function () {
 
         },
 
