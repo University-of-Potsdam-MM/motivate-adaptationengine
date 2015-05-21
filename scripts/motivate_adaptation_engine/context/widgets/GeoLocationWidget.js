@@ -1,62 +1,58 @@
 /**
  * Created by tobias on 25.04.15.
  */
-define(['easejs', 'contactJS'], function (easejs, contactJS) {
-    var Class = easejs.Class;
+define(['contactJS'], function (contactJS) {
+    return (function() {
+        /**
+         *
+         * @requires contactJS
+         * @extends Widget
+         * @param discoverer
+         * @constructor
+         */
+        function GeoLocationWidget(discoverer) {
+            contactJS.Widget.call(this, discoverer);
+            this.name = 'GeoLocationWidget';
+        }
 
-    var GeoLocationWidget = Class('GeoLocationWidget').extend(contactJS.Widget, {
-        'public name': 'GeoLocationWidget',
+        GeoLocationWidget.prototype = Object.create(contactJS.Widget.prototype);
+        GeoLocationWidget.prototype.constructor = GeoLocationWidget;
 
-        'protected initOutAttributes': function () {
-            this.addOutAttribute(
-                new contactJS.Attribute()
-                    .withName('CI_USER_LOCATION_LATITUDE')
-                    .withType('FLOAT')
-            );
-            this.addOutAttribute(
-                new contactJS.Attribute()
-                    .withName('CI_USER_LOCATION_LONGITUDE')
-                    .withType('FLOAT')
-            );
-        },
+        GeoLocationWidget.prototype._initOutAttributes = function() {
+            this._setOutAttributes([
+                new contactJS.Attribute().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT'),
+                new contactJS.Attribute().withName('CI_USER_LOCATION_LONGITUDE').withType('FLOAT')
+            ]);
+        };
 
-        'protected initConstantOutAttributes': function () {
+        GeoLocationWidget.prototype._initConstantOutAttributes = function() {
 
-        },
+        };
 
-        'protected initCallbacks': function () {
-            this.addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
-        },
+        GeoLocationWidget.prototype._initCallbacks = function() {
+            this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
+        };
 
-        'override protected queryGenerator': function (_function) {
+        GeoLocationWidget.prototype.queryGenerator = function (callback) {
             var self = this;
             var response = new contactJS.AttributeList();
 
             if(navigator.geolocation){
-                navigator.geolocation.getCurrentPosition(function(_position) {
-                    response.put(self.getOutAttributes().getItems()[0].setValue(_position.coords.latitude));
-                    response.put(self.getOutAttributes().getItems()[1].setValue(_position.coords.longitude));
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    response.put(self.getOutAttributes().getItems()[0].setValue(position.coords.latitude));
+                    response.put(self.getOutAttributes().getItems()[1].setValue(position.coords.longitude));
 
-                    self.sendResponse(response, _function);
+                    self._sendResponse(response, callback);
                 }, function(error) {
                     //TODO: handle error
-                    self.sendResponse(response, _function);
+                    self._sendResponse(response, callback);
                 });
             } else {
                 //TODO: handle error
-                self.sendResponse(response, _function);
+                self._sendResponse(response, callback);
             }
-        },
+        };
 
-        'private sendResponse': function(response, _function) {
-            this.putData(response);
-            this.notify();
-
-            if (_function && typeof(_function) == 'function') {
-                _function();
-            }
-        }
-    });
-
-    return GeoLocationWidget;
+        return GeoLocationWidget;
+    })();
 });

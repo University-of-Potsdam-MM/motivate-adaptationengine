@@ -1,7 +1,6 @@
 define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters',
     'lib/parser/constraint/parser'], function(nools, $, ContextInformation, contactJS, widgets, interpreters) {
-
-    var ContextDetector = (function() {
+    return (function() {
 
         /**
          * The context detector encapsulates the context toolkit which provides context information.
@@ -43,22 +42,22 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
 
             //TODO: Dynamic Configuration
             // (CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:MILLISECONDS]
-            var attributeTypeUnixTimeMilliseconds = contactJS.Attribute().withName('CI_CURRENT_UNIX_TIME').withType('INTEGER').withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"));
+            var attributeTypeUnixTimeMilliseconds = new contactJS.Attribute().withName('CI_CURRENT_UNIX_TIME').withType('INTEGER').withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"));
             // (CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:SECONDS]
-            var attributeTypeUnixTimeSeconds = contactJS.Attribute().withName('CI_CURRENT_UNIX_TIME').withType('INTEGER').withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"));
+            var attributeTypeUnixTimeSeconds = new contactJS.Attribute().withName('CI_CURRENT_UNIX_TIME').withType('INTEGER').withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"));
             // (CI_USER_LOCATION_LATITUDE:FLOAT)
-            var attributeTypeLatitude = contactJS.Attribute().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT');
+            var attributeTypeLatitude = new contactJS.Attribute().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT');
             // (CI_USER_LOCATION_LONGITUDE:FLOAT)
-            var attributeTypeLongitude = contactJS.Attribute().withName('CI_USER_LOCATION_LONGITUDE').withType('FLOAT');
+            var attributeTypeLongitude = new contactJS.Attribute().withName('CI_USER_LOCATION_LONGITUDE').withType('FLOAT');
             // (CI_USER_LOCATION_ADDRESS:STRING)
-            var attributeTypeAddress = contactJS.Attribute().withName('CI_USER_LOCATION_ADDRESS').withType('STRING');
+            var attributeTypeAddress = new contactJS.Attribute().withName('CI_USER_LOCATION_ADDRESS').withType('STRING');
             // (CI_CURRENT_FORMATTED_TIME:STRING)#[CP_FORMAT:YYYYMMDD]
-            var attributeFormattedTime = contactJS.Attribute().withName('CI_CURRENT_FORMATTED_TIME').withType('STRING').withParameter(new contactJS.Parameter().withKey("CP_FORMAT").withValue("YYYYMMDD"));
+            var attributeFormattedTime = new contactJS.Attribute().withName('CI_CURRENT_FORMATTED_TIME').withType('STRING').withParameter(new contactJS.Parameter().withKey("CP_FORMAT").withValue("YYYYMMDD"));
             // (CI_CURRENT_TEMPERATURE:FLOAT)#[CP_TEMPERATURE_SCALE:FAHRENHEIT]
-            var attributeTemperatureFahrenheit = contactJS.Attribute().withName('CI_CURRENT_TEMPERATURE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("FAHRENHEIT"));
+            var attributeTemperatureFahrenheit = new contactJS.Attribute().withName('CI_CURRENT_TEMPERATURE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("FAHRENHEIT"));
             // (CI_USER_LOCATION_DISTANCE:FLOAT)#[CP_TARGET_LATITUDE:52][CP_TARGET_LONGITUDE:13][CP_UNIT:KILOMETERS]
-            var attributeDistanceKilometers = contactJS.Attribute().withName('CI_USER_LOCATION_DISTANCE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("52.38834")).withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("13.09817")).withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"));
-            var attributeDistanceKilometers2 = contactJS.Attribute().withName('CI_USER_LOCATION_DISTANCE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("20")).withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("20")).withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"));
+            var attributeDistanceKilometers = new contactJS.Attribute().withName('CI_USER_LOCATION_DISTANCE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("52.38834")).withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("13.09817")).withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"));
+            var attributeDistanceKilometers2 = new contactJS.Attribute().withName('CI_USER_LOCATION_DISTANCE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("20")).withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("20")).withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"));
 
             // Add widgets
             new widgets[0](this._discoverer);
@@ -181,6 +180,4 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
 
         return ContextDetector;
     })();
-
-    return ContextDetector;
 });

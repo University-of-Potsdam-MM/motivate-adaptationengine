@@ -1,30 +1,43 @@
 /**
  * Created by tobias on 06.03.15.
  */
-define(['easejs', 'contactJS'], function (easejs, contactJS) {
-    var Class = easejs.Class;
+define(['contactJS'], function (contactJS) {
+    return (function() {
+        /**
+         *
+         * @extends Widget
+         * @param discoverer
+         * @returns {UnixTimeWidget}
+         * @constructor
+         */
+        function UnixTimeWidget(discoverer) {
+            contactJS.Widget.call(this, discoverer);
+            this.name = 'UnixTimeWidget';
 
-    var UnixTimeWidget = Class('UnixTimeWidget').extend(contactJS.Widget, {
-        'public name': 'UnixTimeWidget',
+            return this;
+        }
 
-        'protected initOutAttributes': function () {
-            this.addOutAttribute(
+        UnixTimeWidget.prototype = Object.create(contactJS.Widget.prototype);
+        UnixTimeWidget.prototype.constructor = UnixTimeWidget;
+
+        UnixTimeWidget.prototype._initOutAttributes = function() {
+            this._setOutAttributes([
                 new contactJS.Attribute()
                     .withName('CI_CURRENT_UNIX_TIME')
                     .withType('INTEGER')
                     .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"))
-            );
-        },
+            ]);
+        };
 
-        'protected initConstantOutAttributes': function () {
+        UnixTimeWidget.prototype._initConstantOutAttributes = function() {
 
-        },
+        };
 
-        'protected initCallbacks': function () {
-            this.addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
-        },
+        UnixTimeWidget.prototype._initCallbacks = function() {
+            this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
+        };
 
-        'override protected queryGenerator': function (_function) {
+        UnixTimeWidget.prototype.queryGenerator = function(callback) {
             // old browser workaround
             if (!Date.now) {
                 Date.now = function () {
@@ -34,12 +47,9 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
 
             var response = new contactJS.AttributeList();
             response.put(this.getOutAttributes().getItems()[0].setValue(Date.now()));
-            this.putData(response);
-            this.notify();
+            this._sendResponse(response, callback)
+        };
 
-            this.__super(_function);
-        }
-    });
-
-    return UnixTimeWidget;
+        return UnixTimeWidget;
+    })();
 });
