@@ -76,7 +76,7 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
             // (CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:SECONDS]
             var attributeTypeUnixTimeSeconds = this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME','INTEGER',[["CP_UNIT","SECONDS"]]);
             // (CI_USER_LOCATION_LATITUDE:FLOAT)
-            var attributeTypeLatitude = contactJS.Attribute().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT');
+/*            var attributeTypeLatitude = contactJS.Attribute().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT');
             // (CI_USER_LOCATION_LONGITUDE:FLOAT)
             var attributeTypeLongitude = contactJS.Attribute().withName('CI_USER_LOCATION_LONGITUDE').withType('FLOAT');
             // (CI_USER_LOCATION_ADDRESS:STRING)
@@ -88,22 +88,22 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
             // (CI_USER_LOCATION_DISTANCE:FLOAT)#[CP_TARGET_LATITUDE:52][CP_TARGET_LONGITUDE:13][CP_UNIT:KILOMETERS]
             var attributeDistanceKilometers = contactJS.Attribute().withName('CI_USER_LOCATION_DISTANCE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("52.38834")).withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("13.09817")).withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"));
             var attributeDistanceKilometers2 = contactJS.Attribute().withName('CI_USER_LOCATION_DISTANCE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("20")).withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("20")).withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"));
-
+*/
             // Add widgets
-            new widgets[0](this._discoverer);
-            new widgets[1](this._discoverer);
+//            new widgets[0](this._discoverer);
+//            new widgets[1](this._discoverer);
             new widgets[2](this._discoverer);
 
             // Add interpreters
-            new interpreters[0](this._discoverer);
+/*            new interpreters[0](this._discoverer);
             new interpreters[1](this._discoverer);
             new interpreters[2](this._discoverer);
-            new interpreters[3](this._discoverer);
+            new interpreters[3](this._discoverer);*/
             new interpreters[4](this._discoverer);
-            new interpreters[5](this._discoverer);
+//            new interpreters[5](this._discoverer);
 
             var theAggregator = new contactJS.Aggregator(this._discoverer, [
-                attributeFormattedTime
+attributeTypeUnixTimeSeconds
             ]);
 
             this._aggregators.push(theAggregator);

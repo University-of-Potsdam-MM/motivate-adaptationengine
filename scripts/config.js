@@ -15,7 +15,6 @@ require.config({
     paths: {
         // external libraries
         jquery: 'lib/jquery-2.1.1.min',
-        easejs: 'lib/ease-latest',
         MathUuid: 'lib/Math.uuid',
         nools: 'lib/nools.min',
         contactJS: 'lib/contactJS',
@@ -29,9 +28,6 @@ require.config({
         MoCD: 'motivate_adaptation_engine/context/ContextDetector'
     },
     shim:{
-        'easejs' : {
-            exports : 'easejs'
-        },
         'jquery' : {
             exports : '$'
         },
