@@ -1,41 +1,53 @@
 /**
  * Created by tobias on 13.03.15.
  */
-define(['easejs', 'contactJS'],
-    function(easejs, contactJS) {
-        var Class = easejs.Class;
+define(['contactJS'], function(contactJS) {
+    return (function() {
+        /**
+         *
+         * @extends Interpreter
+         * @param discoverer
+         * @returns {UnixTimeInterpreter}
+         * @constructor
+         */
+        function UnixTimeInterpreter(discoverer) {
+            contactJS.Interpreter.call(this, discoverer);
+            this.name = "UnixTimeInterpreter";
 
-        var UnixTimeInterpreter = Class('UnixTimeInterpreter').extend(contactJS.Interpreter, {
-            'public name' : 'UnixTimeInterpreter',
+            return this;
+        }
 
-            'protected initInAttributes' : function() {
-                this.setInAttributes([
-                    new contactJS.Attribute()
-                        .withName('CI_CURRENT_UNIX_TIME')
-                        .withType('INTEGER')
-                        .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"))
-                ]);
-            },
+        UnixTimeInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
+        UnixTimeInterpreter.prototype.constructor = UnixTimeInterpreter;
 
-            'protected initOutAttributes' : function() {
-                this.setOutAttributes([
-                    new contactJS.Attribute()
-                        .withName('CI_CURRENT_UNIX_TIME')
-                        .withType('INTEGER')
-                        .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"))
-                ]);
-            },
+        UnixTimeInterpreter.prototype._initInAttributes = function() {
+            this._setInAttributes([
+                new contactJS.Attribute()
+                    .withName('CI_CURRENT_UNIX_TIME')
+                    .withType('INTEGER')
+                    .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"))
+            ]);
+        };
 
-            'protected interpretData' : function(_inAttributeValues, _outAttributeValues, _callback) {
-                var unixSecondsValue = _outAttributeValues.getItems()[0];
+        UnixTimeInterpreter.prototype._initOutAttributes = function() {
+            this._setOutAttributes([
+                new contactJS.Attribute()
+                    .withName('CI_CURRENT_UNIX_TIME')
+                    .withType('INTEGER')
+                    .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"))
+            ]);
+        };
 
-                unixSecondsValue.setValue(Math.floor(_inAttributeValues.getValueForAttributeWithTypeOf(this.inAttributes.getItems()[0]) / 1000));
+        UnixTimeInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
+            var unixSecondsValue = outAttributes.getItems()[0];
 
-                _callback([
-                    unixSecondsValue
-                ]);
-            }
-        });
+            unixSecondsValue.setValue(Math.floor(inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[0]) / 1000));
+
+            callback([
+                unixSecondsValue
+            ]);
+        };
 
         return UnixTimeInterpreter;
-    });
+    })();
+});

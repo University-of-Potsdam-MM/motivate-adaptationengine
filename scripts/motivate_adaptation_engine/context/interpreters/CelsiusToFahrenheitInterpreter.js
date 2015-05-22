@@ -1,44 +1,56 @@
 /**
  * Created by tobias on 31.03.15.
  */
-define(['easejs', 'contactJS'],
-    function(easejs, contactJS) {
-        var Class = easejs.Class;
+define(['contactJS'], function(contactJS) {
+    return (function() {
+        /**
+         *
+         * @param discoverer
+         * @extends Interpreter
+         * @returns {CelsiusToFahrenheitInterpreter}
+         * @constructor
+         */
+        function CelsiusToFahrenheitInterpreter(discoverer) {
+            contactJS.Interpreter.call(this, discoverer);
+            this.name = "CelsiusToFahrenheitInterpreter";
 
-        var CelsiusToFahrenheitInterpreter = Class('CelsiusToFahrenheitInterpreter').extend(contactJS.Interpreter, {
-            'public name' : 'CelsiusToFahrenheitInterpreter',
+            return this;
+        }
 
-            'protected initInAttributes' : function() {
-                this.setInAttributes([
-                    new contactJS.Attribute()
-                        .withName('CI_CURRENT_TEMPERATURE')
-                        .withType('FLOAT')
-                        .withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("CELSIUS"))
-                ]);
-            },
+        CelsiusToFahrenheitInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
+        CelsiusToFahrenheitInterpreter.prototype.constructor = CelsiusToFahrenheitInterpreter;
 
-            'protected initOutAttributes' : function() {
-                this.setOutAttributes([
-                    new contactJS.Attribute()
-                        .withName('CI_CURRENT_TEMPERATURE')
-                        .withType('FLOAT')
-                        .withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("FAHRENHEIT"))
-                ]);
-            },
+        CelsiusToFahrenheitInterpreter.prototype._initInAttributes = function() {
+            this._setInAttributes([
+                new contactJS.Attribute()
+                    .withName('CI_CURRENT_TEMPERATURE')
+                    .withType('FLOAT')
+                    .withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("CELSIUS"))
+            ]);
+        };
 
-            'protected interpretData' : function(_inAttributeValues, _outAttributeValues, _callback) {
-                var fahrenheitValue = _outAttributeValues.getItems()[0];
+        CelsiusToFahrenheitInterpreter.prototype._initOutAttributes = function() {
+            this._setOutAttributes([
+                new contactJS.Attribute()
+                    .withName('CI_CURRENT_TEMPERATURE')
+                    .withType('FLOAT')
+                    .withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("FAHRENHEIT"))
+            ]);
+        };
 
-                var celsiusTemperature = _inAttributeValues.getValueForAttributeWithTypeOf(this.inAttributes.getItems()[0]);
-                var fahrenheitTemperature = celsiusTemperature * 1.8 + 32;
+        CelsiusToFahrenheitInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
+            var fahrenheitValue = outAttributes.getItems()[0];
 
-                fahrenheitValue.setValue(fahrenheitTemperature);
+            var celsiusTemperature = inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[0]);
+            var fahrenheitTemperature = celsiusTemperature * 1.8 + 32;
 
-                _callback([
-                    fahrenheitTemperature
-                ]);
-            }
-        });
+            fahrenheitValue.setValue(fahrenheitTemperature);
+
+            callback([
+                fahrenheitTemperature
+            ]);
+        };
 
         return CelsiusToFahrenheitInterpreter;
-    });
+    })();
+});

@@ -1,41 +1,53 @@
 /**
  * Created by tobias on 13.03.15.
  */
-define(['easejs', 'contactJS'],
-    function(easejs, contactJS) {
-        var Class = easejs.Class;
+define(['contactJS'], function(contactJS) {
+    return (function() {
+        /**
+         *
+         * @extends Interpreter
+         * @param discoverer
+         * @returns {SecondsInterpreter}
+         * @constructor
+         */
+        function SecondsInterpreter(discoverer) {
+            contactJS.Interpreter.call(this, discoverer);
+            this.name = "SecondsInterpreter";
 
-        var SecondsInterpreter = Class('SecondsInterpreter').extend(contactJS.Interpreter, {
-            'public name' : 'SecondsInterpreter',
+            return this;
+        }
 
-            'protected initInAttributes' : function() {
-                this.setInAttributes([
-                    new contactJS.Attribute()
-                        .withName('CI_BASE_UNIT_OF_TIME')
-                        .withType('INTEGER')
-                        .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"))
-                ]);
-            },
+        SecondsInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
+        SecondsInterpreter.prototype.constructor = SecondsInterpreter;
 
-            'protected initOutAttributes' : function() {
-                this.setOutAttributes([
-                    new contactJS.Attribute()
-                        .withName('CI_BASE_UNIT_OF_TIME')
-                        .withType('INTEGER')
-                        .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"))
-                ]);
-            },
+        SecondsInterpreter.prototype._initInAttributes = function() {
+            this._setInAttributes([
+                new contactJS.Attribute()
+                    .withName('CI_BASE_UNIT_OF_TIME')
+                    .withType('INTEGER')
+                    .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"))
+            ]);
+        };
 
-            'protected interpretData' : function(_inAttributeValues, _outAttributeValues, _callback) {
-                var unixSecondsValue = _outAttributeValues.getItems()[0];
+        SecondsInterpreter.prototype._initOutAttributes = function() {
+            this._setOutAttributes([
+                new contactJS.Attribute()
+                    .withName('CI_BASE_UNIT_OF_TIME')
+                    .withType('INTEGER')
+                    .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"))
+            ]);
+        };
 
-                unixSecondsValue.setValue(Math.floor(_inAttributeValues.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[0]) / 1000));
+        SecondsInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
+            var unixSecondsValue = outAttributes.getItems()[0];
 
-                _callback([
-                    unixSecondsValue
-                ]);
-            }
-        });
+            unixSecondsValue.setValue(Math.floor(inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[0]) / 1000));
+
+            callback([
+                unixSecondsValue
+            ]);
+        };
 
         return SecondsInterpreter;
-    });
+    })();
+});

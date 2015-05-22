@@ -1,38 +1,48 @@
 /**
  * Created by tobias on 31.03.15.
  */
-define(['easejs', 'contactJS'], function (easejs, contactJS) {
-    var Class = easejs.Class;
+define(['contactJS'], function (contactJS) {
+    return (function() {
+        /**
+         *
+         * @extends Widget
+         * @param discoverer
+         * @returns {FakeCelsiusTemperatureWidget}
+         * @constructor
+         */
+        function FakeCelsiusTemperatureWidget(discoverer) {
+            contactJS.Widget.call(this, discoverer);
+            this.name = 'FakeCelsiusTemperatureWidget';
 
-    var FakeCelsiusTemperatureWidget = Class('FakeCelsiusTemperatureWidget').extend(contactJS.Widget, {
-        'public name': 'FakeCelsiusTemperatureWidget',
+            return this;
+        }
 
-        'protected initOutAttributes': function () {
-            this.addOutAttribute(
+        FakeCelsiusTemperatureWidget.prototype = Object.create(contactJS.Widget.prototype);
+        FakeCelsiusTemperatureWidget.prototype.constructor = FakeCelsiusTemperatureWidget;
+
+        FakeCelsiusTemperatureWidget.prototype._initOutAttributes = function() {
+            this._setOutAttributes([
                 new contactJS.Attribute()
                     .withName('CI_CURRENT_TEMPERATURE')
                     .withType('FLOAT')
                     .withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("CELSIUS"))
-            );
-        },
+            ]);
+        };
 
-        'protected initConstantOutAttributes': function () {
+        FakeCelsiusTemperatureWidget.prototype._initConstantOutAttributes = function() {
 
-        },
+        };
 
-        'protected initCallbacks': function () {
-            this.addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
-        },
+        FakeCelsiusTemperatureWidget.prototype._initCallbacks = function() {
+            this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
+        };
 
-        'override protected queryGenerator': function (_function) {
+        FakeCelsiusTemperatureWidget.prototype.queryGenerator = function(callback) {
             var response = new contactJS.AttributeList();
-            response.put(this.getAttributes().getItems()[0].setValue("25"));
-            this.putData(response);
-            this.notify();
+            response.put(this.getOutAttributes().getItems()[0].setValue("25"));
+            this._sendResponse(response, callback);
+        };
 
-            this.__super(_function);
-        }
-    });
-
-    return FakeCelsiusTemperatureWidget;
+        return FakeCelsiusTemperatureWidget;
+    })();
 });
