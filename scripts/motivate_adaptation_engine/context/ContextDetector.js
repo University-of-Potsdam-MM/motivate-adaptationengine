@@ -101,7 +101,8 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
 //            new interpreters[5](this._discoverer);
 
             var theAggregator = new contactJS.Aggregator(this._discoverer, [
-                attributeFormattedTime
+//                attributeFormattedTime
+				attributeTypeUnixTimeSeconds
             ]);
 
             this._aggregators.push(theAggregator);
