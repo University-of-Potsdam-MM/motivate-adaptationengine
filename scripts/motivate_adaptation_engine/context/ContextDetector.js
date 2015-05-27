@@ -70,9 +70,9 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
 
             //TODO: Dynamic Configuration
             // (CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:MILLISECONDS]
-            var attributeTypeUnixTimeMilliseconds = new contactJS.Attribute().withName('CI_CURRENT_UNIX_TIME').withType('INTEGER').withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"));
+            var attributeTypeUnixTimeMilliseconds = this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME','INTEGER',[['CP_UNIT','MILLISECONDS']]);
             // (CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:SECONDS]
-            var attributeTypeUnixTimeSeconds = new contactJS.Attribute().withName('CI_CURRENT_UNIX_TIME').withType('INTEGER').withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"));
+            var attributeTypeUnixTimeSeconds = this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME','INTEGER',[['CP_UNIT','SECONDS']]);
             // (CI_USER_LOCATION_LATITUDE:FLOAT)
 //            var attributeTypeLatitude = new contactJS.Attribute().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT');
 //            // (CI_USER_LOCATION_LONGITUDE:FLOAT)
