@@ -7,14 +7,16 @@ define([
     './DistanceInterpreter',
     './ISO8601Interpreter',
     './SecondsInterpreter',
-    './UnixTimeInterpreter'
+    './UnixTimeInterpreter',
+    './NightTimeInterpreter'
 ], function(
     AddressInterpreter,
     CelsiusToFahrenheitInterpreter,
     DistanceInterpreter,
     ISO8601Interpreter,
     SecondsInterpreter,
-    UnixTimeInterpreter
+    UnixTimeInterpreter,
+    NightTimeInterpreter
 ) {
     return arguments;
 });

@@ -27,37 +27,16 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
                 }
             };
             
-            this._discoverer = new contactJS.Discoverer(widgets, interpreters, [                                                                                
-                new contactJS.Translation (
-                		new contactJS.Attribute()
-                        .withName('CI_CURRENT_UNIX_TIME')
-                        .withType('INTEGER')
-                        .withParameter(new contactJS.Parameter()
-                            .withKey("CP_UNIT")
-                            .withValue("SECONDS"))
-                            ,
-                        new contactJS.Attribute()
-                        .withName('CI_BASE_UNIT_OF_TIME')
-                        .withType('INTEGER')
-                        .withParameter(new contactJS.Parameter()
-                            .withKey("CP_UNIT")
-                            .withValue("SECONDS"))
-                ),
-                new contactJS.Translation(
-                		new contactJS.Attribute()
-		                    .withName('CI_CURRENT_UNIX_TIME')
-		                    .withType('INTEGER')
-		                    .withParameter(new contactJS.Parameter()
-			                    .withKey("CP_UNIT")
-			                    .withValue("MILLISECONDS"))
-			            ,
-	                    new contactJS.Attribute()
-		                    .withName('CI_BASE_UNIT_OF_TIME')
-		                    .withType('INTEGER')
-		                    .withParameter(new contactJS.Parameter()
-			                    .withKey("CP_UNIT")
-			                    .withValue("MILLISECONDS"))
-                )]);
+            this._discoverer = new contactJS.Discoverer(widgets, interpreters, [
+                [
+                    ['CI_CURRENT_UNIX_TIME','INTEGER',[["CP_UNIT","SECONDS"]]],
+                    ['CI_BASE_UNIT_OF_TIME','INTEGER',[["CP_UNIT","SECONDS"]]]
+                ],
+                [
+                    ['CI_CURRENT_UNIX_TIME','INTEGER',[["CP_UNIT","MILLISECONDS"]]],
+                    ['CI_BASE_UNIT_OF_TIME','INTEGER',[["CP_UNIT","MILLISECONDS"]]]
+                ]
+            ]);
 
             // TODO: dynamic context information extraction
             for(var index in adaptationRules) {
@@ -72,7 +51,9 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
             // (CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:MILLISECONDS]
             var attributeTypeUnixTimeMilliseconds = this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME','INTEGER',[['CP_UNIT','MILLISECONDS']]);
             // (CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:SECONDS]
-            var attributeTypeUnixTimeSeconds = this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME','INTEGER',[['CP_UNIT','SECONDS']]);
+//            var attributeTypeUnixTimeSeconds = this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME','INTEGER',[['CP_UNIT','SECONDS']]);
+            var attributeTypeIsNightTime = this._discoverer.buildAttribute('CI_IS_NIGHTTIME','BOOLEAN');
+
             // (CI_USER_LOCATION_LATITUDE:FLOAT)
 //            var attributeTypeLatitude = new contactJS.Attribute().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT');
 //            // (CI_USER_LOCATION_LONGITUDE:FLOAT)
@@ -99,10 +80,12 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
 //            new interpreters[3](this._discoverer);
             new interpreters[4](this._discoverer);
 //            new interpreters[5](this._discoverer);
+            new interpreters[6](this._discoverer);
 
             var theAggregator = new contactJS.Aggregator(this._discoverer, [
 //                attributeFormattedTime
-				attributeTypeUnixTimeSeconds
+				//attributeTypeUnixTimeSeconds
+                attributeTypeIsNightTime
             ]);
 
             this._aggregators.push(theAggregator);

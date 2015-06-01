@@ -22,19 +22,13 @@ define(['contactJS'], function(contactJS) {
 
         SecondsInterpreter.prototype._initInAttributes = function() {
             this._setInAttributes([
-                new contactJS.Attribute()
-                    .withName('CI_BASE_UNIT_OF_TIME')
-                    .withType('INTEGER')
-                    .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"))
+                this._discoverer.buildAttribute('CI_BASE_UNIT_OF_TIME','INTEGER',[["CP_UNIT","MILLISECONDS"]])
             ]);
         };
 
         SecondsInterpreter.prototype._initOutAttributes = function() {
             this._setOutAttributes([
-                new contactJS.Attribute()
-                    .withName('CI_BASE_UNIT_OF_TIME')
-                    .withType('INTEGER')
-                    .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"))
+                this._discoverer.buildAttribute('CI_BASE_UNIT_OF_TIME','INTEGER',[["CP_UNIT","SECONDS"]])
             ]);
         };
 
