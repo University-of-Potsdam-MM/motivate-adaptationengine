@@ -22,19 +22,13 @@ define(['contactJS'], function(contactJS) {
 
         CelsiusToFahrenheitInterpreter.prototype._initInAttributes = function() {
             this._setInAttributes([
-                new contactJS.Attribute()
-                    .withName('CI_CURRENT_TEMPERATURE')
-                    .withType('FLOAT')
-                    .withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("CELSIUS"))
+                this._discoverer.buildAttribute('CI_CURRENT_TEMPERATURE','FLOAT',[["CP_TEMPERATURE_SCALE","CELSIUS"]])
             ]);
         };
 
         CelsiusToFahrenheitInterpreter.prototype._initOutAttributes = function() {
             this._setOutAttributes([
-                new contactJS.Attribute()
-                    .withName('CI_CURRENT_TEMPERATURE')
-                    .withType('FLOAT')
-                    .withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("FAHRENHEIT"))
+                this._discoverer.buildAttribute('CI_CURRENT_TEMPERATURE','FLOAT',[["CP_TEMPERATURE_SCALE","FAHRENHEIT"]])
             ]);
         };
 

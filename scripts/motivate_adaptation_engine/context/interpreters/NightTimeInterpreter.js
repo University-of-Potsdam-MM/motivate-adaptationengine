@@ -28,7 +28,8 @@ define(['contactJS'], function(contactJS) {
 
         NightTimeInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var isNightTime = outAttributes.getItems()[0];
-            var isNightTimeValue = (inAttributes.getValue() < 20000 || inAttributes.getValue() > 80000);
+            var inAttributeValue = inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[0]);
+            var isNightTimeValue = (inAttributeValue < 20000 || inAttributeValue > 80000);
 
             isNightTime.setValue(isNightTimeValue);
 

@@ -22,19 +22,13 @@ define(['contactJS'], function(contactJS) {
 
         UnixTimeInterpreter.prototype._initInAttributes = function() {
             this._setInAttributes([
-                new contactJS.Attribute()
-                    .withName('CI_CURRENT_UNIX_TIME')
-                    .withType('INTEGER')
-                    .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("MILLISECONDS"))
+                this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME','INTEGER',[["CP_UNIT","MILLISECONDS"]])
             ]);
         };
 
         UnixTimeInterpreter.prototype._initOutAttributes = function() {
             this._setOutAttributes([
-                new contactJS.Attribute()
-                    .withName('CI_CURRENT_UNIX_TIME')
-                    .withType('INTEGER')
-                    .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("SECONDS"))
+                this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME','INTEGER',[["CP_UNIT","SECONDS"]])
             ]);
         };
 

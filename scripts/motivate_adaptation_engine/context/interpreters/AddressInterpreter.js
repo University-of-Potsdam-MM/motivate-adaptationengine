@@ -20,14 +20,14 @@ define(['contactJS'], function(contactJS) {
 
         AddressInterpreter.prototype._initInAttributes = function() {
             this._setInAttributes([
-                new contactJS.Attribute().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT'),
-                new contactJS.Attribute().withName('CI_USER_LOCATION_LONGITUDE').withType('FLOAT')
+                this._discoverer.buildAttribute('CI_USER_LOCATION_LATITUDE','FLOAT'),
+                this._discoverer.buildAttribute('CI_USER_LOCATION_LONGITUDE','FLOAT')
             ]);
         };
 
         AddressInterpreter.prototype._initOutAttributes = function() {
             this._setOutAttributes([
-                new contactJS.Attribute().withName('CI_USER_LOCATION_ADDRESS').withType('STRING')
+                this._discoverer.buildAttribute('CI_USER_LOCATION_ADDRESS','STRING')
             ]);
         };
 

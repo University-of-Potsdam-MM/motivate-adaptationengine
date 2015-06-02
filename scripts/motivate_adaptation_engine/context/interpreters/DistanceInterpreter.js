@@ -22,19 +22,18 @@ define(['contactJS'], function(contactJS) {
 
         DistanceInterpreter.prototype._initInAttributes = function() {
             this._setInAttributes([
-                new contactJS.Attribute().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT'),
-                new contactJS.Attribute().withName('CI_USER_LOCATION_LONGITUDE').withType('FLOAT')
+                this._discoverer.buildAttribute('CI_USER_LOCATION_LATITUDE','FLOAT'),
+                this._discoverer.buildAttribute('CI_USER_LOCATION_LONGITUDE','FLOAT')
             ]);
         };
 
         DistanceInterpreter.prototype._initOutAttributes = function() {
             this._setOutAttributes([
-                new contactJS.Attribute()
-                    .withName('CI_USER_LOCATION_DISTANCE')
-                    .withType('FLOAT')
-                    .withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("PV_INPUT"))
-                    .withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("PV_INPUT"))
-                    .withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"))
+                this._discoverer.buildAttribute('CI_USER_LOCATION_DISTANCE','FLOAT',[
+                    ["CP_TARGET_LATITUDE","PV_INPUT"],
+                    ["CP_TARGET_LONGITUDE","PV_INPUT"],
+                    ["CP_UNIT","KILOMETERS"]
+                ])
             ]);
         };
 

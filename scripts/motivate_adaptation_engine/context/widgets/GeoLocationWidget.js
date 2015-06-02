@@ -20,8 +20,8 @@ define(['contactJS'], function (contactJS) {
 
         GeoLocationWidget.prototype._initOutAttributes = function() {
             this._setOutAttributes([
-                new contactJS.Attribute().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT'),
-                new contactJS.Attribute().withName('CI_USER_LOCATION_LONGITUDE').withType('FLOAT')
+                this._discoverer.buildAttribute('CI_USER_LOCATION_LATITUDE','FLOAT'),
+                this._discoverer.buildAttribute('CI_USER_LOCATION_LONGITUDE','FLOAT')
             ]);
         };
 
