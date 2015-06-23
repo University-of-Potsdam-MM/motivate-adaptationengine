@@ -26,7 +26,8 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
                     console.log("Warning! There is no callback set to handle updated context information.");
                 }
             };
-            
+
+            // third parameter holds translations of attribute types
             this._discoverer = new contactJS.Discoverer(widgets, interpreters, [
                 [
                     ['CI_CURRENT_UNIX_TIME','INTEGER',[["CP_UNIT","SECONDS"]]],
@@ -35,6 +36,10 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
                 [
                     ['CI_CURRENT_UNIX_TIME','INTEGER',[["CP_UNIT","MILLISECONDS"]]],
                     ['CI_BASE_UNIT_OF_TIME','INTEGER',[["CP_UNIT","MILLISECONDS"]]]
+                ],
+                [
+                    ['CI_CURRENT_UNIX_TIME_IN_SECONDS','INTEGER'],
+                    ['CI_CURRENT_UNIX_TIME','INTEGER',[["CP_UNIT","SECONDS"]]]
                 ]
             ]);
 

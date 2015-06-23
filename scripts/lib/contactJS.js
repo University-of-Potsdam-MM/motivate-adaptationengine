@@ -720,7 +720,12 @@ define('attribute',['parameterList'], function(ParameterList) {
          * @classdesc Attribute defines name, type (string, double,...) an associated parameter of an attribute.
          * @constructs Attribute
          */
-        function Attribute() {
+        function Attribute(overrideBuilderDependency) {
+
+            // avoid inexpert meddling with attribute construction
+            if (typeof overrideBuilderDependency == 'undefined' || !overrideBuilderDependency)
+                throw new Error("Attributes must be created by discoverer's buildAttribute() method!");
+
             /**
              * Name of the Attribute.
              *
@@ -932,9 +937,7 @@ define('attribute',['parameterList'], function(ParameterList) {
          */
         Attribute.prototype.addSynonym = function(synonym){
             if (synonym instanceof Attribute)
-                this.synonymList.push(synonym.getName());
-            else if (typeof _synonym == 'string')
-                this.synonymList.push(synonym);
+                this._synonymList.push(synonym);
         };
 
         /**
@@ -964,6 +967,16 @@ define('attribute',['parameterList'], function(ParameterList) {
          */
         Attribute.prototype.hasParameters = function() {
             return this._parameterList.size() > 0;
+        };
+
+        Attribute.prototype.hasSynonyms = function() {
+            return this._synonymList.length > 0;
+        };
+
+        Attribute.prototype.hasSynonym = function(attribute) {
+            for (var i in this._synonymList)
+                if (this._synonymList[i].equalsTypeOf(attribute)) return true;
+            return false;
         };
 
         /**
@@ -1019,11 +1032,29 @@ define('attribute',['parameterList'], function(ParameterList) {
          * @returns {boolean}
          */
         Attribute.prototype.equalsTypeOf = function(attribute) {
-            var name = attribute.getName();
+            if(this._equalsTypeOf(attribute))
+                return true;
+
+            var theseSynonyms = this.getSynonyms();
+            var thoseSynonyms = attribute.getSynonyms();
+            for (var i in theseSynonyms) {
+                var thisSynonym = theseSynonyms[i];
+                if (attribute._equalsTypeOf(thisSynonym))
+                    return true;
+            }
+            for (var i in thoseSynonyms) {
+                var thatSynonym = thoseSynonyms[i];
+                if (this._equalsTypeOf(thatSynonym))
+                    return true;
+            }
+            return false;
+        };
+
+        Attribute.prototype._equalsTypeOf = function(attribute) {
             if (attribute instanceof Attribute) {
-                if ((this.getName() == name || this.getSynonyms().indexOf(name) != -1)
+                if ((this.getName() == attribute.getName()
                     && this.getType() == attribute.getType()
-                    && this.getParameters().equals(attribute.getParameters())) {
+                    && this.getParameters().equals(attribute.getParameters()))) {
                     return true;
                 }
             }
@@ -1282,7 +1313,11 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
             var newList = new AttributeList();
             for (var index in this._items) {
                 var oldAttribute = this._items[index];
-                var newAttribute = new Attribute().withName(oldAttribute.getName()).withType(oldAttribute.getType()).withParameters(oldAttribute.getParameters());
+                var newAttribute = new Attribute(true)
+                    .withName(oldAttribute.getName())
+                    .withType(oldAttribute.getType())
+                    .withParameters(oldAttribute.getParameters())
+                    .withSynonyms(oldAttribute.getSynonyms());
                 if (!typeOnly) newAttribute.setValue(oldAttribute.getValue());
                 newList.put(newAttribute);
             }
@@ -1828,7 +1863,7 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 				var attributeName = this._resolveAttributeName(tableName);
 				var parameterList = this._resolveParameters(tableName);
 				for(var i=0; i<len; i++){
-					var attribute = new Attribute().
+					var attribute = new Attribute(true).
 						withName(attributeName).withValue(results.rows.item(i).value_).
 						withType(results.rows.item(i).type_).
 						withTimestamp(results.rows.item(i).created_).
@@ -4591,7 +4626,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 								var widgetOutAttribute = outAttributes[widgetOutAttributeIndex];
 								// add the attribute type to the aggregators list of handled attribute types
 								if (!this.getOutAttributes().containsTypeOf(widgetOutAttribute)) this.addOutAttribute(widgetOutAttribute);
-								console.log("I can now satisfy attribute "+widgetOutAttribute+" with the help of "+theComponent.getName()+"! That was easy :)");
+								console.log("I can now satisfy attribute "+widgetOutAttribute.toString(true)+" with the help of "+theComponent.getName()+"! That was easy :)");
 								unsatisfiedAttributes.removeAttributeWithTypeOf(widgetOutAttribute);
 							}
 						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
@@ -4604,22 +4639,27 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 							for (var inAttributeIdentifier in inAttributes) {
 								// get the attribute
 								var theInAttribute = inAttributes[inAttributeIdentifier];
-								console.log("The interpreter needs the attribute "+theInAttribute+".");
+								console.log("The interpreter needs the attribute "+theInAttribute.toString(true)+".");
+
+                                var allTranslations = this._discoverer.getTranslations();
+                                for (var translationIndex in allTranslations) {
+                                    theInAttribute = allTranslations[translationIndex].translate(theInAttribute);
+                                }
 
 								// if required attribute is not already satisfied by the aggregator search for components that do
 								if (!this.doesSatisfyTypeOf(theInAttribute)) {
-									console.log("It seems that I can't satisfy "+theInAttribute+", but I will search for components that can.");
+									console.log("It seems that I can't satisfy "+theInAttribute.toString(true)+", but I will search for components that can.");
 									var newAttributeList = new AttributeList();
 									newAttributeList.put(theInAttribute);
 									this._getComponentsForUnsatisfiedAttributes(newAttributeList, false, [Widget, Interpreter]);
 									// if the attribute still can't be satisfied drop the interpreter
 									if (!this.doesSatisfyTypeOf(theInAttribute)) {
-										console.log("I couldn't find a component to satisfy "+theInAttribute+". Dropping interpreter "+theComponent.getName()+". Bye bye.");
+										console.log("I couldn't find a component to satisfy "+theInAttribute.toString(true)+". Dropping interpreter "+theComponent.getName()+". Bye bye.");
 										canSatisfyInAttributes = false;
 										break;
 									}
 								} else {
-									console.log("It seems that I already satisfy the attribute "+theInAttribute+". Let's move on.");
+									console.log("It seems that I already satisfy the attribute "+theInAttribute.toString(true)+". Let's move on.");
 								}
 							}
 
@@ -4632,7 +4672,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 										var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
 										if (theUnsatisfiedAttribute.equalsTypeOf(interpreterOutAttribute)) {
 											this.addOutAttribute(theUnsatisfiedAttribute);
-											console.log("I can now satisfy attribute "+theUnsatisfiedAttribute+" with the help of "+theComponent.getName()+"! Great!");
+											console.log("I can now satisfy attribute "+theUnsatisfiedAttribute.toString(true)+" with the help of "+theComponent.getName()+"! Great!");
 											this._interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
 										}
 									}
@@ -4835,8 +4875,104 @@ define('unequals',['conditionMethod'], function(ConditionMethod){
 		return UnEquals;
 	})();
 });
-define('discoverer',['attributeList', 'widget', 'interpreter', 'aggregator' ],
-	function(AttributeList, Widget, Interpreter, Aggregator) {
+/**
+ * This module represents the helper class Translation. 
+ * 
+ * @module Translation
+ */
+define('translation', ['attribute'], function(Attribute) {
+	return (function() {
+		/**
+		 * Constructs a translation tuple.
+		 *
+		 * @classdesc This class represents a translation tuple. It holds two synonymous attribute types.
+		 * @requires attribute
+		 * @constructs Translation
+		 */
+		function Translation(fromAttribute, toAttribute) {
+			/**
+			 *
+			 * @type {?Attribute}
+			 * @private
+			 */
+			this._fromAttribute = null;
+
+			/**
+			 *
+			 * @type {?Attribute}
+			 * @private
+			 */
+			this._toAttribute = null;
+
+			if (fromAttribute instanceof Attribute && toAttribute instanceof Attribute) {
+				this._fromAttribute = fromAttribute;
+				this._toAttribute = toAttribute;
+			}
+
+			return this;
+		}
+
+		/**
+		 * Return the target synonym.
+		 *
+		 * @returns {Attribute} The synonymous attribute
+		 */
+		Translation.prototype.getSynonym = function() {
+			return this._toAttribute;
+		};
+
+		/**
+		 * Return the original attribute for which a translation exists.
+		 *
+		 * @returns {Attribute} The original attribute
+		 */
+		Translation.prototype.getOrigin = function() {
+			return this._fromAttribute;
+		};
+
+		/**
+		 * Look for a translation and return true if one exists.
+		 *
+		 * @param {Attribute} attribute Attribute whose synonym is queried
+		 * @returns {boolean}
+		 */
+		Translation.prototype.hasTranslation = function(attribute) {
+			return this._fromAttribute.equalsTypeOf(attribute);
+		};
+
+		/**
+		 * Look for a translation result and return true if one exists.
+		 *
+		 * @param {Attribute} attribute Attribute whose synonym is queried
+		 * @returns {boolean}
+		 */
+		Translation.prototype.isTranslation = function(attribute) {
+			return this._toAttribute.equalsTypeOf(attribute);
+		};
+
+		/**
+		 * Look for a translation and return the (translated) attribute.
+		 *
+		 * @param {Attribute} attribute Attribute whose synonym is queried
+		 * @returns {Attribute}
+		 */
+		Translation.prototype.translate = function(attribute) {
+			if (this.hasTranslation(attribute) && !attribute.hasSynonym(this._toAttribute)) {
+				return attribute.withSynonym(this._toAttribute);
+			}
+			else if (this.isTranslation(attribute) && !attribute.hasSynonym(this._fromAttribute)) {
+				return attribute.withSynonym(this._fromAttribute);
+			}
+			else {
+				return attribute;
+			}
+		};
+
+		return Translation;
+	})();
+});
+define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', 'widget', 'interpreter', 'aggregator' ],
+	function(AttributeList, Attribute, Translation, Parameter, Widget, Interpreter, Aggregator) {
 		return (function() {
 			/**
 			 * Constructor: All known components given in the associated functions will be registered as startup.
@@ -4875,7 +5011,33 @@ define('discoverer',['attributeList', 'widget', 'interpreter', 'aggregator' ],
 				 * @type {Array}
 				 * @private
 				 */
-				this._translations = (translations instanceof Array) ? translations : [];
+				this._translations = [];
+
+                for (var i in translations) {
+                    var translationArray = translations[i];
+                    if (translationArray.length != 2)
+                        throw new Error("Translations must consist of exactly 2 attributes!");
+
+                    for (var j in translationArray) {
+                        if (translationArray[j].length > 3 || translationArray[j].length < 2)
+                            throw new Error("Please provide a name, type and (optional) list of parameters!");
+                    }
+
+                    var firstAttribute = this.buildAttribute(
+                        translationArray[0][0],
+                        translationArray[0][1],
+                        translationArray[0][2],
+                        false
+                    );
+                    var secondAttribute = this.buildAttribute(
+                        translationArray[1][0],
+                        translationArray[1][1],
+                        translationArray[1][2],
+                        false
+                    );
+
+                    this._translations.push(new Translation(firstAttribute,secondAttribute));
+                }
 
 				return this;
 			}
@@ -5039,10 +5201,15 @@ define('discoverer',['attributeList', 'widget', 'interpreter', 'aggregator' ],
 			 * @param name
 			 * @param type
 			 * @param parameterList
+             * @param withSynonym
 			 * @returns {Attribute}
 			 */
-			Discoverer.prototype.buildAttribute = function(name, type, parameterList) {
-				var newAttribute = new Attribute().withName(name).withType(type);
+			Discoverer.prototype.buildAttribute = function(name, type, parameterList, withSynonyms) {
+
+                if (typeof name != 'string' || typeof type != 'string')
+                    throw new Error("Parameters name and type must be of type String!");
+
+                var newAttribute = new Attribute(true).withName(name).withType(type);
 
 				while (typeof parameterList != 'undefined' && parameterList.length > 0)
 				{
@@ -5052,11 +5219,14 @@ define('discoverer',['attributeList', 'widget', 'interpreter', 'aggregator' ],
 					if (typeof key != 'undefined' && typeof value != 'undefined')
 						newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withValue(value));
 				}
-				for (var index in this._translations) {
-					var translation = this._translations[index];
-					if (translation.translates(newAttribute))
-						newAttribute = newAttribute.withSynonym(translation.getSynonym());
-				}
+
+                if (typeof withSynonyms == 'undefined' || withSynonyms) {
+                    for (var index in this._translations) {
+                        var translation = this._translations[index];
+						newAttribute = translation.translate(newAttribute);
+                    }
+                }
+
 				return newAttribute;
 			};
 
@@ -5104,65 +5274,6 @@ define('discoverer',['attributeList', 'widget', 'interpreter', 'aggregator' ],
 		})();
 	}
 );
-/**
- * This module represents the helper class Translation. 
- * 
- * @module Translation
- */
-define('translation', ['attribute'], function(Attribute) {
-	return (function() {
-		/**
-		 * Constructs a translation tuple.
-		 *
-		 * @classdesc This class represents a translation tuple. It holds two synonymous attribute types.
-		 * @requires attribute
-		 * @constructs Translation
-		 */
-		function Translation(fromAttribute, toAttribute) {
-			/**
-			 *
-			 * @type {?Attribute}
-			 * @private
-			 */
-			this._fromAttribute = null;
-
-			/**
-			 *
-			 * @type {?Attribute}
-			 * @private
-			 */
-			this._toAttribute = null;
-
-			if (fromAttribute instanceof Attribute && toAttribute instanceof Attribute) {
-				this._fromAttribute = fromAttribute;
-				this._toAttribute = toAttribute;
-			}
-
-			return this;
-		}
-
-		/**
-		 * Look for a translation and return the found synonym.
-		 *
-		 * @returns {Attribute} The synonymous attribute
-		 */
-		Translation.prototype.getSynonym = function() {
-			return this._toAttribute;
-		};
-
-		/**
-		 * Look for a translation and return true if one exists.
-		 *
-		 * @param {Attribute} attribute Attribute whose synonym is queried
-		 * @returns {boolean}
-		 */
-		Translation.prototype.translates = function(attribute) {
-			return this._fromAttribute.equalsTypeOf(attribute);
-		};
-
-		return Translation;
-	})();
-});
 	define('contactJS',['retrievalResult',
 			'storage',
 			'aggregator',
