@@ -3,6 +3,30 @@
  */
 define(['contactJS'], function(contactJS) {
     return (function() {
+
+        ISO8601Interpreter.inOut = {
+            in: [
+                {
+                    'name':'CI_CURRENT_UNIX_TIME',
+                    'type':'INTEGER',
+                    'parameterList': ["CP_UNIT", "SECONDS"],
+                    "synonymList": [],
+                    'value':'',
+                    'timestamp':''
+                }
+            ],
+            out: [
+                {
+                    'name':'CI_CURRENT_FORMATTED_TIME',
+                    'type':'STRING',
+                    'parameterList': ["CP_FORMAT", "YYYYMMDD"],
+                    "synonymList": [],
+                    'value':'',
+                    'timestamp':''
+                }
+            ]
+        };
+
         /**
          *
          * @extends Interpreter
@@ -10,8 +34,8 @@ define(['contactJS'], function(contactJS) {
          * @returns {ISO8601Interpreter}
          * @constructor
          */
-        function ISO8601Interpreter(discoverer) {
-            contactJS.Interpreter.call(this, discoverer);
+        function ISO8601Interpreter(discoverer, inAttributes, outAttributes) {
+            contactJS.Interpreter.call(this, discoverer, inAttributes, outAttributes);
             this.name = "ISO8601Interpreter";
 
             return this;
@@ -20,17 +44,7 @@ define(['contactJS'], function(contactJS) {
         ISO8601Interpreter.prototype = Object.create(contactJS.Interpreter.prototype);
         ISO8601Interpreter.prototype.constructor = ISO8601Interpreter;
 
-        ISO8601Interpreter.prototype._initInAttributes = function() {
-            this._setInAttributes([
-                this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME','INTEGER'[["CP_UNIT","SECONDS"]])
-            ]);
-        };
 
-        ISO8601Interpreter.prototype._initOutAttributes = function() {
-            this._setOutAttributes([
-                this._discoverer.buildAttribute('CI_CURRENT_FORMATTED_TIME','STRING',[["CP_FORMAT","YYYYMMDD"]])
-            ]);
-        };
 
         ISO8601Interpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var formattedTime = outAttributes.getItems()[0];

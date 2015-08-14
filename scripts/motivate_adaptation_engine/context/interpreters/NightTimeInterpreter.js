@@ -4,8 +4,38 @@
 define(['contactJS'], function(contactJS) {
     return (function() {
 
-        function NightTimeInterpreter(discoverer) {
-            contactJS.Interpreter.call(this, discoverer);
+        NightTimeInterpreter.inOut = {
+            in: [
+                {
+                    'name':'CI_CURRENT_UNIX_TIME',
+                    'type':'INTEGER',
+                    'parameterList': ["CP_UNIT", "SECONDS"],
+                    "synonymList": [],
+                    'value':'',
+                    'timestamp':''
+                }
+            ],
+            out: [
+                {
+                    'name':'CI_IS_NIGHTTIME',
+                    'type':'BOOLEAN',
+                    'parameterList': [],
+                    "synonymList": [],
+                    'value':'',
+                    'timestamp':''
+                }
+            ]
+        };
+
+        /**
+         *
+         * @extends Interpreter
+         * @param discoverer
+         * @returns {NightTimeInterpreter}
+         * @constructor
+         */
+        function NightTimeInterpreter(discoverer, inAttributes, outAttributes) {
+            contactJS.Interpreter.call(this, discoverer, inAttributes, outAttributes);
             this.name = "NightTimeInterpreter";
 
             return this;
@@ -14,22 +44,13 @@ define(['contactJS'], function(contactJS) {
         NightTimeInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
         NightTimeInterpreter.prototype.constructor = NightTimeInterpreter;
 
-        NightTimeInterpreter.prototype._initInAttributes = function() {
-            this._setInAttributes([
-                this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME','INTEGER',[["CP_UNIT","SECONDS"]])
-            ]);
-        };
 
-        NightTimeInterpreter.prototype._initOutAttributes = function() {
-            this._setOutAttributes([
-                this._discoverer.buildAttribute('CI_IS_NIGHTTIME','BOOLEAN')
-            ]);
-        };
 
         NightTimeInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var isNightTime = outAttributes.getItems()[0];
             var inAttributeValue = inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[0]);
-            var isNightTimeValue = (inAttributeValue < 20000 || inAttributeValue > 80000);
+            var currentTimeInHours = new Date(inAttributeValue*1000).getHours();
+            var isNightTimeValue = (currentTimeInHours < 6 || currentTimeInHours > 20);
 
             isNightTime.setValue(isNightTimeValue);
 

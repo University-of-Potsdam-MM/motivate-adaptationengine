@@ -3,6 +3,30 @@
  */
 define(['contactJS'], function (contactJS) {
     return (function() {
+
+        UnixTimeWidget.inOut = {
+            out: [
+                {
+                    'name':'CI_CURRENT_UNIX_TIME',
+                    'type':'INTEGER',
+                    'parameterList': ["CP_UNIT", "MILLISECONDS"],
+                    "synonymList": [],
+                    'value':'',
+                    'timestamp':''
+                }
+            ],
+            const: [
+                {
+                    'name':'',
+                    'type':'',
+                    'parameterList': [],
+                    "synonymList": [],
+                    'value':'',
+                    'timestamp':''
+                }
+            ]
+        };
+
         /**
          *
          * @extends Widget
@@ -10,8 +34,8 @@ define(['contactJS'], function (contactJS) {
          * @returns {UnixTimeWidget}
          * @constructor
          */
-        function UnixTimeWidget(discoverer) {
-            contactJS.Widget.call(this, discoverer);
+        function UnixTimeWidget(discoverer, attributes) {
+            contactJS.Widget.call(this, discoverer, attributes);
             this.name = 'UnixTimeWidget';
 
             return this;
@@ -19,16 +43,6 @@ define(['contactJS'], function (contactJS) {
 
         UnixTimeWidget.prototype = Object.create(contactJS.Widget.prototype);
         UnixTimeWidget.prototype.constructor = UnixTimeWidget;
-
-        UnixTimeWidget.prototype._initOutAttributes = function() {
-            this._setOutAttributes([
-                this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME','INTEGER',[["CP_UNIT","MILLISECONDS"]])
-            ]);
-        };
-
-        UnixTimeWidget.prototype._initConstantOutAttributes = function() {
-
-        };
 
         UnixTimeWidget.prototype._initCallbacks = function() {
             this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
