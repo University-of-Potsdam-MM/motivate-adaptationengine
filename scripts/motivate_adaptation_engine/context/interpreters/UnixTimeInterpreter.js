@@ -3,6 +3,30 @@
  */
 define(['contactJS'], function(contactJS) {
     return (function() {
+
+        UnixTimeInterpreter.inOut = {
+            in: [
+                {
+                    'name':'CI_CURRENT_UNIX_TIME',
+                    'type':'INTEGER',
+                    'parameterList': ["CP_UNIT", "MILLISECONDS"],
+                    "synonymList": [],
+                    'value':'',
+                    'timestamp':''
+                }
+            ],
+            out: [
+                {
+                    'name':'CI_CURRENT_UNIX_TIME',
+                    'type':'INTEGER',
+                    'parameterList': ["CP_UNIT", "SECONDS"],
+                    "synonymList": [],
+                    'value':'',
+                    'timestamp':''
+                }
+            ]
+        };
+
         /**
          *
          * @extends Interpreter
@@ -10,8 +34,8 @@ define(['contactJS'], function(contactJS) {
          * @returns {UnixTimeInterpreter}
          * @constructor
          */
-        function UnixTimeInterpreter(discoverer) {
-            contactJS.Interpreter.call(this, discoverer);
+        function UnixTimeInterpreter(discoverer, inAttributes, outAttributes) {
+            contactJS.Interpreter.call(this, discoverer, inAttributes, outAttributes);
             this.name = "UnixTimeInterpreter";
 
             return this;
@@ -20,17 +44,7 @@ define(['contactJS'], function(contactJS) {
         UnixTimeInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
         UnixTimeInterpreter.prototype.constructor = UnixTimeInterpreter;
 
-        UnixTimeInterpreter.prototype._initInAttributes = function() {
-            this._setInAttributes([
-                this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME','INTEGER',[["CP_UNIT","MILLISECONDS"]])
-            ]);
-        };
 
-        UnixTimeInterpreter.prototype._initOutAttributes = function() {
-            this._setOutAttributes([
-                this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME','INTEGER',[["CP_UNIT","SECONDS"]])
-            ]);
-        };
 
         UnixTimeInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var unixSecondsValue = outAttributes.getItems()[0];

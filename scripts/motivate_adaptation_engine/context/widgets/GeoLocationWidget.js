@@ -3,6 +3,37 @@
  */
 define(['contactJS'], function (contactJS) {
     return (function() {
+
+        GeoLocationWidget.inOut = {
+            out: [
+                {
+                    'name':'CI_USER_LOCATION_LATITUDE',
+                    'type':'FLOAT',
+                    'parameterList': [],
+                    "synonymList": [],
+                    'value':'',
+                    'timestamp':''
+                },
+                {
+                    'name':'CI_USER_LOCATION_LONGITUDE',
+                    'type':'FLOAT',
+                    'parameterList': [],
+                    "synonymList": [],
+                    'value':'',
+                    'timestamp':''}
+            ],
+            const: [
+                {
+                    'name':'',
+                    'type':'',
+                    'parameterList': [],
+                    "synonymList": [],
+                    'value':'',
+                    'timestamp':''
+                }
+            ]
+        };
+
         /**
          *
          * @requires contactJS
@@ -10,15 +41,15 @@ define(['contactJS'], function (contactJS) {
          * @param discoverer
          * @constructor
          */
-        function GeoLocationWidget(discoverer) {
-            contactJS.Widget.call(this, discoverer);
+        function GeoLocationWidget(discoverer, attributes) {
+            contactJS.Widget.call(this, discoverer, attributes);
             this.name = 'GeoLocationWidget';
         }
 
         GeoLocationWidget.prototype = Object.create(contactJS.Widget.prototype);
         GeoLocationWidget.prototype.constructor = GeoLocationWidget;
 
-        GeoLocationWidget.prototype._initOutAttributes = function() {
+        /*GeoLocationWidget.prototype._initOutAttributes = function() {
             this._setOutAttributes([
                 this._discoverer.buildAttribute('CI_USER_LOCATION_LATITUDE','FLOAT'),
                 this._discoverer.buildAttribute('CI_USER_LOCATION_LONGITUDE','FLOAT')
@@ -27,7 +58,7 @@ define(['contactJS'], function (contactJS) {
 
         GeoLocationWidget.prototype._initConstantOutAttributes = function() {
 
-        };
+        };*/
 
         GeoLocationWidget.prototype._initCallbacks = function() {
             this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));

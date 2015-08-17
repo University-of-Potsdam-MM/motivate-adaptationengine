@@ -842,7 +842,7 @@ define('attribute',['parameterList'], function(ParameterList) {
         };
 
         /**
-         * Builder for synonyms from single translation, called by discoverer's buildAttribute().
+         * Builder for synonyms from single translation.
          *
          * @param translation
          * @returns {Attribute}
@@ -853,7 +853,7 @@ define('attribute',['parameterList'], function(ParameterList) {
         };
 
         /**
-         * Builder for synonyms from translations, called by discoverer's buildAttribute().
+         * Builder for synonyms from (several) translations.
          *
          * @param translations
          * @returns {Attribute}
@@ -891,7 +891,7 @@ define('attribute',['parameterList'], function(ParameterList) {
         };
 
         /**
-         * Returns the list of synonyms
+         * Returns the list of synonyms.
          *
          * @returns {Array}
          */
@@ -931,7 +931,7 @@ define('attribute',['parameterList'], function(ParameterList) {
         };
 
         /**
-         * Adds one synonym.
+         * Adds a synonym to synonymList.
          *
          * @param synonym
          */
@@ -969,10 +969,21 @@ define('attribute',['parameterList'], function(ParameterList) {
             return this._parameterList.size() > 0;
         };
 
+        /**
+         * Returns true if the attribute has synonyms.
+         *
+         * @returns {boolean}
+         */
         Attribute.prototype.hasSynonyms = function() {
             return this._synonymList.length > 0;
         };
 
+        /**
+         * Returns true if the attribute has the given attribute in its synonymList.
+         *
+         * @param attribute
+         * @returns {boolean}
+         */
         Attribute.prototype.hasSynonym = function(attribute) {
             for (var i in this._synonymList)
                 if (this._synonymList[i].equalsTypeOf(attribute)) return true;
@@ -1032,24 +1043,37 @@ define('attribute',['parameterList'], function(ParameterList) {
          * @returns {boolean}
          */
         Attribute.prototype.equalsTypeOf = function(attribute) {
+            // name, type and parameters equivalent
             if(this._equalsTypeOf(attribute))
                 return true;
 
+            // check synonyms for equality
             var theseSynonyms = this.getSynonyms();
-            var thoseSynonyms = attribute.getSynonyms();
-            for (var i in theseSynonyms) {
-                var thisSynonym = theseSynonyms[i];
-                if (attribute._equalsTypeOf(thisSynonym))
-                    return true;
-            }
-            for (var i in thoseSynonyms) {
-                var thatSynonym = thoseSynonyms[i];
-                if (this._equalsTypeOf(thatSynonym))
-                    return true;
+            if (attribute instanceof Attribute) {
+                var thoseSynonyms = attribute.getSynonyms();
+                for (var i in theseSynonyms) {
+                    var thisSynonym = theseSynonyms[i];
+                    if (attribute._equalsTypeOf(thisSynonym)) {
+                        return true;
+                    }
+                }
+                for (var i in thoseSynonyms) {
+                    var thatSynonym = thoseSynonyms[i];
+                    if (this._equalsTypeOf(thatSynonym)) {
+                        return true;
+                    }
+                }
             }
             return false;
         };
 
+        /**
+         * Auxiliary function comparing only name, type and parameters (without synonyms)
+         *
+         * @param attribute
+         * @returns {boolean}
+         * @private
+         */
         Attribute.prototype._equalsTypeOf = function(attribute) {
             if (attribute instanceof Attribute) {
                 if ((this.getName() == attribute.getName()
@@ -2871,6 +2895,35 @@ define('subscriberList',['abstractList', 'subscriber'], function(AbstractList, S
 define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'conditionList', 'subscriber', 'subscriberList'],
 	function(MathUuid, Callback, CallbackList, Attribute, AttributeList, ConditionList, Subscriber, SubscriberList) {
 		return (function() {
+
+			/**
+			 * Defines all outAttributes and constOutAttributes as an object.
+			 * @type {object}
+			 * @public
+			 */
+			Widget.inOut = {
+				out: [
+					{
+						"name":"",
+						"type":"",
+						'parameterList': [],
+						"synonymList": [],
+						"value":"",
+						"timestamp":""
+					}
+				],
+				const: [
+					{
+						"name":"",
+						"type":"",
+						'parameterList': [],
+						"synonymList": [],
+						"value":"",
+						"timestamp":""
+					}
+				]
+			};
+
 			/**
 			 * Constructor: Generates the ID and initializes the
 			 * Widget with attributes, callbacks and subscriber
@@ -2957,6 +3010,76 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 
 				return this;
 			}
+
+			/**
+			 * Initializes the provided Attributes.
+			 *
+			 * @abstract
+			 * @protected
+			 */
+			Widget.prototype._initOutAttributes = function(attributes) {
+				this._outAttributes = attributes;
+			};
+
+			/**
+			 * Initializes the provided ConstantAttributes.
+			 *
+			 * @abstract
+			 * @protected
+			 */
+			Widget.prototype._initConstantOutAttributes = function() {
+				var constOutAttributes = [];
+				for(var constOutAttributeIndex in Widget.inOut.out) {
+					var name = Widget.inOut.out[constOutAttributeIndex].name;
+					var type = Widget.inOut.out[constOutAttributeIndex].type;
+					var parameterList = [];
+					for (var i = 0; i < Widget.inOut.out[constOutAttributeIndex].parameterList.length; i += 2) {
+						var innerParameter = [];
+						innerParameter.push(Widget.inOut.out[constOutAttributeIndex].parameterList[i]);
+						innerParameter.push(Widget.inOut.out[constOutAttributeIndex].parameterList[i + 1]);
+						parameterList.push(innerParameter);
+					}
+					var synonyms = Widget.inOut.out[constOutAttributeIndex].synonymList;
+					constOutAttributes.push(this._discoverer.buildAttribute(name, type, parameterList, synonyms));
+				}
+				this._constantOutAttributes = constOutAttributes;
+			};
+
+			/**
+			 * Initializes the provided Callbacks.
+			 *
+			 * @abstract
+			 * @protected
+			 */
+			Widget.prototype._initCallbacks = function() {
+				throw new Error("Abstract function!");
+			};
+
+			/**
+			 * Function for initializing. Calls all initFunctions
+			 * and will be called by the constructor.
+			 *
+			 * @protected
+			 */
+			Widget.prototype._init = function(attributes) {
+				this._initOutAttributes(attributes);
+				this._initConstantOutAttributes();
+				this._initCallbacks();
+
+				this.didFinishInitialization(attributes);
+			};
+
+			/**
+			 * Method will be invoked after the initialization of the widget finished.
+			 * Can be overridden by inheriting classes to take action after initialization.
+			 *
+			 * @public
+			 * @virtual
+			 * @param attributes
+			 */
+			Widget.prototype.didFinishInitialization = function(attributes) {
+
+			};
 
 			/**
 			 * Returns the name of the widget.
@@ -3113,8 +3236,8 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * @protected
 			 * @param {(AttributeList|Array)} attributesOrArray List or Array of AttributeValues
 			 */
-			Widget.prototype._setOutAttributes = function(attributesOrArray) {
-				this._outAttributes = new AttributeList().withItems(attributesOrArray);
+			Widget.prototype._setOutAttributes = function(attribute) {
+				this._outAttributes.push(attribute);
 			};
 
 			/**
@@ -3148,23 +3271,7 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * @param {(AttributeList|Array)} constantAttributes List or Array of AttributeValues
 			 */
 			Widget.prototype._setConstantOutAttributes = function(constantAttributes) {
-				var list = [];
-				if (constantAttributes instanceof Array) {
-					list = constantAttributes;
-				} else if (Class.isA(AttributeValueList, constantAttributes)) {
-					list = constantAttributes.getItems();
-				}
-				for ( var i in list) {
-					var constantAttribute = list[i];
-					if (Class.isA(AttributeValue, constantAttribute)) {
-						constantAttribute.setTimestamp(this.getCurrentTime());
-						this.constantAttributes.put(constantAttribute);
-						var type = new AttributeType().withName(constantAttribute.getName())
-							.withType(constantAttribute.getType())
-							.withParameters(constantAttribute.getParameters());
-						this.constantAttributeTypes.put(type);
-					}
-				}
+				this._constantOutAttributes = new AttributeList().withItems(constantAttributes);
 			};
 
 			/**
@@ -3301,61 +3408,7 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 				return !!this._outAttributes.containsTypeOf(attribute);
 			};
 
-			/**
-			 * Initializes the provided Attributes.
-			 *
-			 * @abstract
-			 * @protected
-			 */
-			Widget.prototype._initOutAttributes = function() {
-				throw new Error("Call to abstract function '_initOutAttributes'!");
-			};
 
-			/**
-			 * Initializes the provided ConstantAttributes.
-			 *
-			 * @abstract
-			 * @protected
-			 */
-			Widget.prototype._initConstantOutAttributes = function() {
-				throw new Error("Abstract function!");
-			};
-
-			/**
-			 * Initializes the provided Callbacks.
-			 *
-			 * @abstract
-			 * @protected
-			 */
-			Widget.prototype._initCallbacks = function() {
-				throw new Error("Abstract function!");
-			};
-
-			/**
-			 * Function for initializing. Calls all initFunctions
-			 * and will be called by the constructor.
-			 *
-			 * @protected
-			 */
-			Widget.prototype._init = function(attributes) {
-				this._initOutAttributes();
-				this._initConstantOutAttributes();
-				this._initCallbacks();
-
-				this.didFinishInitialization(attributes);
-			};
-
-			/**
-			 * Method will be invoked after the initialization of the widget finished.
-			 * Can be overridden by inheriting classes to take action after initialization.
-			 *
-			 * @public
-			 * @virtual
-			 * @param attributes
-			 */
-			Widget.prototype.didFinishInitialization = function(attributes) {
-
-			};
 
 			/**
 			 * Notifies other components and sends the attributes.
@@ -3579,7 +3632,12 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * @returns {boolean}
 			 */
 			Widget.prototype.doesSatisfyTypeOf = function(attribute) {
-				return this._outAttributes.containsTypeOf(attribute);
+				var outAttributes = this._outAttributes.getItems();
+				var doesSatisfy = false;
+				for (var i in outAttributes){
+					if (this._outAttributes.getItems()[i].equalsTypeOf(attribute)) doesSatisfy = true;
+				}
+				return doesSatisfy;
 			};
 
 			return Widget;
@@ -3730,6 +3788,35 @@ define('interpreterResult',['attributeList'], function(AttributeList){
 define('interpreter',['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 	function(MathUuid, Attribute, AttributeList, InterpreterResult) {
 		return (function() {
+
+			/**
+			 * Defines all in and outAttributes as an object.
+			 * @type {object}
+			 * @public
+			 */
+			Interpreter.inOut = {
+				in: [
+					{
+						'name':'',
+						'type':'',
+						'parameterList': [],
+						"synonymList": [],
+						'value':'',
+						'timestamp':''
+					}
+				],
+				out: [
+					{
+						'name':'',
+						'type':'',
+						'parameterList': [],
+						"synonymList": [],
+						'value':'',
+						'timestamp':''
+					}
+				]
+			};
+
 			/**
 			 * Generates the id and initializes the (in and out) types and values.
 			 *
@@ -3737,7 +3824,7 @@ define('interpreter',['MathUuid', 'attribute', 'attributeList', 'interpreterResu
 			 * @classdesc The Widget handles the access to sensors.
 			 * @constructs Interpreter
 			 */
-			function Interpreter(discoverer) {
+			function Interpreter(discoverer, inAttributes, outAttributes) {
 				/**
 				 * Name of the Interpreter.
 				 *
@@ -3788,7 +3875,7 @@ define('interpreter',['MathUuid', 'attribute', 'attributeList', 'interpreterResu
 				this._discoverer = discoverer;
 
 				this._register();
-				this._initInterpreter();
+				this._initInterpreter(inAttributes, outAttributes);
 
 				return this;
 			}
@@ -3818,9 +3905,9 @@ define('interpreter',['MathUuid', 'attribute', 'attributeList', 'interpreterResu
 			 *
 			 * @private
 			 */
-			Interpreter.prototype._initInterpreter = function() {
-				this._initInAttributes();
-				this._initOutAttributes();
+			Interpreter.prototype._initInterpreter = function(inAttributes, outAttributes) {
+				this._initInAttributes(inAttributes);
+				this._initOutAttributes(outAttributes);
 			};
 
 			/**
@@ -3829,8 +3916,9 @@ define('interpreter',['MathUuid', 'attribute', 'attributeList', 'interpreterResu
 			 * @abstract
 			 * @protected
 			 */
-			Interpreter.prototype._initInAttributes = function() {
-				throw Error("Abstract function call!");
+			Interpreter.prototype._initInAttributes = function(inAttributes) {
+				this._inAttributes = inAttributes;
+
 			};
 
 			/**
@@ -3839,8 +3927,9 @@ define('interpreter',['MathUuid', 'attribute', 'attributeList', 'interpreterResu
 			 * @abstract
 			 * @protected
 			 */
-			Interpreter.prototype._initOutAttributes = function() {
-				throw Error("Abstract function call!");
+			Interpreter.prototype._initOutAttributes = function(outAttributes) {
+				this._outAttributes = outAttributes;
+
 			};
 
 			/**
@@ -4072,7 +4161,12 @@ define('interpreter',['MathUuid', 'attribute', 'attributeList', 'interpreterResu
 			 * @returns {boolean}
 			 */
 			Interpreter.prototype.doesSatisfyTypeOf = function(attribute) {
-				return this._outAttributes.containsTypeOf(attribute);
+				var outAttributes = this._outAttributes.getItems();
+				var doesSatisfy = false;
+				for (var i in outAttributes){
+					if (this._outAttributes.getItems()[i].equalsTypeOf(attribute)) doesSatisfy = true;
+				}
+				return doesSatisfy;
 			};
 
 			return Interpreter;
@@ -4603,92 +4697,8 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 */
 			Aggregator.prototype._getComponentsForUnsatisfiedAttributes = function(unsatisfiedAttributes, all, componentTypes) {
 				// ask the discoverer for components that satisfy the requested components
-				var relevantComponents = this._discoverer.getComponentsByAttributes(unsatisfiedAttributes, all, componentTypes);
-				console.log("I found "+relevantComponents.length+" component(s) that might satisfy the requested attributes.");
-
-				// iterate over all found components
-				for(var index in relevantComponents) {
-					// get the component
-					var theComponent = relevantComponents[index];
-					console.log("Let's look at component "+theComponent.getName()+".");
-
-					// if the component was added before, ignore it
-					if (!this._hasComponent(theComponent.getId())) {
-						var outAttributes = theComponent.getOutAttributes().getItems();
-
-						// if component is a widget and it wasn't added before, subscribe to its callbacks
-						if (theComponent instanceof Widget) {
-							console.log("It's a widget.");
-
-							this.addWidgetSubscription(theComponent);
-							// remove satisfied attributes
-							for (var widgetOutAttributeIndex in outAttributes) {
-								var widgetOutAttribute = outAttributes[widgetOutAttributeIndex];
-								// add the attribute type to the aggregators list of handled attribute types
-								if (!this.getOutAttributes().containsTypeOf(widgetOutAttribute)) this.addOutAttribute(widgetOutAttribute);
-								console.log("I can now satisfy attribute "+widgetOutAttribute.toString(true)+" with the help of "+theComponent.getName()+"! That was easy :)");
-								unsatisfiedAttributes.removeAttributeWithTypeOf(widgetOutAttribute);
-							}
-						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
-							console.log("It's an interpreter.");
-
-							var inAttributes = theComponent.getInAttributes().getItems();
-							var canSatisfyInAttributes = true;
-
-							// iterate over the attributes needed to satisfy the interpreter
-							for (var inAttributeIdentifier in inAttributes) {
-								// get the attribute
-								var theInAttribute = inAttributes[inAttributeIdentifier];
-								console.log("The interpreter needs the attribute "+theInAttribute.toString(true)+".");
-
-                                var allTranslations = this._discoverer.getTranslations();
-                                for (var translationIndex in allTranslations) {
-                                    theInAttribute = allTranslations[translationIndex].translate(theInAttribute);
-                                }
-
-								// if required attribute is not already satisfied by the aggregator search for components that do
-								if (!this.doesSatisfyTypeOf(theInAttribute)) {
-									console.log("It seems that I can't satisfy "+theInAttribute.toString(true)+", but I will search for components that can.");
-									var newAttributeList = new AttributeList();
-									newAttributeList.put(theInAttribute);
-									this._getComponentsForUnsatisfiedAttributes(newAttributeList, false, [Widget, Interpreter]);
-									// if the attribute still can't be satisfied drop the interpreter
-									if (!this.doesSatisfyTypeOf(theInAttribute)) {
-										console.log("I couldn't find a component to satisfy "+theInAttribute.toString(true)+". Dropping interpreter "+theComponent.getName()+". Bye bye.");
-										canSatisfyInAttributes = false;
-										break;
-									}
-								} else {
-									console.log("It seems that I already satisfy the attribute "+theInAttribute.toString(true)+". Let's move on.");
-								}
-							}
-
-							if (canSatisfyInAttributes) {
-								// remove satisfied attribute
-								for (var interpreterOutAttributeIndex in outAttributes) {
-									var interpreterOutAttribute = outAttributes[interpreterOutAttributeIndex];
-									// add the attribute type to the aggregators list of handled attribute types
-									for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
-										var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
-										if (theUnsatisfiedAttribute.equalsTypeOf(interpreterOutAttribute)) {
-											this.addOutAttribute(theUnsatisfiedAttribute);
-											console.log("I can now satisfy attribute "+theUnsatisfiedAttribute.toString(true)+" with the help of "+theComponent.getName()+"! Great!");
-											this._interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
-										}
-									}
-									unsatisfiedAttributes.removeAttributeWithTypeOf(interpreterOutAttribute, true);
-								}
-							} else {
-								console.log("Found interpreter but can't satisfy required attributes.");
-								for (var j in theComponent.getInAttributes().getItems()) {
-									console.log("Missing "+theComponent.getInAttributes().getItems()[j]+".");
-								}
-							}
-						}
-					} else {
-						console.log("Aggregator already has component "+theComponent.getName()+". Nothing to do here ;)");
-					}
-				}
+				console.log("Aggregator "+this.id+": I need to satisfy attributes, let's ask the discoverer.");
+				this._discoverer.getComponentsForUnsatisfiedAttributes(this.id, unsatisfiedAttributes, all, componentTypes);
 			};
 
 			/**
@@ -4700,11 +4710,8 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			Aggregator.prototype.didFinishSetup = function() {
 				var unsatisfiedAttributes = this.getOutAttributes().clone();
 
-				// get all widgets that satisfy attribute types
-				this._getComponentsForUnsatisfiedAttributes(unsatisfiedAttributes, false, [Widget]);
-				// get all interpreters that satisfy attribute types
-				this._getComponentsForUnsatisfiedAttributes(unsatisfiedAttributes, false, [Interpreter]);
-
+				// get all components that satisfy attribute types
+				this._getComponentsForUnsatisfiedAttributes(unsatisfiedAttributes, false, [Widget, Interpreter]);
 				console.log("Unsatisfied attributes: "+unsatisfiedAttributes.size());
 				console.log("Satisfied attributes: "+this.getOutAttributes().size());
 				console.log("Interpretations "+this._interpretations.length);
@@ -4971,8 +4978,8 @@ define('translation', ['attribute'], function(Attribute) {
 		return Translation;
 	})();
 });
-define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', 'widget', 'interpreter', 'aggregator' ],
-	function(AttributeList, Attribute, Translation, Parameter, Widget, Interpreter, Aggregator) {
+define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', 'parameterList', 'widget', 'interpreter', 'aggregator',  'interpretation' ],
+	function(AttributeList, Attribute, Translation, Parameter, ParameterList, Widget, Interpreter, Aggregator, Interpretation) {
 		return (function() {
 			/**
 			 * Constructor: All known components given in the associated functions will be registered as startup.
@@ -4990,6 +4997,15 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 				this._widgets = [];
 
 				/**
+				 * List of unregistered Widgets
+				 *
+				 * @type (Array)
+				 * @private
+				 */
+				this._unregisteredWidgets = widgets;
+
+
+				/**
 				 * List of available Aggregators.
 				 *
 				 * @type {Array}
@@ -5005,6 +5021,16 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 				 */
 				this._interpreters = [];
 
+
+				/**
+				 * List of unregistered Interpreters
+				 *
+				 * @type (Array)
+				 * @private
+				 */
+				this._unregisteredInterpreters = interpreters;
+
+
 				/**
 				 * List of translations or synonymous attributes, respectively.
 				 *
@@ -5013,16 +5039,19 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 				 */
 				this._translations = [];
 
+				// build translations from input array
                 for (var i in translations) {
+					// get translation (an array) from array of translations
                     var translationArray = translations[i];
+					// check for correct cardinality
                     if (translationArray.length != 2)
                         throw new Error("Translations must consist of exactly 2 attributes!");
-
-                    for (var j in translationArray) {
+					// check for correct number of attribute building blocks
+					for (var j in translationArray) {
                         if (translationArray[j].length > 3 || translationArray[j].length < 2)
                             throw new Error("Please provide a name, type and (optional) list of parameters!");
                     }
-
+					// build attributes from arrays containing name, type (and parameters)
                     var firstAttribute = this.buildAttribute(
                         translationArray[0][0],
                         translationArray[0][1],
@@ -5035,7 +5064,7 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
                         translationArray[1][2],
                         false
                     );
-
+					// add built attributes to translations
                     this._translations.push(new Translation(firstAttribute,secondAttribute));
                 }
 
@@ -5268,6 +5297,240 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 					}
 				}
 				return false;
+			};
+
+			/**
+			 * Searches for components that can satisfy the requested attributes. Searches recursively through all
+			 * registered and unregistered components and initiates them.
+			 *
+			 * @private
+			 * @param {uuid} the aggregator's Id
+			 * @param {AttributeList} unsatisfiedAttributes A list of attributes that components should be searched for.
+			 * @param {boolean} all If true all attributes must be satisfied by a single component.
+			 * @param {Array} componentTypes An array of components classes that should be searched for (e.g. Widget, Interpreter and Aggregator).
+			 */
+			Discoverer.prototype.getComponentsForUnsatisfiedAttributes = function(aggregatorId, unsatisfiedAttributes, all, componentTypes){
+				//Discoverer gets a list of attributes to satisfy
+
+				console.log('Discoverer: I need to satisfy the following attributes: '+unsatisfiedAttributes.getItems()+' .' );
+
+				//look at all the already registered components
+				console.log("Discoverer: Let's look at my registered components.");
+
+				var relevantComponents = this.getComponentsByAttributes(unsatisfiedAttributes, all, componentTypes);
+				console.log("Discoverer: I found " + relevantComponents.length + " registered component(s) that might satisfy the requested attributes.");
+
+				//iterate over the found components
+				for(var index in relevantComponents) {
+					var theComponent = relevantComponents[index];
+					console.log("Discoverer: Let's look at component " + theComponent.getName() + ".");
+
+					// if the component was added before, ignore it
+					if (!this.getAggregator(aggregatorId)._hasComponent(theComponent.getId())) {
+						var outAttributes = theComponent.getOutAttributes().getItems();
+
+						// if component is a widget and it wasn't added before, subscribe to its callbacks
+						if (theComponent instanceof Widget) {
+							console.log("Discoverer: It's a Widget.");
+
+							console.log("Discoverer: You should subscribe to the Widget.");
+							this.getAggregator(aggregatorId).addWidgetSubscription(theComponent);
+							// remove satisfied attributes
+							for (var widgetOutAttributeIndex in outAttributes) {
+								var widgetOutAttribute = outAttributes[widgetOutAttributeIndex];
+								// add the attribute type to the aggregators list of handled attribute types
+								if (!this.getAggregator(aggregatorId).getOutAttributes().containsTypeOf(widgetOutAttribute)) this.getAggregator(aggregatorId).addOutAttribute(widgetOutAttribute);
+								console.log("Aggregator: I can now satisfy attribute " + widgetOutAttribute + " with the help of " + theComponent.getName() + "! That was easy :)");
+								unsatisfiedAttributes.removeAttributeWithTypeOf(widgetOutAttribute);
+							}
+						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
+							console.log("Discoverer: It's an Interpreter.");
+							var inAttributes = theComponent.getInAttributes().getItems();
+							var canSatisfyInAttributes = true;
+
+							// iterate over the attributes needed to satisfy the interpreter
+							for (var inAttributeIdentifier in inAttributes) {
+								// get the attribute
+								var theInAttribute = inAttributes[inAttributeIdentifier];
+								console.log("Discoverer: The Interpreter needs the attribute: " + theInAttribute + ".");
+
+								// if required attribute is not already satisfied by the aggregator search for components that do
+								if (!this.getAggregator(aggregatorId).doesSatisfyTypeOf(theInAttribute)) {
+									console.log("Discoverer: I can't satisfy " + theInAttribute + ", but i will search for components that can");
+									var newAttributeList = new AttributeList();
+									newAttributeList.put(theInAttribute);
+									this.getComponentsForUnsatisfiedAttributes(aggregatorId, newAttributeList, false, [Widget, Interpreter]);
+									// if the attribute still can't be satisfied drop the interpreter
+									if (!this.getAggregator(aggregatorId).doesSatisfyTypeOf(theInAttribute)) {
+										console.log("Discoverer: I couldn't find a component to satisfy " + theInAttribute + ". Dropping interpreter " + theComponent.getName() + ". Bye bye.");
+										canSatisfyInAttributes = false;
+										break;
+									}
+								} else {
+									console.log("Discoverer: It seems that I already satisfy the attribute " + theInAttribute + ". Let's move on.");
+								}
+							}
+							if (canSatisfyInAttributes) {
+								// remove satisfied attribute
+								for (var interpreterOutAttributeIndex in outAttributes) {
+									var interpreterOutAttribute = outAttributes[interpreterOutAttributeIndex];
+									// add the attribute type to the aggregators list of handled attribute types
+									for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
+										var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
+										if (theUnsatisfiedAttribute.equalsTypeOf(interpreterOutAttribute)) {
+											this.getAggregator(aggregatorId).addOutAttribute(theUnsatisfiedAttribute);
+											console.log("Discoverer: I can now satisfy attribute " + theUnsatisfiedAttribute + " with the help of " + theComponent.getName() + "! Great!");
+											this.getAggregator(aggregatorId)._interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
+										}
+									}
+									unsatisfiedAttributes.removeAttributeWithTypeOf(interpreterOutAttribute, true);
+								}
+							} else {
+								console.log("Discoverer: Found interpreter but can't satisfy required attributes.");
+								for (var j in theComponent.getInAttributes().getItems()) {
+									console.log("Discoverer: Missing " + theComponent.getInAttributes().getItems()[j] + ".");
+								}
+							}
+						}
+					}
+				}
+
+				//look at all unregistered components
+				console.log("Discoverer: Let's look at the unregistered Components.");
+
+				//check all Widget's outAttributes
+				console.log("Discoverer: Let's look at the unregistered Widgets.")
+				var foundWidget = false;
+				for(var widgetIndex in this._unregisteredWidgets){
+					var theWidget = this._unregisteredWidgets[widgetIndex];
+					for(var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()){
+						var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
+						//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
+
+						//create temporary OutAttributeList
+						var tempWidgetOutList = new AttributeList();
+						for(var tempOutAttributeIndex in theWidget.inOut.out) {
+							var name = theWidget.inOut.out[tempOutAttributeIndex].name;
+							var type = theWidget.inOut.out[tempOutAttributeIndex].type;
+							var parameterList = [];
+							for (var i = 0; i < theWidget.inOut.out[tempOutAttributeIndex].parameterList.length; i += 2) {
+								var innerParameter = [];
+								innerParameter.push(theWidget.inOut.out[tempOutAttributeIndex].parameterList[i]);
+								innerParameter.push(theWidget.inOut.out[tempOutAttributeIndex].parameterList[i + 1]);
+								parameterList.push(innerParameter);
+							}
+							var synonyms = theWidget.inOut.out[tempOutAttributeIndex].synonymList;
+							tempWidgetOutList.put(this.buildAttribute(name, type, parameterList, synonyms));
+						}
+						for(var tempOutAttribute = 0; tempOutAttribute < tempWidgetOutList.size(); tempOutAttribute++) {
+							if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempOutAttribute])) {
+								console.log("Discoverer: I have found an unregistered Widget \"" + theWidget.name + "\".");
+								var newWidget = new theWidget(this, tempWidgetOutList);
+								this.getAggregator(aggregatorId).addWidgetSubscription(newWidget);
+
+								console.log("Discoverer: I registered the Widget \"" + theWidget.name + "\" and subscribed to it.");
+								// remove satisfied attributes
+								var widgetOutAttributes = newWidget.getOutAttributes();
+								for (var toRemoveIndex = 0; toRemoveIndex < widgetOutAttributes.size(); toRemoveIndex++) {
+									var toRemoveOutAttribute = newWidget.getOutAttributes().getItems()[toRemoveIndex];
+									// add the attribute type to the aggregators list of handled attribute types
+									if (!this.getAggregator(aggregatorId).getOutAttributes().containsTypeOf(toRemoveOutAttribute)) this.getAggregator(aggregatorId).addOutAttribute(toRemoveOutAttribute);
+									console.log("Aggregator "+this.getAggregator(aggregatorId).id+": I can now satisfy attribute " + toRemoveOutAttribute + " with the help of " + newWidget.getName() + "! That was easy :)");
+									unsatisfiedAttributes.removeAttributeWithTypeOf(toRemoveOutAttribute);
+								}
+								foundWidget = true;
+
+							}
+						}
+
+
+					}
+
+				}
+				if (!foundWidget) {
+					//check all interpreters' outAttributes
+					console.log("Discoverer: Let's look at the unregistered interpreters.")
+					for (var index in this._unregisteredInterpreters) {
+						var theInterpreter = this._unregisteredInterpreters[index];
+						for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
+							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
+							//if an interpreter can satisfy the Attribute, check if the inAttributes are satisfied
+
+							//create temporary outAttributeList
+							var tempOutList = new AttributeList();
+							for (var interpreterOutAttributeIndex in theInterpreter.inOut.out) {
+								var outName = theInterpreter.inOut.out[interpreterOutAttributeIndex].name;
+								var outType = theInterpreter.inOut.out[interpreterOutAttributeIndex].type;
+								var outParameterList = [];
+								for (var i = 0; i < theInterpreter.inOut.out[interpreterOutAttributeIndex].parameterList.length; i += 2) {
+									var innerParameter = [];
+									innerParameter.push(theInterpreter.inOut.out[interpreterOutAttributeIndex].parameterList[i]);
+									innerParameter.push(theInterpreter.inOut.out[interpreterOutAttributeIndex].parameterList[i + 1]);
+									outParameterList.push(innerParameter);
+								}
+								var outSynonyms = theInterpreter.inOut.out[interpreterOutAttributeIndex].synonymList;
+								tempOutList.put(this.buildAttribute(outName, outType, outParameterList, outSynonyms));
+							}
+
+							//create temporary inAttributeList
+							var tempInList = new AttributeList();
+							for (var interpreterInAttributeIndex in theInterpreter.inOut.in) {
+								var inName = theInterpreter.inOut.in[interpreterInAttributeIndex].name;
+								var inType = theInterpreter.inOut.in[interpreterInAttributeIndex].type;
+								var inParameterList = [];
+								for (var j = 0; j < theInterpreter.inOut.in[interpreterInAttributeIndex].parameterList.length; j = 2) {
+									var innerParameter = [];
+									innerParameter.push(theInterpreter.inOut.in[interpreterInAttributeIndex].parameterList[j]);
+									innerParameter.push(theInterpreter.inOut.in[interpreterInAttributeIndex].parameterList[j + 1]);
+									inParameterList.push(innerParameter);
+								}
+								var inSynonyms = theInterpreter.inOut.in[interpreterInAttributeIndex].synonymList;
+								var tempInAttribute = this.buildAttribute(inName, inType, inParameterList, inSynonyms);
+								tempInList.put(tempInAttribute);
+							}
+
+							for (var tempOutAttribute = 0; tempOutAttribute < tempOutList.size(); tempOutAttribute++) {
+								if (theUnsatisfiedAttribute.equalsTypeOf(tempOutList.getItems()[tempOutAttribute])) {
+									console.log("Discoverer: I have found an unregistered Interpreter \"" + theInterpreter.name + "\".");
+									for (var inAttributeIndex = 0; inAttributeIndex < tempInList.size(); inAttributeIndex++) {
+										var theInAttribute = tempInList.getItems()[inAttributeIndex];
+										console.log("Discoverer: The Interpreter needs the attribute: " + theInAttribute + ".");
+
+										// if required attribute is not already satisfied by the aggregator search for components that do
+										if (!this.getAggregator(aggregatorId).doesSatisfyTypeOf(theInAttribute)) {
+											console.log("Discoverer: I can't satisfy " + theInAttribute + ", but i will search for components that can");
+											var newAttributeList = new AttributeList();
+											newAttributeList.put(theInAttribute);
+											this.getComponentsForUnsatisfiedAttributes(aggregatorId, newAttributeList, false, [Widget, Interpreter]);
+											// if the attribute still can't be satisfied drop the interpreter
+											if (!this.getAggregator(aggregatorId).doesSatisfyTypeOf(theInAttribute)) {
+												console.log("Discoverer: I couldn't find a component to satisfy " + theInAttribute + ". Dropping interpreter " + theInterpreter.name + ". Bye bye.");
+												canSatisfyInAttributes = false;
+												break;
+											}
+											var newInterpreter = new theInterpreter(this, tempInList, tempOutList);
+											this.getAggregator(aggregatorId).addWidgetSubscription(newInterpreter);
+											console.log("Discoverer: I registered the Interpreter \"" + theInterpreter.name + "\" .");
+											// remove satisfied attributes
+											var interpreterOutAttributes = newInterpreter.getOutAttributes();
+											for (var toRemoveIndex = 0; toRemoveIndex < interpreterOutAttributes.size(); toRemoveIndex++) {
+												var toRemoveOutAttribute = newInterpreter.getOutAttributes().getItems()[toRemoveIndex];
+												// add the attribute type to the aggregators list of handled attribute types
+												if (!this.getAggregator(aggregatorId).getOutAttributes().containsTypeOf(toRemoveOutAttribute)) this.getAggregator(aggregatorId).addOutAttribute(toRemoveOutAttribute);
+												console.log("Aggregator "+this.getAggregator(aggregatorId).id+": I can now satisfy attribute " + toRemoveOutAttribute + " with the help of " + newInterpreter.getName() + "! That was easy :)");
+												this.getAggregator(aggregatorId)._interpretations.push(new Interpretation(newInterpreter.getId(), newInterpreter.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
+												unsatisfiedAttributes.removeAttributeWithTypeOf(toRemoveOutAttribute);
+											}
+										} else {
+											console.log("Discoverer: It seems that I already satisfy the attribute " + theInAttribute + ". Let's move on.");
+										}
+									}
+								}
+							}
+
+						}
+					}
+				}
 			};
 
 			return Discoverer;

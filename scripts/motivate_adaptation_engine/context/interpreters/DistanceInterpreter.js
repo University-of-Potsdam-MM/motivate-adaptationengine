@@ -3,6 +3,38 @@
  */
 define(['contactJS'], function(contactJS) {
     return (function() {
+
+        DistanceInterpreter.inOut = {
+            in: [
+                {
+                    'name':'CI_USER_LOCATION_LATITUDE',
+                    'type':'FLOAT',
+                    'parameterList': [],
+                    "synonymList": [],
+                    'value':'',
+                    'timestamp':''
+                },
+                {
+                    'name':'CI_USER_LOCATION_LONGITUDE',
+                    'type':'FLOAT',
+                    'parameterList': [],
+                    "synonymList": [],
+                    'value':'',
+                    'timestamp':''
+                }
+            ],
+            out: [
+                {
+                    'name':'CI_USER_LOCATION_DISTANCE',
+                    'type':'FLOAT',
+                    'parameterList': [['CP_TARGET_LATITUDE', 'PV_INPUT'], ['CP_TARGET_LONGITUDE', 'PV_INPUT'], ['CP_UNIT','KILOMETERS']],
+                    "synonymList": [],
+                    'value':'',
+                    'timestamp':''
+                }
+            ]
+        };
+
         /**
          *
          * @param discoverer
@@ -10,8 +42,8 @@ define(['contactJS'], function(contactJS) {
          * @returns {DistanceInterpreter}
          * @constructor
          */
-        function DistanceInterpreter(discoverer) {
-            contactJS.Interpreter.call(this, discoverer);
+        function DistanceInterpreter(discoverer, inAttributes, outAttributes) {
+            contactJS.Interpreter.call(this, discoverer, inAttributes, outAttributes);
             this.name = "DistanceInterpreter";
 
             return this;
@@ -20,22 +52,7 @@ define(['contactJS'], function(contactJS) {
         DistanceInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
         DistanceInterpreter.prototype.constructor = DistanceInterpreter;
 
-        DistanceInterpreter.prototype._initInAttributes = function() {
-            this._setInAttributes([
-                this._discoverer.buildAttribute('CI_USER_LOCATION_LATITUDE','FLOAT'),
-                this._discoverer.buildAttribute('CI_USER_LOCATION_LONGITUDE','FLOAT')
-            ]);
-        };
 
-        DistanceInterpreter.prototype._initOutAttributes = function() {
-            this._setOutAttributes([
-                this._discoverer.buildAttribute('CI_USER_LOCATION_DISTANCE','FLOAT',[
-                    ["CP_TARGET_LATITUDE","PV_INPUT"],
-                    ["CP_TARGET_LONGITUDE","PV_INPUT"],
-                    ["CP_UNIT","KILOMETERS"]
-                ])
-            ]);
-        };
 
         DistanceInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var distanceValue = outAttributes.getItems()[0];
