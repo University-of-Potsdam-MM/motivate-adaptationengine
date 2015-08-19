@@ -3,6 +3,24 @@
  */
 define(['contactJS'], function(contactJS) {
     return (function() {
+
+        SecondsInterpreter.inOut = {
+            in: [
+                {
+                    'name':'CI_BASE_UNIT_OF_TIME',
+                    'type':'INTEGER',
+                    'parameterList': [["CP_UNIT", "MILLISECONDS"]]
+                }
+            ],
+            out: [
+                {
+                    'name':'CI_BASE_UNIT_OF_TIME',
+                    'type':'INTEGER',
+                    'parameterList': [["CP_UNIT", "SECONDS"]]
+                }
+            ]
+        };
+
         /**
          *
          * @extends Interpreter
@@ -13,24 +31,11 @@ define(['contactJS'], function(contactJS) {
         function SecondsInterpreter(discoverer) {
             contactJS.Interpreter.call(this, discoverer);
             this.name = "SecondsInterpreter";
-
             return this;
         }
 
         SecondsInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
         SecondsInterpreter.prototype.constructor = SecondsInterpreter;
-
-        SecondsInterpreter.prototype._initInAttributes = function() {
-            this._setInAttributes([
-                this._discoverer.buildAttribute('CI_BASE_UNIT_OF_TIME','INTEGER',[["CP_UNIT","MILLISECONDS"]])
-            ]);
-        };
-
-        SecondsInterpreter.prototype._initOutAttributes = function() {
-            this._setOutAttributes([
-                this._discoverer.buildAttribute('CI_BASE_UNIT_OF_TIME','INTEGER',[["CP_UNIT","SECONDS"]])
-            ]);
-        };
 
         SecondsInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var unixSecondsValue = outAttributes.getItems()[0];

@@ -40,8 +40,18 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
                 [
                     ['CI_CURRENT_UNIX_TIME_IN_SECONDS','INTEGER'],
                     ['CI_CURRENT_UNIX_TIME','INTEGER',[["CP_UNIT","SECONDS"]]]
+                ],
+                [
+                    ['CI_CURRENT_UNIX_TIME_IN_MILLISECONDS','INTEGER'],
+                    ['CI_CURRENT_UNIX_TIME','INTEGER',[["CP_UNIT","MILLISECONDS"]]]
+                ],
+                [
+                    ['CI_CURRENT_TEMPERATURE','INTEGER',[['CP_TEMPERATURE_SCALE','CELSIUS']]],
+                    ['CI_TEMPERATURE','INTEGER',[['CP_TEMPERATURE_SCALE','CELSIUS']]]
                 ]
             ]);
+
+            //Dynamic Configuration
 
             // TODO: dynamic context information extraction
             for(var index in adaptationRules) {
@@ -52,48 +62,22 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
                 //var ruleAggregator = new contactJS.Aggregator(_this.discoverer);
             }
 
-            //TODO: Dynamic Configuration
-            // (CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:MILLISECONDS]
-            var attributeTypeUnixTimeMilliseconds = this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME','INTEGER',[['CP_UNIT','MILLISECONDS']]);
-            // (CI_CURRENT_UNIX_TIME:INTEGER)#[CP_UNIT:SECONDS]
-//            var attributeTypeUnixTimeSeconds = this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME','INTEGER',[['CP_UNIT','SECONDS']]);
+            //initiate attributes that need to be satisfied
             var attributeTypeIsNightTime = this._discoverer.buildAttribute('CI_IS_NIGHTTIME','BOOLEAN');
+            var attributeTypeUnixTimeInSeconds = this._discoverer.buildAttribute('CI_CURRENT_UNIX_TIME_IN_SECONDS','INTEGER');
 
-            // (CI_USER_LOCATION_LATITUDE:FLOAT)
-//            var attributeTypeLatitude = new contactJS.Attribute().withName('CI_USER_LOCATION_LATITUDE').withType('FLOAT');
-//            // (CI_USER_LOCATION_LONGITUDE:FLOAT)
-//            var attributeTypeLongitude = new contactJS.Attribute().withName('CI_USER_LOCATION_LONGITUDE').withType('FLOAT');
-//            // (CI_USER_LOCATION_ADDRESS:STRING)
-//            var attributeTypeAddress = new contactJS.Attribute().withName('CI_USER_LOCATION_ADDRESS').withType('STRING');
-//            // (CI_CURRENT_FORMATTED_TIME:STRING)#[CP_FORMAT:YYYYMMDD]
-//            var attributeFormattedTime = new contactJS.Attribute().withName('CI_CURRENT_FORMATTED_TIME').withType('STRING').withParameter(new contactJS.Parameter().withKey("CP_FORMAT").withValue("YYYYMMDD"));
-//            // (CI_CURRENT_TEMPERATURE:FLOAT)#[CP_TEMPERATURE_SCALE:FAHRENHEIT]
-//            var attributeTemperatureFahrenheit = new contactJS.Attribute().withName('CI_CURRENT_TEMPERATURE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TEMPERATURE_SCALE").withValue("FAHRENHEIT"));
-//            // (CI_USER_LOCATION_DISTANCE:FLOAT)#[CP_TARGET_LATITUDE:52][CP_TARGET_LONGITUDE:13][CP_UNIT:KILOMETERS]
-//            var attributeDistanceKilometers = new contactJS.Attribute().withName('CI_USER_LOCATION_DISTANCE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("52.38834")).withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("13.09817")).withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"));
-//            var attributeDistanceKilometers2 = new contactJS.Attribute().withName('CI_USER_LOCATION_DISTANCE').withType('FLOAT').withParameter(new contactJS.Parameter().withKey("CP_TARGET_LATITUDE").withValue("20")).withParameter(new contactJS.Parameter().withKey("CP_TARGET_LONGITUDE").withValue("20")).withParameter(new contactJS.Parameter().withKey("CP_UNIT").withValue("KILOMETERS"));
-
-            // Add widgets
-//            new widgets[0](this._discoverer);
-//            new widgets[1](this._discoverer);
-            new widgets[2](this._discoverer);
-
-            // Add interpreters
-//            new interpreters[0](this._discoverer);
-//            new interpreters[1](this._discoverer);
-//            new interpreters[2](this._discoverer);
-//            new interpreters[3](this._discoverer);
-            new interpreters[4](this._discoverer);
-//            new interpreters[5](this._discoverer);
-            new interpreters[6](this._discoverer);
-
+            //initiate aggregators with a list of the unsatisfied attributes
             var theAggregator = new contactJS.Aggregator(this._discoverer, [
-//                attributeFormattedTime
-				//attributeTypeUnixTimeSeconds
                 attributeTypeIsNightTime
             ]);
 
+            var anotherAggregator = new contactJS.Aggregator(this._discoverer, [
+                attributeTypeUnixTimeInSeconds
+            ]);
+
             this._aggregators.push(theAggregator);
+            this._aggregators.push(anotherAggregator);
+
         }
 
         /**

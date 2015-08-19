@@ -3,6 +3,27 @@
  */
 define(['contactJS'], function(contactJS) {
     return (function() {
+
+        DistanceInterpreter.inOut = {
+            in: [
+                {
+                    'name':'CI_USER_LOCATION_LATITUDE',
+                    'type':'FLOAT'
+                },
+                {
+                    'name':'CI_USER_LOCATION_LONGITUDE',
+                    'type':'FLOAT'
+                }
+            ],
+            out: [
+                {
+                    'name':'CI_USER_LOCATION_DISTANCE',
+                    'type':'FLOAT',
+                    'parameterList': [['CP_TARGET_LATITUDE', 'PV_INPUT'], ['CP_TARGET_LONGITUDE', 'PV_INPUT'], ['CP_UNIT','KILOMETERS']]
+                }
+            ]
+        };
+
         /**
          *
          * @param discoverer
@@ -13,29 +34,11 @@ define(['contactJS'], function(contactJS) {
         function DistanceInterpreter(discoverer) {
             contactJS.Interpreter.call(this, discoverer);
             this.name = "DistanceInterpreter";
-
             return this;
         }
 
         DistanceInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
         DistanceInterpreter.prototype.constructor = DistanceInterpreter;
-
-        DistanceInterpreter.prototype._initInAttributes = function() {
-            this._setInAttributes([
-                this._discoverer.buildAttribute('CI_USER_LOCATION_LATITUDE','FLOAT'),
-                this._discoverer.buildAttribute('CI_USER_LOCATION_LONGITUDE','FLOAT')
-            ]);
-        };
-
-        DistanceInterpreter.prototype._initOutAttributes = function() {
-            this._setOutAttributes([
-                this._discoverer.buildAttribute('CI_USER_LOCATION_DISTANCE','FLOAT',[
-                    ["CP_TARGET_LATITUDE","PV_INPUT"],
-                    ["CP_TARGET_LONGITUDE","PV_INPUT"],
-                    ["CP_UNIT","KILOMETERS"]
-                ])
-            ]);
-        };
 
         DistanceInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var distanceValue = outAttributes.getItems()[0];

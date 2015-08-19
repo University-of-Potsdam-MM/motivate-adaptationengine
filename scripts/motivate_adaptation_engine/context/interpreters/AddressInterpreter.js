@@ -3,6 +3,26 @@
  */
 define(['contactJS'], function(contactJS) {
     return (function() {
+
+        AddressInterpreter.inOut = {
+            in: [
+                {
+                    'name':'CI_USER_LOCATION_LATITUDE',
+                    'type':'FLOAT'
+                },
+                {
+                    'name':'CI_USER_LOCATION_LONGITUDE',
+                    'type':'FLOAT'
+                }
+            ],
+            out: [
+                {
+                    'name':'CI_USER_LOCATION_ADDRESS',
+                    'type':'STRING'
+                }
+            ]
+        };
+
         /**
          *
          * @requires contactJS
@@ -13,23 +33,11 @@ define(['contactJS'], function(contactJS) {
         function AddressInterpreter(discoverer) {
             contactJS.Interpreter.call(this, discoverer);
             this.name = "AddressInterpreter";
+            return this;
         }
 
         AddressInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
         AddressInterpreter.prototype.constructor = AddressInterpreter;
-
-        AddressInterpreter.prototype._initInAttributes = function() {
-            this._setInAttributes([
-                this._discoverer.buildAttribute('CI_USER_LOCATION_LATITUDE','FLOAT'),
-                this._discoverer.buildAttribute('CI_USER_LOCATION_LONGITUDE','FLOAT')
-            ]);
-        };
-
-        AddressInterpreter.prototype._initOutAttributes = function() {
-            this._setOutAttributes([
-                this._discoverer.buildAttribute('CI_USER_LOCATION_ADDRESS','STRING')
-            ]);
-        };
 
         AddressInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var addressValue = outAttributes.getItems()[0];

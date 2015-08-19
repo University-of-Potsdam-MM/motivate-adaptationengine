@@ -3,6 +3,23 @@
  */
 define(['contactJS'], function (contactJS) {
     return (function() {
+
+        FakeCelsiusTemperatureWidget.inOut = {
+            out: [
+                {
+                    'name':'CI_CURRENT_TEMPERATURE',
+                    'type':'FLOAT',
+                    'parameterList': [["CP_TEMPERATURE_SCALE", "CELSIUS"]]
+                }
+            ],
+            const: [
+                {
+                    'name':'',
+                    'type':''
+                }
+            ]
+        };
+
         /**
          *
          * @extends Widget
@@ -13,22 +30,11 @@ define(['contactJS'], function (contactJS) {
         function FakeCelsiusTemperatureWidget(discoverer) {
             contactJS.Widget.call(this, discoverer);
             this.name = 'FakeCelsiusTemperatureWidget';
-
             return this;
         }
 
         FakeCelsiusTemperatureWidget.prototype = Object.create(contactJS.Widget.prototype);
         FakeCelsiusTemperatureWidget.prototype.constructor = FakeCelsiusTemperatureWidget;
-
-        FakeCelsiusTemperatureWidget.prototype._initOutAttributes = function() {
-            this._setOutAttributes([
-                this._discoverer.buildAttribute('CI_CURRENT_TEMPERATURE','FLOAT',[["CP_TEMPERATURE_SCALE","CELSIUS"]])
-            ]);
-        };
-
-        FakeCelsiusTemperatureWidget.prototype._initConstantOutAttributes = function() {
-
-        };
 
         FakeCelsiusTemperatureWidget.prototype._initCallbacks = function() {
             this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
