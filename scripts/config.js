@@ -19,9 +19,9 @@ require.config({
         nools: 'lib/nools.min',
         contactJS: 'lib/contactJS',
         // adaptation engine
-        MoAE: 'motivate_adaptation_engine/adaptationengine',
+        MoAE: 'motivate_adaptation_engine/AdaptationEngine',
         // rule engine
-        MoRE: 'motivate_adaptation_engine/rules/ruleengine',
+        MoRE: 'motivate_adaptation_engine/rules/RuleEngine',
         // context information
         MoCI: 'motivate_adaptation_engine/context/ContextInformation',
         // context detection
