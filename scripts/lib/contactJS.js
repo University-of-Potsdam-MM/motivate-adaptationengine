@@ -3029,15 +3029,7 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * @private
 			 */
 			Widget.prototype._initOutAttributes = function() {
-				for(var outAttributeIndex in this.constructor.inOut.out) {
-					var out = this.constructor.inOut.out[outAttributeIndex];
-					this._outAttributes.put(this._discoverer.buildAttribute(
-						out.name,
-						out.type,
-						out.parameterList,
-						true
-					));
-				}
+				this._outAttributes = AttributeList.fromAttributeDescription(this._discoverer, this.constructor.inOut.out);
 			};
 
 			/**
@@ -3046,15 +3038,7 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * @private
 			 */
 			Widget.prototype._initConstantOutAttributes = function() {
-				for(var constAttributeIndex in this.constructor.inOut.const) {
-					var constants = this.constructor.inOut.const[constAttributeIndex];
-					this._outAttributes.put(this._discoverer.buildAttribute(
-						constants.name,
-						constants.type,
-						constants.parameterList,
-						true
-					));
-				}
+				this._constantOutAttributes = AttributeList.fromAttributeDescription(this._discoverer, this.constructor.inOut.const);
 			};
 
 			/**
@@ -5346,9 +5330,8 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 					if (!theAggregator._hasComponent(theComponent.getId())) {
 						// if component is a widget and it wasn't added before, subscribe to its callbacks
 						if (theComponent instanceof Widget) {
-							console.log("Discoverer: It's a Widget.");
 							theAggregator.addWidgetSubscription(theComponent);
-							console.log("Discoverer: The Aggregator did subscribe to "+theComponent.name+".");
+							console.log("Discoverer: I found "+theComponent.name+" and the Aggregator did subscribe to it.");
 							this._removeAttributesSatisfiedByWidget(aggregatorId, theComponent, unsatisfiedAttributes);
 						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
 							console.log("Discoverer: It's an Interpreter.");
@@ -5378,7 +5361,6 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 			 */
 			Discoverer.prototype._getUnregisteredComponentsForUnsatisfiedAttributes = function(aggregatorId, unsatisfiedAttributes) {
 				var theAggregator = this.getAggregator(aggregatorId);
-
 				console.log("Discoverer: Let's look at the unregistered components.");
 
 				//check all Widget's outAttributes
@@ -5392,8 +5374,8 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 						//create temporary OutAttributeList
 						var tempWidgetOutList = AttributeList.fromAttributeDescription(this, theWidget.inOut.out);
 
-						for(var tempOutAttribute = 0; tempOutAttribute < tempWidgetOutList.size(); tempOutAttribute++) {
-							if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempOutAttribute])) {
+						for(var tempWidgetOutListIndex in tempWidgetOutList.getItems()) {
+							if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempWidgetOutListIndex])) {
 								console.log("Discoverer: I have found an unregistered "+theWidget.name+".");
 								var newWidget = new theWidget(this, tempWidgetOutList);
 								theAggregator.addWidgetSubscription(newWidget);
