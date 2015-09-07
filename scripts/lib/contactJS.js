@@ -551,6 +551,13 @@ define('parameter',[],function(){
 			 * @type {string}
 			 * @private
 			 */
+			this._type = '';
+
+			/**
+			 *
+			 * @type {string}
+			 * @private
+			 */
 			this._value = '';
 
 			return this;
@@ -565,6 +572,17 @@ define('parameter',[],function(){
 		 */
 		Parameter.prototype.withKey = function(key){
 			this.setKey(key);
+			return this;
+		};
+
+		/**
+		 * Builder for type.
+		 *
+		 * @param type
+		 * @return {Parameter}
+		 */
+		Parameter.prototype.withType = function(type) {
+			this.setType(type);
 			return this;
 		};
 
@@ -586,8 +604,17 @@ define('parameter',[],function(){
 		 * @public
 		 * @returns {string}
 		 */
-		Parameter.prototype.getKey = function(){
+		Parameter.prototype.getKey = function() {
 			return this._key;
+		};
+
+		/**
+		 * Return the type.
+		 *
+		 * @returns {string}
+		 */
+		Parameter.prototype.getType = function() {
+			return this._type;
 		};
 
 		/**
@@ -607,9 +634,16 @@ define('parameter',[],function(){
 		 * @param {string} newKey Key
 		 */
 		Parameter.prototype.setKey = function(newKey){
-			if(typeof newKey === 'string'){
-				this._key = newKey;
-			}
+			if(typeof newKey === 'string') this._key = newKey;
+		};
+
+		/**
+		 * Sets the type.
+		 *
+		 * @param newType
+		 */
+		Parameter.prototype.setType = function(newType) {
+			if(typeof newType === "string") this._type = newType;
 		};
 
 		/**
@@ -619,9 +653,7 @@ define('parameter',[],function(){
 		 * @param {string} newValue Value
 		 */
 		Parameter.prototype.setValue = function(newValue){
-			if(typeof newValue === 'string'){
-				this._value = newValue;
-			}
+			if(typeof newValue === 'string') this._value = newValue;
 		};
 
 		/**
@@ -633,9 +665,9 @@ define('parameter',[],function(){
 		Parameter.prototype.equals = function(parameter) {
 			if(parameter.constructor === Parameter){
 				if (parameter.getValue() == "PV_INPUT" || this.getValue() == "PV_INPUT") {
-					return this.getKey() == parameter.getKey();
+					return this.getKey() == parameter.getKey() && this.getType() == parameter.getType();
 				} else {
-					return this.getKey() == parameter.getKey() && this.getValue() == parameter.getValue();
+					return this.getKey() == parameter.getKey() && this.getType() == parameter.getType() && this.getValue() == parameter.getValue();
 				}
 			}
 			return false;
@@ -643,12 +675,12 @@ define('parameter',[],function(){
 
 		/**
 		 * Returns a description of the parameter.
-		 * Format: [ParameterName:ParameterValue]
+		 * Format: [ParameterName:ParameterType:ParameterValue]
 		 *
-		 * @example [CP_UNIT:KILOMETERS]
+		 * @example [CP_UNIT:STRING:KILOMETERS]
 		 */
 		Parameter.prototype.toString = function() {
-			return "["+this.getKey()+":"+this.getValue()+"]";
+			return "["+this.getKey()+":"+this.getType()+":"+this.getValue()+"]";
 		};
 
 		return Parameter;
@@ -773,6 +805,14 @@ define('attribute',['parameterList'], function(ParameterList) {
 
             return this;
         }
+
+        Attribute.fromAttributeDescription = function(discoverer, attributeDescription) {
+            return discoverer.buildAttribute(
+                attributeDescription.name,
+                attributeDescription.type,
+                attributeDescription.parameterList,
+                true);
+        };
 
         /**
          * Builder for name.
@@ -1103,10 +1143,10 @@ define('attribute',['parameterList'], function(ParameterList) {
         /**
          * Returns an identifier that uniquely describes the attribute type and its parameters.
          * The identifier can be used to compare two attribute types. <br/>
-         * Format: (AttributeName:AttributeType)#[FirstParameterName:FirstParameterValue]…
+         * Format: (AttributeName:AttributeType)#[FirstParameterName:FirstParameterType:FirstParameterValue]…
          *
          * @returns {String}
-         * @example (CI_USER_LOCATION_DISTANCE:FLOAT)#[CP_TARGET_LATITUDE:52][CP_TARGET_LONGITUDE:13][CP_UNIT:KILOMETERS]
+         * @example (CI_USER_LOCATION_DISTANCE:FLOAT)#[CP_TARGET_LATITUDE:INTEGER:52][CP_TARGET_LONGITUDE:INTEGER:13][CP_UNIT:STRING:KILOMETERS]
          */
         Attribute.prototype.toString = function(typeOnly) {
             var identifier = "(" + this.getName() + ":" + this.getType() + ")";
@@ -1137,9 +1177,7 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
          */
         function AttributeList() {
             AbstractList.call(this);
-
             this._type = Attribute;
-
             return this;
         }
 
@@ -1154,15 +1192,29 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
          * @param {Array} attributeDescription
          * @returns {AttributeList}
          */
-        AttributeList.fromAttributeDescription = function(discoverer, attributeDescription) {
+        AttributeList.fromAttributeDescriptions = function(discoverer, attributeDescription) {
             var theAttributeList = new AttributeList();
             for(var attributeDescriptionIndex in attributeDescription) {
-                theAttributeList.put(discoverer.buildAttribute(
-                    attributeDescription[attributeDescriptionIndex].name,
-                    attributeDescription[attributeDescriptionIndex].type,
-                    attributeDescription[attributeDescriptionIndex].parameterList,
-                    true));
+                theAttributeList.put(Attribute.fromAttributeDescription(discoverer, attributeDescription[attributeDescriptionIndex]));
             }
+            return theAttributeList;
+        };
+
+        /**
+         *
+         * @param {Discoverer} discoverer
+         * @param {Array<String>} attributeNames
+         * @returns {AttributeList}
+         */
+        AttributeList.fromAttributeNames = function(discoverer, attributeNames) {
+            var theAttributeList = new AttributeList();
+            var possibleAttributes = discoverer.getPossibleAttributes();
+
+            for (var attributeNameIndex in attributeNames) {
+                var theAttributeName = attributeNames[attributeNameIndex];
+                theAttributeList.put(possibleAttributes._getAttributeWithName(theAttributeName));
+            }
+
             return theAttributeList;
         };
 
@@ -1171,7 +1223,7 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
          *
          * @public
          * @param {Attribute} attribute AttributeType
-         * @param {boolean} multipleInstances
+         * @param {Boolean} [multipleInstances=false]
          */
 
         AttributeList.prototype.put = function(attribute, multipleInstances) {
@@ -1202,6 +1254,10 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
             for ( var i in list) {
                 this.put(list[i]);
             }
+        };
+
+        AttributeList.prototype.putIfTypeNotContained = function(attribute) {
+            if (!this.containsTypeOf(attribute)) this.put(attribute);
         };
 
         /**
@@ -1296,6 +1352,20 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
                 return true;
             }
             return false;
+        };
+
+        /**
+         *
+         * @param {String} attributeName
+         * @returns {?Attribute}
+         * @private
+         */
+        AttributeList.prototype._getAttributeWithName = function(attributeName) {
+            for (var index in this._items) {
+                var theAttribute = this._items[index];
+                if (theAttribute.getName() == attributeName) return theAttribute;
+            }
+            return null;
         };
 
         /**
@@ -1412,8 +1482,8 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
         /**
          * Returns the attribute value that matches the provided attribute type.
          *
-         * @param {AttributeType} attribute
-         * @returns {Attribute}
+         * @param {Attribute} attribute
+         * @returns {String}
          */
         AttributeList.prototype.getValueForAttributeWithTypeOf = function(attribute) {
             return this.getAttributeWithTypeOf(attribute).getValue();
@@ -2941,13 +3011,13 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * Widget with attributes, callbacks and subscriber
 			 * that are specified in the provided functions.
 			 *
+			 * @param {Discoverer} discoverer
+ 			 * @param {AttributeList} attributes
 			 * @abstract
 			 * @classdesc The Widget handles the access to sensors.
 			 * @constructs Widget
 			 */
 			function Widget(discoverer, attributes) {
-				var self = this;
-
 				/**
 				 * Name of the Widget.
 				 *
@@ -3029,7 +3099,7 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * @private
 			 */
 			Widget.prototype._initOutAttributes = function() {
-				this._outAttributes = AttributeList.fromAttributeDescription(this._discoverer, this.constructor.inOut.out);
+				this._outAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.inOut.out);
 			};
 
 			/**
@@ -3038,7 +3108,7 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * @private
 			 */
 			Widget.prototype._initConstantOutAttributes = function() {
-				this._constantOutAttributes = AttributeList.fromAttributeDescription(this._discoverer, this.constructor.inOut.const);
+				this._constantOutAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.inOut.const);
 			};
 
 			/**
@@ -3136,19 +3206,16 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			/**
 			 * Returns the last acquired attribute value with the given attribute type.
 			 *
-			 * @param {AttributeType} attributeType The attribute type to return the last value for.
+			 * @param {Attribute} attribute The attribute to return the last value for.
 			 * @returns {*}
 			 */
-			Widget.prototype.getValueForAttributeWithTypeOf = function(attributeType) {
-				return this.getOutAttributes().getAttributeWithTypeOf(attributeType).getValue();
+			Widget.prototype.getLastValueForAttributeWithTypeOf = function(attribute) {
+				return this.getOutAttributes().getAttributeWithTypeOf(attribute).getValue();
 			};
 
 			/**
 			 * Returns the old Attributes.
 			 *
-			 * @private
-			 * @alias getOldAttributes
-			 * @memberof Widget#
 			 * @returns {AttributeList}
 			 */
 			Widget.prototype.getOldAttributes = function() {
@@ -3159,9 +3226,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * Returns a list of callbacks that can be
 			 * subscribed to.
 			 *
-			 * @public
-			 * @alias getCallbacks
-			 * @memberof Widget#
 			 * @returns {CallbackList}
 			 */
 			Widget.prototype.getCallbackList = function() {
@@ -3280,17 +3344,11 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * @param {Attribute} constantAttribute AttributeValue
 			 */
 			Widget.prototype._addConstantOutAttribute = function(constantAttribute) {
-				if (Class.isA(AttributeValue, constantAttribute)) {
-					if (!this.constantAttributes
-							.contains(constantAttribute)) {
-
-						var type = new AttributeType().withName(constantAttribute.getName())
-							.withType(constantAttribute.getType())
-							.withParameters(constantAttribute.getParameters());
-						this.constantAttributeTypes.put(type);
+				if (constantAttribute instanceof Attribute) {
+					if (!this._constantOutAttributes.containsTypeOf(constantAttribute)) {
+						constantAttribute.setTimestamp(this.getCurrentTime());
+						this._constantOutAttributes.put(constantAttribute);
 					}
-					_attribute.setTimestamp(this.getCurrentTime());
-					this.constantAttributes.put(constantAttribute);
 				}
 			};
 
@@ -3394,11 +3452,9 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * Verifies whether the specified attributes is a
 			 * provided Attribute.
 			 *
-			 * @protected
-			 * @alias isOutAttribute
-			 * @memberof Widget#
 			 * @param {Attribute} attribute
-			 * @returns {boolean}
+			 * @returns {Boolean}
+			 * @protected
 			 */
 			Widget.prototype._isOutAttribute = function(attribute) {
 				return !!this._outAttributes.containsTypeOf(attribute);
@@ -4203,6 +4259,8 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			/**
 			 * Generates the id and initializes the Aggregator.
 			 *
+			 * @param {Discoverer} discoverer
+			 * @param {AttributeList} attributes
 			 * @classdesc The Widget handles the access to sensors.
 			 * @constructs Aggregator
 			 * @extends Widget
@@ -4375,12 +4433,12 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * Initializes the provided attributeValues that are only specific to the Aggregator.
 			 * Called by aggregatorSetup().
 			 *
-			 * @virtual
+			 * @param {AttributeList} attributes
 			 * @protected
 			 */
 			Aggregator.prototype._setAggregatorAttributeValues = function(attributes) {
-				for (var index in attributes) {
-					var theAttribute = attributes[index];
+				for (var index in attributes.getItems()) {
+					var theAttribute = attributes.getItems()[index];
 					this.addOutAttribute(theAttribute);
 				}
 			};
@@ -5052,7 +5110,7 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
                         false
                     );
 					// add built attributes to translations
-                    this._translations.push(new Translation(firstAttribute,secondAttribute));
+                    this._translations.push(new Translation(firstAttribute, secondAttribute));
                 }
 
 				return this;
@@ -5169,7 +5227,7 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 			};
 
 			/**
-			 * Returns all components that have the specified attribute as
+			 * Returns all registered components that have the specified attribute as
 			 * outAttribute. It can be chosen between the verification of
 			 * all attributes or at least one attribute.
 			 *
@@ -5178,7 +5236,7 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 			 * @param {Array} componentTypes Components types to search for
 			 * @returns {Array}
 			 */
-			Discoverer.prototype.getComponentsByAttributes = function(attributeListOrArray, all, componentTypes) {
+			Discoverer.prototype.getRegisteredComponentsByAttributes = function(attributeListOrArray, all, componentTypes) {
 				var componentList = [];
 				var list = [];
 				if (typeof componentTypes == "undefined") componentTypes = [Widget, Interpreter, Aggregator];
@@ -5214,26 +5272,28 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 			 * Builds a new attribute from given name, type and parameters,
 			 * adding known translations to its synonyms.
 			 *
-			 * @param name
-			 * @param type
+			 * @param attributeName
+			 * @param attributeType
 			 * @param {Array} [parameterList=[]]
              * @param {Boolean} [withSynonyms=true]
 			 * @returns {Attribute}
 			 */
-			Discoverer.prototype.buildAttribute = function(name, type, parameterList, withSynonyms) {
+			Discoverer.prototype.buildAttribute = function(attributeName, attributeType, parameterList, withSynonyms) {
 				if (typeof withSynonyms == 'undefined') withSynonyms = true;
 				if (typeof parameterList == 'undefined') parameterList = [];
 
-                if (typeof name != 'string' || typeof type != 'string')
+                if (typeof attributeName != 'string' || typeof attributeType != 'string')
                     throw new Error("Parameters name and type must be of type String!");
 
-                var newAttribute = new Attribute(true).withName(name).withType(type);
+                var newAttribute = new Attribute(true).withName(attributeName).withType(attributeType);
 
 				for (var i = 0; i < parameterList.length; i++) {
 					var param = parameterList[i];
-					var value = param[1];
+					var value = param[2];
+					var type = param[1];
 					var key = param[0];
-					if (typeof key != 'undefined' && typeof value != 'undefined') newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withValue(value));
+					if (typeof key != 'undefined' && typeof value != 'undefined')
+						newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withType(type).withValue(value));
 				}
 
                 if (withSynonyms) {
@@ -5318,7 +5378,7 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 				var theAggregator = this.getAggregator(aggregatorId);
 				console.log("Discoverer: Let's look at my registered components.");
 
-				var relevantComponents = this.getComponentsByAttributes(unsatisfiedAttributes, all, componentTypes);
+				var relevantComponents = this.getRegisteredComponentsByAttributes(unsatisfiedAttributes, all, componentTypes);
 				console.log("Discoverer: I found " + relevantComponents.length + " registered component(s) that might satisfy the requested attributes.");
 
 				//iterate over the found components
@@ -5372,7 +5432,7 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 						//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
 
 						//create temporary OutAttributeList
-						var tempWidgetOutList = AttributeList.fromAttributeDescription(this, theWidget.inOut.out);
+						var tempWidgetOutList = AttributeList.fromAttributeDescriptions(this, theWidget.inOut.out);
 
 						for(var tempWidgetOutListIndex in tempWidgetOutList.getItems()) {
 							if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempWidgetOutListIndex])) {
@@ -5395,9 +5455,9 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 						for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
 							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
 							//create temporary outAttributeList
-							var tempOutList = AttributeList.fromAttributeDescription(this, theInterpreter.inOut.out);
+							var tempOutList = AttributeList.fromAttributeDescriptions(this, theInterpreter.inOut.out);
 							//create temporary inAttributeList
-							var tempInList = AttributeList.fromAttributeDescription(this, theInterpreter.inOut.in);
+							var tempInList = AttributeList.fromAttributeDescriptions(this, theInterpreter.inOut.in);
 
 							for (var tempOutAttributeIndex in tempOutList.getItems()) {
 								if (theUnsatisfiedAttribute.equalsTypeOf(tempOutList.getItems()[tempOutAttributeIndex])) {
@@ -5434,7 +5494,7 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 				if (theInterpreter instanceof Interpreter) {
 					attributes = theInterpreter.getInAttributes().getItems();
 				} else {
-					attributes = AttributeList.fromAttributeDescription(this, theInterpreter.inOut.in).getItems();
+					attributes = AttributeList.fromAttributeDescriptions(this, theInterpreter.inOut.in).getItems();
 				}
 
 				for (var attributeIdentifier in attributes) {
@@ -5505,6 +5565,29 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 					}
 					unsatisfiedAttributes.removeAttributeWithTypeOf(theAttribute, true);
 				}
+			};
+
+			/**
+			 *
+			 * @returns {AttributeList}
+			 */
+			Discoverer.prototype.getPossibleAttributes = function() {
+				var possibleAttributes = new AttributeList();
+
+				// iterate over all unregistered widgets
+				for (var widgetIndex in this._unregisteredWidgets) {
+					var theWidget = this._unregisteredWidgets[widgetIndex];
+					for (var attributeDescriptionIndex in theWidget.inOut.out) {
+						var theAttribute = Attribute.fromAttributeDescription(this, theWidget.inOut.out[attributeDescriptionIndex]);
+						possibleAttributes.putIfTypeNotContained(theAttribute);
+					}
+				}
+
+				return possibleAttributes;
+			};
+
+			Discoverer.prototype.getAttributesWithNames = function(attributeNames) {
+				return AttributeList.fromAttributeNames(this, attributeNames);
 			};
 
 			return Discoverer;

@@ -9,7 +9,7 @@ define(['contactJS'], function(contactJS) {
                 {
                     'name':'CI_BASE_UNIT_OF_TIME',
                     'type':'INTEGER',
-                    'parameterList': [["CP_UNIT", "SECONDS"]]
+                    'parameterList': [["CP_UNIT", "STRING", "SECONDS"]]
                 }
             ],
             out: [

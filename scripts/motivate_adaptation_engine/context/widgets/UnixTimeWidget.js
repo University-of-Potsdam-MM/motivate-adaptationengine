@@ -9,7 +9,7 @@ define(['contactJS'], function (contactJS) {
                 {
                     'name':'CI_CURRENT_UNIX_TIME',
                     'type':'INTEGER',
-                    'parameterList': [["CP_UNIT", "MILLISECONDS"]]
+                    'parameterList': [["CP_UNIT", "STRING", "MILLISECONDS"]]
                 }
             ],
             const: [

@@ -9,7 +9,7 @@ define(['contactJS'], function (contactJS) {
                 {
                     'name':'CI_CURRENT_TEMPERATURE',
                     'type':'FLOAT',
-                    'parameterList': [["CP_TEMPERATURE_SCALE", "CELSIUS"]]
+                    'parameterList': [["CP_TEMPERATURE_SCALE", "STRING", "CELSIUS"]]
                 }
             ],
             const: [

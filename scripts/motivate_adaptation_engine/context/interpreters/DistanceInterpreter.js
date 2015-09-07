@@ -19,7 +19,11 @@ define(['contactJS'], function(contactJS) {
                 {
                     'name':'CI_USER_LOCATION_DISTANCE',
                     'type':'FLOAT',
-                    'parameterList': [['CP_TARGET_LATITUDE', 'PV_INPUT'], ['CP_TARGET_LONGITUDE', 'PV_INPUT'], ['CP_UNIT','KILOMETERS']]
+                    'parameterList': [
+                        ['CP_TARGET_LATITUDE', 'FLOAT', 'PV_INPUT'],
+                        ['CP_TARGET_LONGITUDE', 'FLOAT', 'PV_INPUT'],
+                        ['CP_UNIT', 'STRING', 'KILOMETERS']
+                    ]
                 }
             ]
         };
