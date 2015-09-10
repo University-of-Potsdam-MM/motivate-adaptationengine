@@ -7,22 +7,15 @@ define(['contactJS'], function(contactJS) {
         NightTimeInterpreter.inOut = {
             in: [
                 {
-                    'name':'CI_CURRENT_UNIX_TIME',
+                    'name':'CI_BASE_UNIT_OF_TIME',
                     'type':'INTEGER',
-                    'parameterList': ["CP_UNIT", "SECONDS"],
-                    "synonymList": [],
-                    'value':'',
-                    'timestamp':''
+                    'parameterList': [["CP_UNIT", "STRING", "SECONDS"]]
                 }
             ],
             out: [
                 {
                     'name':'CI_IS_NIGHTTIME',
-                    'type':'BOOLEAN',
-                    'parameterList': [],
-                    "synonymList": [],
-                    'value':'',
-                    'timestamp':''
+                    'type':'BOOLEAN'
                 }
             ]
         };
@@ -34,17 +27,14 @@ define(['contactJS'], function(contactJS) {
          * @returns {NightTimeInterpreter}
          * @constructor
          */
-        function NightTimeInterpreter(discoverer, inAttributes, outAttributes) {
-            contactJS.Interpreter.call(this, discoverer, inAttributes, outAttributes);
+        function NightTimeInterpreter(discoverer) {
+            contactJS.Interpreter.call(this, discoverer);
             this.name = "NightTimeInterpreter";
-
             return this;
         }
 
         NightTimeInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
         NightTimeInterpreter.prototype.constructor = NightTimeInterpreter;
-
-
 
         NightTimeInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var isNightTime = outAttributes.getItems()[0];

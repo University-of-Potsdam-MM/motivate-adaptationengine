@@ -7,22 +7,16 @@ define(['contactJS'], function(contactJS) {
         SecondsInterpreter.inOut = {
             in: [
                 {
-                    'name':'CI_CURRENT_UNIX_TIME',
+                    'name':'CI_BASE_UNIT_OF_TIME',
                     'type':'INTEGER',
-                    'parameterList': ["CP_UNIT", "MILLISECONDS"],
-                    "synonymList": [],
-                    'value':'',
-                    'timestamp':''
+                    'parameterList': [["CP_UNIT", "STRING", "MILLISECONDS"]]
                 }
             ],
             out: [
                 {
-                    'name':'CI_CURRENT_UNIX_TIME',
+                    'name':'CI_BASE_UNIT_OF_TIME',
                     'type':'INTEGER',
-                    'parameterList': ["CP_UNIT", "SECONDS"],
-                    "synonymList": [],
-                    'value':'',
-                    'timestamp':''
+                    'parameterList': [["CP_UNIT", "STRING", "SECONDS"]]
                 }
             ]
         };
@@ -34,17 +28,14 @@ define(['contactJS'], function(contactJS) {
          * @returns {SecondsInterpreter}
          * @constructor
          */
-        function SecondsInterpreter(discoverer, inAttributes, outAttributes) {
-            contactJS.Interpreter.call(this, discoverer, inAttributes, outAttributes);
+        function SecondsInterpreter(discoverer) {
+            contactJS.Interpreter.call(this, discoverer);
             this.name = "SecondsInterpreter";
-
             return this;
         }
 
         SecondsInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
         SecondsInterpreter.prototype.constructor = SecondsInterpreter;
-
-
 
         SecondsInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var unixSecondsValue = outAttributes.getItems()[0];

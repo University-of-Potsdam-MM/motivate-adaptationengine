@@ -9,20 +9,13 @@ define(['contactJS'], function (contactJS) {
                 {
                     'name':'CI_CURRENT_UNIX_TIME',
                     'type':'INTEGER',
-                    'parameterList': ["CP_UNIT", "MILLISECONDS"],
-                    "synonymList": [],
-                    'value':'',
-                    'timestamp':''
+                    'parameterList': [["CP_UNIT", "STRING", "MILLISECONDS"]]
                 }
             ],
             const: [
                 {
                     'name':'',
-                    'type':'',
-                    'parameterList': [],
-                    "synonymList": [],
-                    'value':'',
-                    'timestamp':''
+                    'type':''
                 }
             ]
         };
@@ -34,10 +27,9 @@ define(['contactJS'], function (contactJS) {
          * @returns {UnixTimeWidget}
          * @constructor
          */
-        function UnixTimeWidget(discoverer, attributes) {
-            contactJS.Widget.call(this, discoverer, attributes);
+        function UnixTimeWidget(discoverer) {
+            contactJS.Widget.call(this, discoverer);
             this.name = 'UnixTimeWidget';
-
             return this;
         }
 

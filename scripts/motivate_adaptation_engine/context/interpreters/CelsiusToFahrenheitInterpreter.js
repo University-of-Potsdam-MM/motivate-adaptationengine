@@ -9,20 +9,14 @@ define(['contactJS'], function(contactJS) {
                 {
                     'name':'CI_CURRENT_TEMPERATURE',
                     'type':'FLOAT',
-                    'parameterList': ["CP_TEMPERATURE_SCALE", "CELSIUS"],
-                    "synonymList": [],
-                    'value':'',
-                    'timestamp':''
+                    'parameterList': [["CP_TEMPERATURE_SCALE", "STRING", "CELSIUS"]]
                 }
             ],
             out: [
                 {
                     'name':'CI_CURRENT_TEMPERATURE',
                     'type':'FLOAT',
-                    'parameterList': ["CP_TEMPERATURE_SCALE", "FAHRENHEIT"],
-                    "synonymList": [],
-                    'value':'',
-                    'timestamp':''
+                    'parameterList': [["CP_TEMPERATURE_SCALE", "STRING", "FAHRENHEIT"]]
                 }
             ]
         };
@@ -34,17 +28,14 @@ define(['contactJS'], function(contactJS) {
          * @returns {CelsiusToFahrenheitInterpreter}
          * @constructor
          */
-        function CelsiusToFahrenheitInterpreter(discoverer, inAttributes, outAttributes) {
-            contactJS.Interpreter.call(this, discoverer, inAttributes, outAttributes);
+        function CelsiusToFahrenheitInterpreter(discoverer) {
+            contactJS.Interpreter.call(this, discoverer);
             this.name = "CelsiusToFahrenheitInterpreter";
-
             return this;
         }
 
         CelsiusToFahrenheitInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
         CelsiusToFahrenheitInterpreter.prototype.constructor = CelsiusToFahrenheitInterpreter;
-
-
 
         CelsiusToFahrenheitInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var fahrenheitValue = outAttributes.getItems()[0];

@@ -8,28 +8,17 @@ define(['contactJS'], function (contactJS) {
             out: [
                 {
                     'name':'CI_USER_LOCATION_LATITUDE',
-                    'type':'FLOAT',
-                    'parameterList': [],
-                    "synonymList": [],
-                    'value':'',
-                    'timestamp':''
+                    'type':'FLOAT'
                 },
                 {
                     'name':'CI_USER_LOCATION_LONGITUDE',
-                    'type':'FLOAT',
-                    'parameterList': [],
-                    "synonymList": [],
-                    'value':'',
-                    'timestamp':''}
+                    'type':'FLOAT'
+                }
             ],
             const: [
                 {
                     'name':'',
-                    'type':'',
-                    'parameterList': [],
-                    "synonymList": [],
-                    'value':'',
-                    'timestamp':''
+                    'type':''
                 }
             ]
         };
@@ -41,24 +30,14 @@ define(['contactJS'], function (contactJS) {
          * @param discoverer
          * @constructor
          */
-        function GeoLocationWidget(discoverer, attributes) {
-            contactJS.Widget.call(this, discoverer, attributes);
+        function GeoLocationWidget(discoverer) {
+            contactJS.Widget.call(this, discoverer);
             this.name = 'GeoLocationWidget';
+            return this;
         }
 
         GeoLocationWidget.prototype = Object.create(contactJS.Widget.prototype);
         GeoLocationWidget.prototype.constructor = GeoLocationWidget;
-
-        /*GeoLocationWidget.prototype._initOutAttributes = function() {
-            this._setOutAttributes([
-                this._discoverer.buildAttribute('CI_USER_LOCATION_LATITUDE','FLOAT'),
-                this._discoverer.buildAttribute('CI_USER_LOCATION_LONGITUDE','FLOAT')
-            ]);
-        };
-
-        GeoLocationWidget.prototype._initConstantOutAttributes = function() {
-
-        };*/
 
         GeoLocationWidget.prototype._initCallbacks = function() {
             this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));

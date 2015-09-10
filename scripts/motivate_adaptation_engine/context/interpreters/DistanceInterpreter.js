@@ -8,29 +8,22 @@ define(['contactJS'], function(contactJS) {
             in: [
                 {
                     'name':'CI_USER_LOCATION_LATITUDE',
-                    'type':'FLOAT',
-                    'parameterList': [],
-                    "synonymList": [],
-                    'value':'',
-                    'timestamp':''
+                    'type':'FLOAT'
                 },
                 {
                     'name':'CI_USER_LOCATION_LONGITUDE',
-                    'type':'FLOAT',
-                    'parameterList': [],
-                    "synonymList": [],
-                    'value':'',
-                    'timestamp':''
+                    'type':'FLOAT'
                 }
             ],
             out: [
                 {
                     'name':'CI_USER_LOCATION_DISTANCE',
                     'type':'FLOAT',
-                    'parameterList': [['CP_TARGET_LATITUDE', 'PV_INPUT'], ['CP_TARGET_LONGITUDE', 'PV_INPUT'], ['CP_UNIT','KILOMETERS']],
-                    "synonymList": [],
-                    'value':'',
-                    'timestamp':''
+                    'parameterList': [
+                        ['CP_TARGET_LATITUDE', 'FLOAT', 'PV_INPUT'],
+                        ['CP_TARGET_LONGITUDE', 'FLOAT', 'PV_INPUT'],
+                        ['CP_UNIT', 'STRING', 'KILOMETERS']
+                    ]
                 }
             ]
         };
@@ -42,17 +35,14 @@ define(['contactJS'], function(contactJS) {
          * @returns {DistanceInterpreter}
          * @constructor
          */
-        function DistanceInterpreter(discoverer, inAttributes, outAttributes) {
-            contactJS.Interpreter.call(this, discoverer, inAttributes, outAttributes);
+        function DistanceInterpreter(discoverer) {
+            contactJS.Interpreter.call(this, discoverer);
             this.name = "DistanceInterpreter";
-
             return this;
         }
 
         DistanceInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
         DistanceInterpreter.prototype.constructor = DistanceInterpreter;
-
-
 
         DistanceInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var distanceValue = outAttributes.getItems()[0];

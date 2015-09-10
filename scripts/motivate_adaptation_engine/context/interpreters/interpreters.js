@@ -7,7 +7,6 @@ define([
     './DistanceInterpreter',
     './ISO8601Interpreter',
     './SecondsInterpreter',
-    './UnixTimeInterpreter',
     './NightTimeInterpreter'
 ], function(
     AddressInterpreter,
@@ -15,7 +14,6 @@ define([
     DistanceInterpreter,
     ISO8601Interpreter,
     SecondsInterpreter,
-    UnixTimeInterpreter,
     NightTimeInterpreter
 ) {
     return arguments;

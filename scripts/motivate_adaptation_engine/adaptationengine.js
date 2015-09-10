@@ -224,9 +224,8 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
 
         /**
          * Starts the context detection process.
-         * @alias startContextDetection
-         * @memberof AdaptationEngine#
-         * @param intervalInMilliseconds {Number}
+         *
+         * @param {Number} [intervalInMilliseconds]
          */
         AdaptationEngine.prototype.startContextDetection = function(intervalInMilliseconds) {
             console.log("startContextDetection");
