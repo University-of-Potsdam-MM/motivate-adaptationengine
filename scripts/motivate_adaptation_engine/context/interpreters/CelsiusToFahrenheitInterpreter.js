@@ -30,7 +30,7 @@ define(['contactJS'], function(contactJS) {
          */
         function CelsiusToFahrenheitInterpreter(discoverer) {
             contactJS.Interpreter.call(this, discoverer);
-            this.name = "CelsiusToFahrenheitInterpreter";
+            this._name = "CelsiusToFahrenheitInterpreter";
             return this;
         }
 

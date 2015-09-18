@@ -29,7 +29,7 @@ define(['contactJS'], function (contactJS) {
          */
         function FakeCelsiusTemperatureWidget(discoverer) {
             contactJS.Widget.call(this, discoverer);
-            this.name = 'FakeCelsiusTemperatureWidget';
+            this._name = 'FakeCelsiusTemperatureWidget';
             return this;
         }
 

@@ -32,7 +32,7 @@ define(['contactJS'], function (contactJS) {
          */
         function GeoLocationWidget(discoverer) {
             contactJS.Widget.call(this, discoverer);
-            this.name = 'GeoLocationWidget';
+            this._name = 'GeoLocationWidget';
             return this;
         }
 

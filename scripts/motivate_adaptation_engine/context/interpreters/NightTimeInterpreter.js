@@ -29,7 +29,7 @@ define(['contactJS'], function(contactJS) {
          */
         function NightTimeInterpreter(discoverer) {
             contactJS.Interpreter.call(this, discoverer);
-            this.name = "NightTimeInterpreter";
+            this._name = "NightTimeInterpreter";
             return this;
         }
 

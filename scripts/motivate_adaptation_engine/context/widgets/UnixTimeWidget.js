@@ -29,7 +29,7 @@ define(['contactJS'], function (contactJS) {
          */
         function UnixTimeWidget(discoverer) {
             contactJS.Widget.call(this, discoverer);
-            this.name = 'UnixTimeWidget';
+            this._name = 'UnixTimeWidget';
             return this;
         }
 

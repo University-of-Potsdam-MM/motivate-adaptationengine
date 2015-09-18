@@ -32,7 +32,7 @@ define(['contactJS'], function(contactJS) {
          */
         function AddressInterpreter(discoverer) {
             contactJS.Interpreter.call(this, discoverer);
-            this.name = "AddressInterpreter";
+            this._name = "AddressInterpreter";
             return this;
         }
 

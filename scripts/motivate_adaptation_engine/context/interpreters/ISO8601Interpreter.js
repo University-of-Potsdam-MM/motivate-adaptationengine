@@ -30,7 +30,7 @@ define(['contactJS'], function(contactJS) {
          */
         function ISO8601Interpreter(discoverer) {
             contactJS.Interpreter.call(this, discoverer);
-            this.name = "ISO8601Interpreter";
+            this._name = "ISO8601Interpreter";
             return this;
         }
 

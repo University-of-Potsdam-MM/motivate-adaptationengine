@@ -30,7 +30,7 @@ define(['contactJS'], function(contactJS) {
          */
         function SecondsInterpreter(discoverer) {
             contactJS.Interpreter.call(this, discoverer);
-            this.name = "SecondsInterpreter";
+            this._name = "SecondsInterpreter";
             return this;
         }
 

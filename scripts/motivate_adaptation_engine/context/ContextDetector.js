@@ -53,8 +53,7 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
             ]);
 
             //Dynamic Configuration
-            var contextIds = this._extractContextIdsFromAdaptationRules(adaptationRules);
-            this._aggregators.push(new contactJS.Aggregator(this._discoverer, this._discoverer.getAttributesWithNames(contextIds)));
+            this._aggregators.push(new contactJS.Aggregator(this._discoverer, this.extractAttributesFromAdaptationRules(adaptationRules)));
         }
 
         /**
@@ -67,10 +66,15 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
             this._callbacks[callbackName] = callback;
         };
 
+        ContextDetector.prototype.extractAttributesFromAdaptationRules = function(adaptationRules) {
+            return this._discoverer.getAttributesWithNames(this._extractContextIdsFromAdaptationRules(adaptationRules));
+        };
+
         /**
          *
          *
          * @param {*|Array} adaptationRules
+         * @return {Array}
          * @private
          */
         ContextDetector.prototype._extractContextIdsFromAdaptationRules = function(adaptationRules) {

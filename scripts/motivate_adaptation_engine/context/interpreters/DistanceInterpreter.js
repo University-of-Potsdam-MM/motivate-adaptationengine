@@ -37,7 +37,7 @@ define(['contactJS'], function(contactJS) {
          */
         function DistanceInterpreter(discoverer) {
             contactJS.Interpreter.call(this, discoverer);
-            this.name = "DistanceInterpreter";
+            this._name = "DistanceInterpreter";
             return this;
         }
 
