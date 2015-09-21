@@ -4,7 +4,7 @@
 define(['contactJS'], function (contactJS) {
     return (function() {
 
-        FakeCelsiusTemperatureWidget.inOut = {
+        FakeCelsiusTemperatureWidget.description = {
             out: [
                 {
                     'name':'CI_CURRENT_TEMPERATURE',
@@ -17,7 +17,8 @@ define(['contactJS'], function (contactJS) {
                     'name':'',
                     'type':''
                 }
-            ]
+            ],
+            updateInterval: 30000
         };
 
         /**
@@ -42,7 +43,7 @@ define(['contactJS'], function (contactJS) {
 
         FakeCelsiusTemperatureWidget.prototype.queryGenerator = function(callback) {
             var response = new contactJS.AttributeList();
-            response.put(this.getOutAttributes().getItems()[0].setValue("25"));
+            response.put(this.getOutAttributes().getItems()[0].setValue(Math.floor((Math.random() * 30) + 1)));
             this._sendResponse(response, callback);
         };
 

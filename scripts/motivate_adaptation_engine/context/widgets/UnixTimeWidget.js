@@ -4,7 +4,7 @@
 define(['contactJS'], function (contactJS) {
     return (function() {
 
-        UnixTimeWidget.inOut = {
+        UnixTimeWidget.description = {
             out: [
                 {
                     'name':'CI_CURRENT_UNIX_TIME',
@@ -17,7 +17,8 @@ define(['contactJS'], function (contactJS) {
                     'name':'',
                     'type':''
                 }
-            ]
+            ],
+            updateInterval: 5000
         };
 
         /**

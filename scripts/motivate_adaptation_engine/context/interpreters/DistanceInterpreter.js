@@ -4,7 +4,7 @@
 define(['contactJS'], function(contactJS) {
     return (function() {
 
-        DistanceInterpreter.inOut = {
+        DistanceInterpreter.description = {
             in: [
                 {
                     'name':'CI_USER_LOCATION_LATITUDE',

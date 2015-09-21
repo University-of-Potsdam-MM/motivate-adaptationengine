@@ -4,7 +4,7 @@
 define(['contactJS'], function (contactJS) {
     return (function() {
 
-        GeoLocationWidget.inOut = {
+        GeoLocationWidget.description = {
             out: [
                 {
                     'name':'CI_USER_LOCATION_LATITUDE',
@@ -20,7 +20,8 @@ define(['contactJS'], function (contactJS) {
                     'name':'',
                     'type':''
                 }
-            ]
+            ],
+            updateInterval: 5000
         };
 
         /**

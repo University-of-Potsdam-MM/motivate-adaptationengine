@@ -4,7 +4,7 @@
 define(['contactJS'], function(contactJS) {
     return (function() {
 
-        CelsiusToFahrenheitInterpreter.inOut = {
+        CelsiusToFahrenheitInterpreter.description = {
             in: [
                 {
                     'name':'CI_CURRENT_TEMPERATURE',

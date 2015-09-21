@@ -4,7 +4,7 @@
 define(['contactJS'], function(contactJS) {
     return (function() {
 
-        ISO8601Interpreter.inOut = {
+        ISO8601Interpreter.description = {
             in: [
                 {
                     'name':'CI_BASE_UNIT_OF_TIME',

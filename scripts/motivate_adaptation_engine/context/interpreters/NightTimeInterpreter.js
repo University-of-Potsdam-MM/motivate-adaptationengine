@@ -4,7 +4,7 @@
 define(['contactJS'], function(contactJS) {
     return (function() {
 
-        NightTimeInterpreter.inOut = {
+        NightTimeInterpreter.description = {
             in: [
                 {
                     'name':'CI_BASE_UNIT_OF_TIME',
