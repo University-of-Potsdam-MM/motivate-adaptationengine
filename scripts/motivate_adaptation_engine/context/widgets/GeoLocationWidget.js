@@ -21,7 +21,8 @@ define(['contactJS'], function (contactJS) {
                     'type':''
                 }
             ],
-            updateInterval: 5000
+            updateInterval: 5000,
+            requiredObjects: ["navigator.geolocation"]
         };
 
         /**

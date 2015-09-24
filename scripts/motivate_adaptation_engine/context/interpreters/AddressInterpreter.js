@@ -20,7 +20,8 @@ define(['contactJS'], function(contactJS) {
                     'name':'CI_USER_LOCATION_ADDRESS',
                     'type':'STRING'
                 }
-            ]
+            ],
+            requiredObjects: ["jQuery"]
         };
 
         /**

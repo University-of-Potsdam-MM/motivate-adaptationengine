@@ -50,7 +50,7 @@ define("MoCI", [], function() {
         ContextInformation.prototype.description = function() {
             var description = "";
 
-            description += "AT "+this._timestamp;
+            description += "AT "+this.getUnixTimestamp();
             description += " "+this.getID();
             if (!$.isEmptyObject(this.getParameters())) {
                 description += " [";
@@ -59,7 +59,7 @@ define("MoCI", [], function() {
                 }
                 description += "]";
             }
-            description += " IS "+this.getValue();
+            description += " WAS "+this.getValue();
 
             return description;
         };
@@ -173,6 +173,14 @@ define("MoCI", [], function() {
          */
         ContextInformation.prototype.getFormatedTimestamp = function() {
             return this.getTimestamp().getDate()+"."+this.getTimestamp().getMonth()+"."+this.getTimestamp().getFullYear()+" "+this.getTimestamp().getHours()+":"+this.getTimestamp().getMinutes()+":"+this.getTimestamp().getSeconds();
+        };
+
+        /**
+         *
+         * @returns {number|*}
+         */
+        ContextInformation.prototype.getUnixTimestamp = function() {
+            return this.getTimestamp().getTime();
         };
 
         return ContextInformation;

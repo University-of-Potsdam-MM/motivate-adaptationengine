@@ -793,7 +793,7 @@ define('attribute',['parameterList'], function(ParameterList) {
              * @type {string}
              * @private
              */
-            this._value = 'NO_VALUE';
+            this._value = 'CV_UNKNOWN';
 
             /**
              * Time when the value was set.
@@ -3897,7 +3897,8 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 						'name':'',
 						'type':''
 					}
-				]
+				],
+				requiredObjects: []
 			};
 
 			/**
@@ -5377,7 +5378,7 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 				for(var widgetIndex in this._unregisteredWidgets){
 					var theWidget = this._unregisteredWidgets[widgetIndex];
 					// check i
-					if (this._checkWidgetRequirements(theWidget)) {
+					if (this._checkComponentRequirements(theWidget)) {
 						for(var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()){
 							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
 							//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
@@ -5402,26 +5403,28 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 				//check all interpreters' outAttributes
 				for (var index in this._unregisteredInterpreters) {
 					var theInterpreter = this._unregisteredInterpreters[index];
-					for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
-						var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
-						//create temporary outAttributeList
-						var tempOutList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.out);
-						//create temporary inAttributeList
-						var tempInList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.in);
+					if (this._checkComponentRequirements(theInterpreter)) {
+						for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
+							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
+							//create temporary outAttributeList
+							var tempOutList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.out);
+							//create temporary inAttributeList
+							var tempInList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.in);
 
-						for (var tempOutAttributeIndex in tempOutList.getItems()) {
-							if (theUnsatisfiedAttribute.equalsTypeOf(tempOutList.getItems()[tempOutAttributeIndex])) {
-								console.log("Discoverer: I have found an unregistered "+theInterpreter.name+" that might satisfy the requested Attribute.");
+							for (var tempOutAttributeIndex in tempOutList.getItems()) {
+								if (theUnsatisfiedAttribute.equalsTypeOf(tempOutList.getItems()[tempOutAttributeIndex])) {
+									console.log("Discoverer: I have found an unregistered "+theInterpreter.name+" that might satisfy the requested Attribute.");
 
-								//if an interpreter can satisfy the Attribute, check if the inAttributes are satisfied
-								if (this._checkInterpreterInAttributes(aggregatorId, theInterpreter)) {
-									var newInterpreter = new theInterpreter(this, tempInList, tempOutList);
-									//theAggregator.addWidgetSubscription(newInterpreter);
-									console.log("Discoverer: I registered the Interpreter \""+theInterpreter.name+"\" .");
-									// remove satisfied attributes
-									this._removeAttributesSatisfiedByInterpreter(aggregatorId, newInterpreter, unsatisfiedAttributes);
-								} else {
-									console.log("Discoverer: I found an unregistered Interpreter but I couldn't satisfy the required Attributes.");
+									//if an interpreter can satisfy the Attribute, check if the inAttributes are satisfied
+									if (this._checkInterpreterInAttributes(aggregatorId, theInterpreter)) {
+										var newInterpreter = new theInterpreter(this, tempInList, tempOutList);
+										//theAggregator.addWidgetSubscription(newInterpreter);
+										console.log("Discoverer: I registered the Interpreter \""+theInterpreter.name+"\" .");
+										// remove satisfied attributes
+										this._removeAttributesSatisfiedByInterpreter(aggregatorId, newInterpreter, unsatisfiedAttributes);
+									} else {
+										console.log("Discoverer: I found an unregistered Interpreter but I couldn't satisfy the required Attributes.");
+									}
 								}
 							}
 						}
@@ -5556,15 +5559,33 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 
 			/**
 			 *
-			 * @param theWidget
+			 * @param {Component} theComponent
 			 * @returns {boolean}
 			 * @private
 			 */
-			Discoverer.prototype._checkWidgetRequirements = function(theWidget) {
-				if (theWidget.description.requiredObjects && theWidget.description.requiredObjects instanceof Array) {
-					for (var index in theWidget.description.requiredObjects) {
-						var theRequiredObject = theWidget.description.requiredObjects[index];
-						if (typeof window[theRequiredObject] == "undefined") return false;
+			Discoverer.prototype._checkComponentRequirements = function(theComponent) {
+				if (theComponent.description.requiredObjects && theComponent.description.requiredObjects instanceof Array) {
+					for (var index in theComponent.description.requiredObjects) {
+						var theRequiredObject = theComponent.description.requiredObjects[index];
+						var theRequiredObjectSplit = theRequiredObject.split(".");
+
+						if (theRequiredObjectSplit.length > 1) {
+							var scope = window;
+							for (var objectIndex in theRequiredObjectSplit) {
+								var objectComponent = theRequiredObjectSplit[objectIndex];
+								if (typeof scope[objectComponent] !== "undefined") {
+									scope = scope[objectComponent]
+								} else {
+									console.log("Discoverer: A component requires "+theRequiredObject+", but it's not available.");
+									return false;
+								}
+							}
+						} else {
+							if (typeof window[theRequiredObject] === "undefined") {
+								console.log("Discoverer: A component requires "+theRequiredObject+", but it's not available.");
+								return false;
+							}
+						}
 					}
 				}
 				return true;
