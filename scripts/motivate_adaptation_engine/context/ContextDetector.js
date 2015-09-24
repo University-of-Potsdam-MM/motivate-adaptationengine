@@ -53,8 +53,19 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
             ]);
 
             //Dynamic Configuration
-            this._aggregators.push(new contactJS.Aggregator(this._discoverer, this.extractAttributesFromAdaptationRules(adaptationRules)));
+            // this.extractAttributesFromAdaptationRules(adaptationRules)
+            this._aggregators.push(new contactJS.Aggregator(this._discoverer, this._discoverer.getAttributesWithNames(["CI_WIFI_ENABLED", "CI_BLUETOOTH_ENABLED", "CI_LOCAL_WIFI_IP", "CI_DEVICE_ORIENTATION", "CI_DEVICE_MODEL", "CI_DEVICE_PLATFORM", "CI_USER_LOCATION_ADDRESS"])));
         }
+
+        ContextDetector.prototype._contextInformationFromAttributes = function(attributes) {
+            var contextInformation = [];
+            for(var index in attributes.getItems()) {
+                var attribute = attributes.getItems()[index];
+
+                contextInformation.push(ContextInformation.fromAttribute(attribute));
+            }
+            return contextInformation;
+        };
 
         /**
          * Sets a function as the callback for the provided callback name.
@@ -66,6 +77,11 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
             this._callbacks[callbackName] = callback;
         };
 
+        /**
+         *
+         * @param adaptationRules
+         * @returns {*}
+         */
         ContextDetector.prototype.extractAttributesFromAdaptationRules = function(adaptationRules) {
             return this._discoverer.getAttributesWithNames(this._extractContextIdsFromAdaptationRules(adaptationRules));
         };
@@ -156,13 +172,7 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
             for (var index in this._aggregators) {
                 var theAggregator = this._aggregators[index];
 
-                theAggregator.queryReferencedComponents(function(attributes) {
-                    for (var attributeIndex in attributes.getItems()) {
-                        var theAttributeValue = attributes.getItems()[attributeIndex];
-
-                        self.addContextInformation(ContextInformation.fromAttributeValue(theAttributeValue), false);
-                    }
-                });
+                this._callbacks["newContextInformationCallback"](this._contextInformationFromAttributes(theAggregator.getOutAttributes()));
             }
         };
 

@@ -45,22 +45,27 @@ define(['contactJS'], function(contactJS) {
             var latitude = inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[0]);
             var longitude = inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[1]);
 
-            if(navigator.onLine){
-                if (latitude && longitude) {
-                    var url = "http://maps.googleapis.com/maps/api/geocode/json?latlng="+latitude+","+longitude+"&sensor=false";
-                    $.getJSON(url, function(json) {
+            if (latitude && longitude) {
+                $.ajax({
+                    url: "http://maps.googleapis.com/maps/api/geocode/json?latlng="+latitude+","+longitude+"&sensor=true",
+                    dataType: 'json',
+                    success: function(json) {
                         if (json["status"] != ("OK")) {
                             //TODO: handle error case
-                            addressValue.setValue("NO_VALUE");
+                            addressValue.setValue(json["status"]);
                         } else {
                             addressValue.setValue(json["results"][0]["formatted_address"]);
                         }
                         callback([addressValue]);
-                    });
-                }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown ) {
+                        self.log(jqXHR.status);
+                        self.log(textStatus);
+                        self.log(errorThrown);
+                    }
+                });
             } else {
-                //TODO: handle error case
-                addressValue.setValue("NO_VALUE");
+                addressValue.setValue("NO_LAT_LONG");
                 callback([addressValue]);
             }
         };

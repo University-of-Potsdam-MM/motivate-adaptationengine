@@ -4,11 +4,23 @@
 define([
     './FakeCelsiusTemperatureWidget',
     './GeoLocationWidget',
-    './UnixTimeWidget'
+    './UnixTimeWidget',
+    './WifiEnabledWidget',
+    './BluetoothEnabledWidget',
+    './LocalWifiIPWidget',
+    './DeviceOrientationWidget',
+    './DeviceModelWidget',
+    './DevicePlatformWidget'
 ], function(
     FakeCelsiusTemperatureWidget,
     GeoLocationWidget,
-    UnixTimeWidget
+    UnixTimeWidget,
+    WifiEnabledWidget,
+    BluetoothEnabledWidget,
+    LocalWifiIDWidget,
+    DeviceOrientationWidget,
+    DeviceModelWidget,
+    DevicePlatformWidget
 ) {
     return arguments;
 });

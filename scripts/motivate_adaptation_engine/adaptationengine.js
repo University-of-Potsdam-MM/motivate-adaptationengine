@@ -10,7 +10,7 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
          * - nools.js & its constraint parser (lib/parser/constraint/parser.js)
          * - require.js
          * - ease.js
-         * @class
+         *
          * @constructs AdaptationEngine
          * @param {String} noolsDSL The adaptation rules as nools DSL format.
          * @param {Boolean} verbose
@@ -52,6 +52,8 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
 
             // initialize context detector
             this._contextDetector = new ContextDetector(this._ruleEngine.getRules(), verbose);
+
+            return this;
         }
 
         /**
@@ -141,8 +143,7 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
 
         /**
          * Sets a callback function that is executed when the rule matching produced an error.
-         * @alias setRuleMatchingErrorCallback
-         * @memberof AdaptationEngine#
+         *
          * @param callback {AdaptationEngine~ruleMatchingErrorCallback} The function that handles the callback.
          */
         AdaptationEngine.prototype.setRuleMatchingErrorCallback = function(callback) {
@@ -159,10 +160,27 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
         };
 
         /**
+         * Sets a callback function that is executed when the rule matching produced an error.
+         *
+         * @param callback {AdaptationEngine~newContextInformationCallback} The function that handles the callback.
+         */
+        AdaptationEngine.prototype.setNewContextInformationCallback = function(callback) {
+            /**
+             * The callback returns with an object containing further information about the error that occurred.
+             * @callback AdaptationEngine~newContextInformationCallback
+             * @param attributes {array.<Attribute>} The context information attributes.
+             * @example
+             * adaptationEngine.setNewContextInformationCallback(function(contextInformation) {
+                 *     console.log(contextInformation);
+                 * });
+             */
+            this._contextDetector.setCallback("newContextInformationCallback", callback);
+        };
+
+        /**
          * Starts the rule matching process. If an integer values is provided the rule matching process will repeat
          * every x milliseconds until it is halted manually by executing {@link AdaptationEngine#stopRuleMatching}.
-         * @alias startRuleMatching
-         * @memberof AdaptationEngine#
+         *
          * @param intervalInMilliseconds {number} The time in milliseconds between every rule matching interval.
          */
         AdaptationEngine.prototype.startRuleMatching = function(intervalInMilliseconds) {
@@ -243,8 +261,7 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
 
         /**
          * Stops the context detection process.
-         * @alias stopContextDetection
-         * @memberof AdaptationEngine#
+         *
          */
         AdaptationEngine.prototype.stopContextDetection = function() {
             console.log("stopContextDetection");
@@ -259,8 +276,7 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
          * Restarts the context detection process (i.e. executes {@link AdaptationEngine#stopContextDetection} and
          * {@link AdaptationEngine#startContextDetection} successively). If an integer value is provided a new
          * interval will be set.
-         * @alias restartContextDetection
-         * @memberof AdaptationEngine#
+         *
          * @param intervalInMilliseconds {number}
          */
         AdaptationEngine.prototype.restartContextDetection = function(intervalInMilliseconds) {
@@ -272,6 +288,7 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
 
         /**
          * Allows to manually add context information to be used by the rule engine.
+         *
          * @param contextInformation {ContextInformation}
          * @param allowMultipleInstances {boolean}
          */
