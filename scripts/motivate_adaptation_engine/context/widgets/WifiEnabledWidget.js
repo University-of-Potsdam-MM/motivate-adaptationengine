@@ -39,21 +39,22 @@ define(['contactJS'], function (contactJS) {
         WifiEnabledWidget.prototype.constructor = WifiEnabledWidget;
 
         WifiEnabledWidget.prototype._initCallbacks = function() {
-            this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
+            this._addCallback(new contactJS.Callback().withName('UPDATE').withContextInformation(this.getOutputContextInformation()));
         };
 
         WifiEnabledWidget.prototype.queryGenerator = function(callback) {
             var self = this;
+            var wifiEnabled = self.getOutputContextInformation().getItems()[0];
 
             cordova.plugins.diagnostic.isWifiEnabled(function(enabled){
-                var response = new contactJS.AttributeList();
-                response.put(self.getOutAttributes().getItems()[0].setValue(!!enabled));
+                var response = new contactJS.ContextInformationList();
+                response.put(wifiEnabled.setValue(!!enabled));
                 self._sendResponse(response, callback);
             }, function(error){
                 console.error("The following error occurred: "+error);
 
-                var response = new contactJS.AttributeList();
-                response.put(self.getOutAttributes().getItems()[0].setValue("ERROR"));
+                var response = new contactJS.ContextInformationList();
+                response.put(wifiEnabled.setValue("ERROR"));
                 self._sendResponse(response, callback);
             });
         };

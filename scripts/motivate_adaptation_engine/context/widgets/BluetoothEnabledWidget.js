@@ -39,21 +39,21 @@ define(['contactJS'], function (contactJS) {
         BluetoothEnabledWidget.prototype.constructor = BluetoothEnabledWidget;
 
         BluetoothEnabledWidget.prototype._initCallbacks = function() {
-            this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
+            this._addCallback(new contactJS.Callback().withName('UPDATE').withContextInformation(this.getOutputContextInformation()));
         };
 
         BluetoothEnabledWidget.prototype.queryGenerator = function(callback) {
             var self = this;
 
             cordova.plugins.diagnostic.isBluetoothEnabled(function(enabled){
-                var response = new contactJS.AttributeList();
-                response.put(self.getOutAttributes().getItems()[0].setValue(!!enabled));
+                var response = new contactJS.ContextInformationList();
+                response.put(self.getOutputContextInformation().getItems()[0].setValue(!!enabled));
                 self._sendResponse(response, callback);
             }, function(error){
                 console.error("The following error occurred: "+error);
 
-                var response = new contactJS.AttributeList();
-                response.put(self.getOutAttributes().getItems()[0].setValue("ERROR"));
+                var response = new contactJS.ContextInformationList();
+                response.put(self.getOutputContextInformation().getItems()[0].setValue("ERROR"));
                 self._sendResponse(response, callback);
             });
         };

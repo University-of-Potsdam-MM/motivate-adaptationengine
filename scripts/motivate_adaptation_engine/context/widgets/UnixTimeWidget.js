@@ -26,7 +26,7 @@ define(['contactJS'], function (contactJS) {
          * @extends Widget
          * @param discoverer
          * @returns {UnixTimeWidget}
-         * @constructor
+         * @class UnixTimeWidget
          */
         function UnixTimeWidget(discoverer) {
             contactJS.Widget.call(this, discoverer);
@@ -38,7 +38,7 @@ define(['contactJS'], function (contactJS) {
         UnixTimeWidget.prototype.constructor = UnixTimeWidget;
 
         UnixTimeWidget.prototype._initCallbacks = function() {
-            this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
+            this._addCallback(new contactJS.Callback().withName('UPDATE').withContextInformation(this.getOutputContextInformation()));
         };
 
         UnixTimeWidget.prototype.queryGenerator = function(callback) {
@@ -49,8 +49,8 @@ define(['contactJS'], function (contactJS) {
                 }
             }
 
-            var response = new contactJS.AttributeList();
-            response.put(this.getOutAttributes().getItems()[0].setValue(Date.now()));
+            var response = new contactJS.ContextInformationList();
+            response.put(this.getOutputContextInformation().getItems()[0].setValue(Date.now()));
             this._sendResponse(response, callback)
         };
 

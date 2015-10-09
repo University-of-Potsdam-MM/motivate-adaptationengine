@@ -42,17 +42,17 @@ define(['contactJS'], function (contactJS) {
         GeoLocationWidget.prototype.constructor = GeoLocationWidget;
 
         GeoLocationWidget.prototype._initCallbacks = function() {
-            this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
+            this._addCallback(new contactJS.Callback().withName('UPDATE').withContextInformation(this.getOutputContextInformation()));
         };
 
         GeoLocationWidget.prototype.queryGenerator = function (callback) {
             var self = this;
-            var response = new contactJS.AttributeList();
+            var response = new contactJS.ContextInformationList();
 
             if(navigator.geolocation){
                 navigator.geolocation.getCurrentPosition(function(position) {
-                    response.put(self.getOutAttributes().getItems()[0].setValue(position.coords.latitude));
-                    response.put(self.getOutAttributes().getItems()[1].setValue(position.coords.longitude));
+                    response.put(self.getOutputContextInformation().getItems()[0].setValue(position.coords.latitude));
+                    response.put(self.getOutputContextInformation().getItems()[1].setValue(position.coords.longitude));
 
                     self._sendResponse(response, callback);
                 }, function(error) {

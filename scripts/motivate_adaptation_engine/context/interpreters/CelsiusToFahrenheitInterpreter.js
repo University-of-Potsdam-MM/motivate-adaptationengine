@@ -40,7 +40,7 @@ define(['contactJS'], function(contactJS) {
         CelsiusToFahrenheitInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var fahrenheitValue = outAttributes.getItems()[0];
 
-            var celsiusTemperature = inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[0]);
+            var celsiusTemperature = inAttributes.getValueForContextInformationOfKind(this.getInputContextInformation().getItems()[0]);
             var fahrenheitTemperature = celsiusTemperature * 1.8 + 32;
 
             fahrenheitValue.setValue(fahrenheitTemperature);

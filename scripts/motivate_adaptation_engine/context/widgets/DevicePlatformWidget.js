@@ -39,7 +39,7 @@ define(['contactJS'], function (contactJS) {
         DevicePlatformWidget.prototype.constructor = DevicePlatformWidget;
 
         DevicePlatformWidget.prototype._initCallbacks = function() {
-            this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
+            this._addCallback(new contactJS.Callback().withName('UPDATE').withContextInformation(this.getOutputContextInformation()));
         };
 
         DevicePlatformWidget.prototype.queryGenerator = function(callback) {

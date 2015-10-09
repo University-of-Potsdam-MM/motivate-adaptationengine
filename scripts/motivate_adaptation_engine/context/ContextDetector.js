@@ -49,12 +49,26 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
                 [
                     ['CI_CURRENT_TEMPERATURE','INTEGER',[['CP_TEMPERATURE_SCALE','STRING','CELSIUS']]],
                     ['CI_TEMPERATURE','INTEGER',[['CP_TEMPERATURE_SCALE','STRING','CELSIUS']]]
+                ],
+                [
+                    ['CI_UP_MOODLE_AVAILABLE', 'BOOLEAN'],
+                    ['CI_URI_AVAILABLE', 'BOOLEAN', [['CP_URI', 'STRING', 'https://moodle2.uni-potsdam.de/login/index.php']]]
+                ],
+                [
+                    ['CI_UP_MOODLE_AVAILABLE', 'BOOLEAN'],
+                    ['CI_MOODLE_AVAILABLE', 'BOOLEAN', [['CP_MOODLE_URI', 'STRING', 'https://moodle2.uni-potsdam.de/login/index.php']]]
                 ]
             ]);
 
             //Dynamic Configuration
             // this.extractAttributesFromAdaptationRules(adaptationRules)
-            this._aggregators.push(new contactJS.Aggregator(this._discoverer, this._discoverer.getAttributesWithNames(["CI_WIFI_ENABLED", "CI_BLUETOOTH_ENABLED", "CI_LOCAL_WIFI_IP", "CI_DEVICE_ORIENTATION", "CI_DEVICE_MODEL", "CI_DEVICE_PLATFORM", "CI_USER_LOCATION_ADDRESS"])));
+            this._aggregators.push(new contactJS.Aggregator(this._discoverer, contactJS.ContextInformationList.fromContextInformationDescriptions(this._discoverer, [
+                    {
+                        'name':'CI_IS_NIGHTTIME',
+                        'type':'BOOLEAN'
+                    }
+                ])
+            ));
         }
 
         ContextDetector.prototype._contextInformationFromAttributes = function(attributes) {
@@ -172,7 +186,7 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
             for (var index in this._aggregators) {
                 var theAggregator = this._aggregators[index];
 
-                this._callbacks["newContextInformationCallback"](this._contextInformationFromAttributes(theAggregator.getOutAttributes()));
+                this._callbacks["newContextInformationCallback"](this._contextInformationFromAttributes(theAggregator.getOutputContextInformation()));
             }
         };
 

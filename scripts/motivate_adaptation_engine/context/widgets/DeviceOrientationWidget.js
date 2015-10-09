@@ -39,7 +39,7 @@ define(['contactJS'], function (contactJS) {
         DeviceOrientationWidget.prototype.constructor = DeviceOrientationWidget;
 
         DeviceOrientationWidget.prototype._initCallbacks = function() {
-            this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
+            this._addCallback(new contactJS.Callback().withName('UPDATE').withContextInformation(this.getOutputContextInformation()));
         };
 
         DeviceOrientationWidget.prototype.queryGenerator = function(callback) {

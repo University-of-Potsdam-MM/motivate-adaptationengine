@@ -17,7 +17,7 @@ define(['contactJS'], function (contactJS) {
                     'type': ''
                 }
             ],
-            updateInterval: 60000,
+            updateInterval: 10000,
             platforms: ["IOS", "ANDROID", "WP8", "BLACKBERRY10"],
             requiredObjects: ["cordova", "networkinterface"]
         };
@@ -39,19 +39,19 @@ define(['contactJS'], function (contactJS) {
         LocalWifiIPWidget.prototype.constructor = LocalWifiIPWidget;
 
         LocalWifiIPWidget.prototype._initCallbacks = function() {
-            this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
+            this._addCallback(new contactJS.Callback().withName('UPDATE').withContextInformation(this.getOutputContextInformation()));
         };
 
         LocalWifiIPWidget.prototype.queryGenerator = function(callback) {
             var self = this;
 
             networkinterface.getIPAddress(function(ip){
-                var response = new contactJS.AttributeList();
-                response.put(self.getOutAttributes().getItems()[0].setValue(ip));
+                var response = new contactJS.ContextInformationList();
+                response.put(self.getOutputContextInformation().getItems()[0].setValue(ip));
                 self._sendResponse(response, callback);
             }, function(){
-                var response = new contactJS.AttributeList();
-                response.put(self.getOutAttributes().getItems()[0].setValue("NO_VALUE"));
+                var response = new contactJS.ContextInformationList();
+                response.put(self.getOutputContextInformation().getItems()[0].setValue("CV_UNKNOWN"));
                 self._sendResponse(response, callback);
             });
         };

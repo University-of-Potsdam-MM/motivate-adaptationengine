@@ -532,11 +532,58 @@ define('abstractList',[],function() {
 		return AbstractList;
 	})();
 });
+/**
+ * Created by tobias on 30.09.15.
+ */
+define('data',['data'],
+    function(Data) {
+        return (function() {
+
+            /**
+             *
+             * @returns {Data}
+             * @class Data
+             */
+            function Data() {
+
+
+                return this;
+            }
+
+            return Data;
+        })();
+    }
+);
+/**
+ * Created by tobias on 01.10.15.
+ */
+define('dataList',['abstractList', 'data'], function(AbstractList, Data) {
+    return (function() {
+        /**
+         * This class represents a list for Data.
+         *
+         * @extends AbstractList
+         * @class DataList
+         * @returns DataList
+         */
+        function DataList() {
+            AbstractList.call(this);
+            this._type = Data;
+            return this;
+        }
+
+        DataList.prototype = Object.create(AbstractList.prototype);
+        DataList.prototype.constructor = DataList;
+
+        return DataList;
+    })();
+});
 define('parameter',[],function(){
 	return (function() {
 		/**
-		 * @classdesc Parameter specifies the Attributes to that these are associated.
-		 * @constructs Parameter
+		 * Parameter specifies the Attributes to that these are associated.
+		 *
+		 * @class Parameter
 		 */
 		function Parameter() {
 			/**
@@ -551,7 +598,7 @@ define('parameter',[],function(){
 			 * @type {string}
 			 * @private
 			 */
-			this._type = '';
+			this._dataType = '';
 
 			/**
 			 *
@@ -578,11 +625,11 @@ define('parameter',[],function(){
 		/**
 		 * Builder for type.
 		 *
-		 * @param type
+		 * @param dataType
 		 * @return {Parameter}
 		 */
-		Parameter.prototype.withType = function(type) {
-			this.setType(type);
+		Parameter.prototype.withDataType = function(dataType) {
+			this.setDataType(dataType);
 			return this;
 		};
 
@@ -613,8 +660,8 @@ define('parameter',[],function(){
 		 *
 		 * @returns {string}
 		 */
-		Parameter.prototype.getType = function() {
-			return this._type;
+		Parameter.prototype.getDataType = function() {
+			return this._dataType;
 		};
 
 		/**
@@ -640,10 +687,10 @@ define('parameter',[],function(){
 		/**
 		 * Sets the type.
 		 *
-		 * @param newType
+		 * @param newDataType
 		 */
-		Parameter.prototype.setType = function(newType) {
-			if(typeof newType === "string") this._type = newType;
+		Parameter.prototype.setDataType = function(newDataType) {
+			if(typeof newDataType === "string") this._dataType = newDataType;
 		};
 
 		/**
@@ -665,9 +712,9 @@ define('parameter',[],function(){
 		Parameter.prototype.equals = function(parameter) {
 			if(parameter.constructor === Parameter){
 				if (parameter.getValue() == "PV_INPUT" || this.getValue() == "PV_INPUT") {
-					return this.getKey() == parameter.getKey() && this.getType() == parameter.getType();
+					return this.getKey() == parameter.getKey() && this.getDataType() == parameter.getDataType();
 				} else {
-					return this.getKey() == parameter.getKey() && this.getType() == parameter.getType() && this.getValue() == parameter.getValue();
+					return this.getKey() == parameter.getKey() && this.getDataType() == parameter.getDataType() && this.getValue() == parameter.getValue();
 				}
 			}
 			return false;
@@ -680,7 +727,7 @@ define('parameter',[],function(){
 		 * @example [CP_UNIT:STRING:KILOMETERS]
 		 */
 		Parameter.prototype.toString = function() {
-			return "["+this.getKey()+":"+this.getType()+":"+this.getValue()+"]";
+			return "["+this.getKey()+":"+this.getDataType()+":"+this.getValue()+"]";
 		};
 
 		return Parameter;
@@ -689,10 +736,10 @@ define('parameter',[],function(){
 define('parameterList',['abstractList', 'parameter'], function(AbstractList, Parameter) {
 	return (function() {
 		/**
+		 * This class represents a list for Parameter.
 		 *
-		 * @classdesc This class represents a list for Parameter.
 		 * @extends AbstractList
-		 * @constructs ParameterList
+		 * @class ParameterList
 		 */
 		function ParameterList() {
 			AbstractList.call(this);
@@ -741,25 +788,40 @@ define('parameterList',['abstractList', 'parameter'], function(AbstractList, Par
 		return ParameterList;
 	})();
 });
-/**
- * @module Attribute
- */
-define('attribute',['parameterList'], function(ParameterList) {
+define('contextInformation',['data', 'parameterList'], function(Data, ParameterList) {
     return (function() {
-        /**
-         * Initializes the Attribute.
-         *
-         * @classdesc Attribute defines name, type (string, double,...) an associated parameter of an attribute.
-         * @constructs Attribute
-         */
-        function Attribute(overrideBuilderDependency) {
 
-            // avoid inexpert meddling with attribute construction
+        /**
+         *
+         * @static
+         * @constant
+         * @type {string}
+         */
+        ContextInformation.VALUE_UNKNOWN = "CV_UNKNOWN";
+
+        /**
+         *
+         * @static
+         * @constant
+         * @type {string}
+         */
+        ContextInformation.VALUE_ERROR = "CV_ERROR";
+
+        /**
+         * ContextInformation defines name, type (string, double,...) an associated parameter of a contextual information.
+         *
+         * @class ContextInformation
+         * @extends Data
+         */
+        function ContextInformation(overrideBuilderDependency) {
+            Data.call(this);
+
+            // avoid inexpert meddling with contextual information construction
             if (typeof overrideBuilderDependency == 'undefined' || !overrideBuilderDependency)
-                throw new Error("Attributes must be created by discoverer's buildAttribute() method!");
+                throw new Error("Contextual information must be created by the discoverer's buildContextInformation() method!");
 
             /**
-             * Name of the Attribute.
+             * Name of the ContextInformation.
              *
              * @type {String}
              * @private
@@ -767,12 +829,12 @@ define('attribute',['parameterList'], function(ParameterList) {
             this._name = '';
 
             /**
-             * Defines the type of the Attribute (i.e String, Double,...).
+             * Defines the data type of the ContextInformation (i.e String, Double,...).
              *
              * @type {string}
              * @private
              */
-            this._type = '';
+            this._dataType = '';
 
             /**
              *
@@ -790,10 +852,10 @@ define('attribute',['parameterList'], function(ParameterList) {
 
             /**
              *
-             * @type {string}
+             * @type {*}
              * @private
              */
-            this._value = 'CV_UNKNOWN';
+            this._value = ContextInformation.VALUE_UNKNOWN;
 
             /**
              * Time when the value was set.
@@ -806,21 +868,24 @@ define('attribute',['parameterList'], function(ParameterList) {
             return this;
         }
 
-        Attribute.fromAttributeDescription = function(discoverer, attributeDescription) {
-            return discoverer.buildAttribute(
-                attributeDescription.name,
-                attributeDescription.type,
-                attributeDescription.parameterList,
+        ContextInformation.prototype = Object.create(Data.prototype);
+        ContextInformation.prototype.constructor = ContextInformation;
+
+        ContextInformation.fromContextInformationDescription = function(discoverer, contextInformationDescription) {
+            return discoverer.buildContextInformation(
+                contextInformationDescription.name,
+                contextInformationDescription.type,
+                contextInformationDescription.parameterList,
                 true);
         };
 
         /**
          * Builder for name.
          *
-         * @param {String} name The attribute name to build with.
-         * @returns {Attribute}
+         * @param {String} name The contextual information name to build with.
+         * @returns {ContextInformation}
          */
-        Attribute.prototype.withName = function(name){
+        ContextInformation.prototype.withName = function(name){
             this.setName(name);
             return this;
         };
@@ -828,11 +893,11 @@ define('attribute',['parameterList'], function(ParameterList) {
         /**
          * Builder for type.
          *
-         * @param {String} type The attribute type to build with.
-         * @returns {Attribute}
+         * @param {String} dataType The context information data type to build with.
+         * @returns {ContextInformation}
          */
-        Attribute.prototype.withType = function(type){
-            this.setType(type);
+        ContextInformation.prototype.withDataType = function(dataType){
+            this.setDataType(dataType);
             return this;
         };
 
@@ -840,9 +905,9 @@ define('attribute',['parameterList'], function(ParameterList) {
          * Builder for one parameter.
          *
          * @param {Parameter} parameter The parameter to build with.
-         * @returns {Attribute}
+         * @returns {ContextInformation}
          */
-        Attribute.prototype.withParameter = function(parameter){
+        ContextInformation.prototype.withParameter = function(parameter){
             this.addParameter(parameter);
             return this;
         };
@@ -851,9 +916,9 @@ define('attribute',['parameterList'], function(ParameterList) {
          * Builder for parameterList.
          *
          * @param {(ParameterList|Array)} parameterList ParameterList
-         * @returns {Attribute}
+         * @returns {ContextInformation}
          */
-        Attribute.prototype.withParameters = function(parameterList){
+        ContextInformation.prototype.withParameters = function(parameterList){
             this.setParameters(parameterList);
             return this;
         };
@@ -862,9 +927,9 @@ define('attribute',['parameterList'], function(ParameterList) {
          * Builder for value.
          *
          * @param {String} value value
-         * @returns {Attribute}
+         * @returns {ContextInformation}
          */
-        Attribute.prototype.withValue = function(value) {
+        ContextInformation.prototype.withValue = function(value) {
             this.setValue(value);
             this.setTimestamp(new Date());
             return this;
@@ -873,33 +938,33 @@ define('attribute',['parameterList'], function(ParameterList) {
         /**
          * Builder for timestamp.
          *
-         * @param {Date} timestamp timestamp
-         * @returns {Attribute}
+         * @param {Date} date The timestamp.
+         * @returns {ContextInformation}
          */
-        Attribute.prototype.withTimestamp = function(timestamp) {
-            this.setTimestamp(timestamp);
+        ContextInformation.prototype.withTimestamp = function(date) {
+            this.setTimestamp(date);
             return this;
         };
 
         /**
          * Builder for synonyms from single translation.
          *
-         * @param translation
-         * @returns {Attribute}
+         * @param {ContextInformation} contextInformation
+         * @returns {ContextInformation}
          */
-        Attribute.prototype.withSynonym = function(translation){
-            this.addSynonym(translation);
+        ContextInformation.prototype.withSynonym = function(contextInformation){
+            this.addSynonym(contextInformation);
             return this;
         };
 
         /**
          * Builder for synonyms from (several) translations.
          *
-         * @param translations
-         * @returns {Attribute}
+         * @param contextInformation
+         * @returns {ContextInformation}
          */
-        Attribute.prototype.withSynonyms = function(translations){
-            this.setSynonyms(translations);
+        ContextInformation.prototype.withSynonyms = function(contextInformation){
+            this.setSynonyms(contextInformation);
             return this;
         };
 
@@ -908,7 +973,7 @@ define('attribute',['parameterList'], function(ParameterList) {
          *
          * @returns {string}
          */
-        Attribute.prototype.getName = function(){
+        ContextInformation.prototype.getName = function(){
             return this._name;
         };
 
@@ -917,8 +982,8 @@ define('attribute',['parameterList'], function(ParameterList) {
          *
          * @returns {string}
          */
-        Attribute.prototype.getType = function(){
-            return this._type;
+        ContextInformation.prototype.getDataType = function(){
+            return this._dataType;
         };
 
         /**
@@ -926,8 +991,25 @@ define('attribute',['parameterList'], function(ParameterList) {
          *
          * @returns {ParameterList}
          */
-        Attribute.prototype.getParameters = function(){
+        ContextInformation.prototype.getParameters = function(){
             return this._parameterList;
+        };
+
+        /**
+         * Returns the synonym with the specified name if existent or itself, otherwise.
+         *
+         * @param {String} name
+         * @returns {ContextInformation}
+         */
+        ContextInformation.prototype.getSynonymWithName = function(name) {
+            var synonyms = this.getSynonyms();
+            for (var index in synonyms) {
+                if (synonyms.hasOwnProperty(index)) {
+                    var synonym = this.getSynonyms()[index];
+                    if (synonym.getName() == name) return synonym;
+                }
+            }
+            return this;
         };
 
         /**
@@ -935,7 +1017,7 @@ define('attribute',['parameterList'], function(ParameterList) {
          *
          * @returns {Array}
          */
-        Attribute.prototype.getSynonyms = function(){
+        ContextInformation.prototype.getSynonyms = function(){
             return this._synonymList;
         };
 
@@ -944,7 +1026,7 @@ define('attribute',['parameterList'], function(ParameterList) {
          *
          * @param {string} name Name
          */
-        Attribute.prototype.setName = function(name){
+        ContextInformation.prototype.setName = function(name){
             if(typeof name === 'string'){
                 this._name = name;
             }
@@ -955,9 +1037,9 @@ define('attribute',['parameterList'], function(ParameterList) {
          *
          * @param {string} type Type
          */
-        Attribute.prototype.setType = function(type){
+        ContextInformation.prototype.setDataType = function(type){
             if(typeof type === 'string'){
-                this._type = type;
+                this._dataType = type;
             }
         };
 
@@ -966,7 +1048,7 @@ define('attribute',['parameterList'], function(ParameterList) {
          *
          * @param {Parameter} parameter Parameter
          */
-        Attribute.prototype.addParameter = function(parameter){
+        ContextInformation.prototype.addParameter = function(parameter){
             this._parameterList.put(parameter);
         };
 
@@ -975,8 +1057,8 @@ define('attribute',['parameterList'], function(ParameterList) {
          *
          * @param synonym
          */
-        Attribute.prototype.addSynonym = function(synonym){
-            if (synonym instanceof Attribute)
+        ContextInformation.prototype.addSynonym = function(synonym){
+            if (synonym instanceof ContextInformation)
                 this._synonymList.push(synonym);
         };
 
@@ -985,7 +1067,7 @@ define('attribute',['parameterList'], function(ParameterList) {
          *
          * @param {ParameterList} parameters ParameterList
          */
-        Attribute.prototype.setParameters = function(parameters){
+        ContextInformation.prototype.setParameters = function(parameters){
             this._parameterList.putAll(parameters);
         };
 
@@ -994,49 +1076,49 @@ define('attribute',['parameterList'], function(ParameterList) {
          *
          * @param synonyms
          */
-        Attribute.prototype.setSynonyms = function(synonyms){
+        ContextInformation.prototype.setSynonyms = function(synonyms){
             for (var synIndex in synonyms) {
                 this.addSynonym(synonyms[synIndex]);
             }
         };
 
         /**
-         * Returns true if the attribute is parameterized.
+         * Returns true if the context information is parametrized.
          *
          * @returns {boolean}
          */
-        Attribute.prototype.hasParameters = function() {
+        ContextInformation.prototype.hasParameters = function() {
             return this._parameterList.size() > 0;
         };
 
         /**
-         * Returns true if the attribute has synonyms.
+         * Returns true if the context information has synonyms.
          *
          * @returns {boolean}
          */
-        Attribute.prototype.hasSynonyms = function() {
+        ContextInformation.prototype.hasSynonyms = function() {
             return this._synonymList.length > 0;
         };
 
         /**
-         * Returns true if the attribute has the given attribute in its synonymList.
+         * Returns true if the contextual information has the given contextual information in its synonymList.
          *
-         * @param attribute
+         * @param {ContextInformation} contextInformation
          * @returns {boolean}
          */
-        Attribute.prototype.hasSynonym = function(attribute) {
+        ContextInformation.prototype.hasSynonym = function(contextInformation) {
             for (var i in this._synonymList)
-                if (this._synonymList[i].equalsTypeOf(attribute)) return true;
+                if (this._synonymList[i].isKindOf(contextInformation)) return true;
             return false;
         };
 
         /**
          * Sets the value.
          *
-         * @param {string} value value
-         * @returns {Attribute}
+         * @param {*} value the value
+         * @returns {ContextInformation}
          */
-        Attribute.prototype.setValue = function(value) {
+        ContextInformation.prototype.setValue = function(value) {
             this._value = value;
             return this;
         };
@@ -1046,7 +1128,7 @@ define('attribute',['parameterList'], function(ParameterList) {
          *
          * @returns {string}
          */
-        Attribute.prototype.getValue = function() {
+        ContextInformation.prototype.getValue = function() {
             return this._value;
         };
 
@@ -1055,7 +1137,7 @@ define('attribute',['parameterList'], function(ParameterList) {
          *
          * @param {Date} time timestamp
          */
-        Attribute.prototype.setTimestamp = function(time) {
+        ContextInformation.prototype.setTimestamp = function(time) {
             this._timestamp = time;
         };
 
@@ -1064,7 +1146,7 @@ define('attribute',['parameterList'], function(ParameterList) {
          *
          * @returns {Number}
          */
-        Attribute.prototype.getTimestamp = function() {
+        ContextInformation.prototype.getTimestamp = function() {
             return this._timestamp;
         };
 
@@ -1072,35 +1154,35 @@ define('attribute',['parameterList'], function(ParameterList) {
          *
          * @returns {boolean}
          */
-        Attribute.prototype.hasInputParameter = function() {
+        ContextInformation.prototype.hasInputParameter = function() {
             return this.hasParameters() && this._parameterList.hasInputParameter();
         };
 
         /**
-         * Compares this instance with the given one.
+         * Compares two contextual information. Returns true if they or one of their synonyms are of the same kind
+         * (i.e. same name, dataType, and parameters).
          *
-         * @param {Attribute} attribute Attribute that should be compared.
-         * @returns {boolean}
+         * @param {ContextInformation} contextInformation The contextual information that should be compared.
+         * @returns {Boolean}
          */
-        Attribute.prototype.equalsTypeOf = function(attribute) {
+        ContextInformation.prototype.isKindOf = function(contextInformation) {
             // name, type and parameters equivalent
-            if(this._equalsTypeOf(attribute))
-                return true;
+            if(this._isKindOf(contextInformation)) return true;
 
             // check synonyms for equality
             var theseSynonyms = this.getSynonyms();
 
-            if (attribute instanceof Attribute) {
-                var thoseSynonyms = attribute.getSynonyms();
+            if (contextInformation instanceof ContextInformation) {
+                var thoseSynonyms = contextInformation.getSynonyms();
                 for (var i in theseSynonyms) {
                     var thisSynonym = theseSynonyms[i];
-                    if (attribute._equalsTypeOf(thisSynonym)) {
+                    if (contextInformation._isKindOf(thisSynonym)) {
                         return true;
                     }
                 }
                 for (var i in thoseSynonyms) {
                     var thatSynonym = thoseSynonyms[i];
-                    if (this._equalsTypeOf(thatSynonym)) {
+                    if (this._isKindOf(thatSynonym)) {
                         return true;
                     }
                 }
@@ -1111,15 +1193,15 @@ define('attribute',['parameterList'], function(ParameterList) {
         /**
          * Auxiliary function comparing only name, type and parameters (without synonyms)
          *
-         * @param attribute
+         * @param {ContextInformation} contextInformation
          * @returns {boolean}
          * @private
          */
-        Attribute.prototype._equalsTypeOf = function(attribute) {
-            if (attribute instanceof Attribute) {
-                if ((this.getName() == attribute.getName()
-                    && this.getType() == attribute.getType()
-                    && this.getParameters().equals(attribute.getParameters()))) {
+        ContextInformation.prototype._isKindOf = function(contextInformation) {
+            if (contextInformation instanceof ContextInformation) {
+                if ((this.getName() == contextInformation.getName()
+                    && this.getDataType() == contextInformation.getDataType()
+                    && this.getParameters().equals(contextInformation.getParameters()))) {
                     return true;
                 }
             }
@@ -1127,13 +1209,14 @@ define('attribute',['parameterList'], function(ParameterList) {
         };
 
         /**
+         * Compares two contextual information. Returns true if they are exactly equal (i.e. same kind and value).
          *
-         * @param {Attribute} attribute
+         * @param {ContextInformation} contextInformation
          * @returns {Boolean}
          */
-        Attribute.prototype.equalsValueOf = function(attribute) {
-            if (attribute instanceof Attribute) {
-                if (this.equalsTypeOf(attribute) && this.getValue() == attribute.getValue()) {
+        ContextInformation.prototype.equals = function(contextInformation) {
+            if (contextInformation instanceof ContextInformation) {
+                if (this.isKindOf(contextInformation) && this.getValue() == contextInformation.getValue()) {
                     return true;
                 }
             }
@@ -1141,15 +1224,17 @@ define('attribute',['parameterList'], function(ParameterList) {
         };
 
         /**
-         * Returns an identifier that uniquely describes the attribute type and its parameters.
-         * The identifier can be used to compare two attribute types. <br/>
-         * Format: (AttributeName:AttributeType)#[FirstParameterName:FirstParameterType:FirstParameterValue]…
+         * Returns an identifier that uniquely describes the contextual information and its parameters.
+         * The identifier shall in no case be used to compare two contextual information (use isKindOf() and isEqualTo() instead). <br/>
+         * Format: [ContextInformationName:ContextInformationDataType:ContextInformationValue]#[FirstParameterName:FirstParameterType:FirstParameterValue]…
          *
          * @returns {String}
-         * @example (CI_USER_LOCATION_DISTANCE:FLOAT)#[CP_TARGET_LATITUDE:INTEGER:52][CP_TARGET_LONGITUDE:INTEGER:13][CP_UNIT:STRING:KILOMETERS]
+         * @example [CI_USER_LOCATION_DISTANCE:FLOAT:24]#[CP_TARGET_LATITUDE:INTEGER:52][CP_TARGET_LONGITUDE:INTEGER:13][CP_UNIT:STRING:KILOMETERS]
          */
-        Attribute.prototype.toString = function(typeOnly) {
-            var identifier = "(" + this.getName() + ":" + this.getType() + ")";
+        ContextInformation.prototype.toString = function(typeOnly) {
+            var identifier = "["+this.getName()+":"+this.getDataType();
+            if (!typeOnly) identifier += ":"+this.getValue();
+            identifier += "]";
             if (this.hasParameters()) {
                 identifier += "#";
                 for (var index in this.getParameters().getItems()) {
@@ -1157,150 +1242,142 @@ define('attribute',['parameterList'], function(ParameterList) {
                     identifier += theParameter.toString();
                 }
             }
-            if (!typeOnly) identifier += ":" + this.getValue();
             return identifier;
         };
 
-        return Attribute;
-    })();
-});
-/**
- * @module Attribute
- */
-define('attributeList',['abstractList', 'attribute'], function(AbstractList, Attribute) {
-    return (function() {
         /**
-         * @class
-         * @classdesc This class represents a list for Attribute.
-         * @extends AbstractList
-         * @constructs AttributeList
-         */
-        function AttributeList() {
-            AbstractList.call(this);
-            this._type = Attribute;
-            return this;
-        }
-
-        AttributeList.prototype = Object.create(AbstractList.prototype);
-        AttributeList.prototype.constructor = AttributeList;
-
-        /**
-         * Create an AttributeList from the description provided by a Widget or Interpreter.
          *
-         * @static
-         * @param {Discoverer} discoverer
-         * @param {Array} attributeDescription
-         * @returns {AttributeList}
          */
-        AttributeList.fromAttributeDescriptions = function(discoverer, attributeDescription) {
-            var theAttributeList = new AttributeList();
-            for(var attributeDescriptionIndex in attributeDescription) {
-                theAttributeList.put(Attribute.fromAttributeDescription(discoverer, attributeDescription[attributeDescriptionIndex]));
-            }
-            return theAttributeList;
+        ContextInformation.prototype.setValueUnknown = function() {
+            this.setValue(ContextInformation.VALUE_UNKNOWN);
         };
 
         /**
          *
-         * @param {Discoverer} discoverer
-         * @param {Array<String>} attributeNames
-         * @returns {AttributeList}
          */
-        AttributeList.fromAttributeNames = function(discoverer, attributeNames) {
-            var theAttributeList = new AttributeList();
-            var possibleAttributes = discoverer.getPossibleAttributes();
+        ContextInformation.prototype.setValueError = function() {
+            this.setValue(ContextInformation.VALUE_ERROR);
+        };
 
-            for (var attributeNameIndex in attributeNames) {
-                var theAttributeName = attributeNames[attributeNameIndex];
-                theAttributeList.put(possibleAttributes._getAttributeWithName(theAttributeName));
+        /**
+         *
+         * @returns {boolean}
+         */
+        ContextInformation.prototype.isKnown = function() {
+            return this.getValue() != ContextInformation.VALUE_UNKNOWN && this.getValue() != ContextInformation.VALUE_ERROR;
+        };
+
+        return ContextInformation;
+    })();
+});
+define('contextInformationList',['dataList', 'contextInformation'], function(DataList, ContextInformation) {
+    return (function() {
+        /**
+         * This class represents a list for ContextInformation.
+         *
+         * @extends DataList
+         * @class ContextInformationList
+         */
+        function ContextInformationList() {
+            DataList.call(this);
+            this._type = ContextInformation;
+            return this;
+        }
+
+        ContextInformationList.prototype = Object.create(DataList.prototype);
+        ContextInformationList.prototype.constructor = ContextInformationList;
+
+        /**
+         * Create a ContextInformationList from the description provided by a Widget or Interpreter.
+         *
+         * @static
+         * @param {Discoverer} discoverer
+         * @param {Array} contextInformationDescriptions
+         * @returns {ContextInformationList}
+         */
+        ContextInformationList.fromContextInformationDescriptions = function(discoverer, contextInformationDescriptions) {
+            var theContextInformationList = new ContextInformationList();
+            for(var contextInformationDescriptionIndex in contextInformationDescriptions) {
+                theContextInformationList.put(ContextInformation.fromContextInformationDescription(discoverer, contextInformationDescriptions[contextInformationDescriptionIndex]));
+            }
+            return theContextInformationList;
+        };
+
+        /**
+         * Creates a ContextInformationList from an array of context information names.
+         *
+         * @param {Discoverer} discoverer
+         * @param {Array<String>} contextInformationNames
+         * @returns {ContextInformationList}
+         */
+        ContextInformationList.fromContextInformationNames = function(discoverer, contextInformationNames) {
+            var theContextInformationList = new ContextInformationList();
+            var possibleContextInformation = discoverer.getPossibleContextInformation();
+
+            for (var contextInformationNameIndex in contextInformationNames) {
+                var theContextInformationName = contextInformationNames[contextInformationNameIndex];
+                theContextInformationList.put(possibleContextInformation._getContextInformationWithName(theContextInformationName));
             }
 
-            return theAttributeList;
+            return theContextInformationList;
         };
 
         /**
          * Adds the specified item to the itemList.
          *
          * @public
-         * @param {Attribute} attribute AttributeType
+         * @param {ContextInformation} contextInformation
          * @param {Boolean} [multipleInstances=false]
          */
 
-        AttributeList.prototype.put = function(attribute, multipleInstances) {
+        ContextInformationList.prototype.put = function(contextInformation, multipleInstances) {
             multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
-            if (attribute instanceof this._type) {
-                if (multipleInstances || !(this.containsTypeOf(attribute))) {
-                    this._items.push(attribute);
+            if (contextInformation instanceof this._type) {
+                if (multipleInstances || !(this.containsKindOf(contextInformation))) {
+                    this._items.push(contextInformation);
                 } else {
-                    this.updateValue(attribute);
+                    this.updateValue(contextInformation);
                 }
             }
         };
 
         /**
-         * Adds all items in the specified list to the
-         * itemList.
+         * Adds all items in the specified list to the itemList.
          *
          * @public
-         * @param {(AttributeList|Array)} attributeList AttributeList
+         * @param {(ContextInformationList|Array)} contextInformationList ContextInformationList
          */
-        AttributeList.prototype.putAll = function(attributeList) {
+        ContextInformationList.prototype.putAll = function(contextInformationList) {
             var list = [];
-            if (attributeList instanceof Array) {
-                list = attributeList;
-            } else if (attributeList.constructor === AttributeList) {
-                list = attributeList.getItems();
+            if (contextInformationList instanceof Array) {
+                list = contextInformationList;
+            } else if (contextInformationList instanceof ContextInformationList) {
+                list = contextInformationList.getItems();
             }
             for ( var i in list) {
                 this.put(list[i]);
             }
         };
 
-        AttributeList.prototype.putIfTypeNotContained = function(attribute) {
-            if (!this.containsTypeOf(attribute)) this.put(attribute);
-        };
-
         /**
          *
-         * @deprecated Use containsTypeOf or containsValueOf instead.
-         * @param {Attribute} attribute
-         * @param {?Boolean} typeOnly
-         * @returns {Boolean}
+         * @param contextInformation
          */
-        AttributeList.prototype.contains = function(attribute, typeOnly) {
-            typeOnly = typeof typeOnly == "undefined" ? false : typeOnly;
-            return typeOnly ? this.containsTypeOf(attribute) : this.containsValueOf(attribute);
-        };
-
-        /**
-         * Verifies whether an attribute with the type of the given item is included in this list.
-         *
-         * @param {Attribute} attribute AttributeType that should be verified.
-         * @returns {Boolean}
-         */
-        AttributeList.prototype.containsTypeOf = function(attribute) {
-            if (attribute.constructor === Attribute) {
-                for (var index in this.getItems()) {
-                    var theAttribute = this.getItems()[index];
-                    if (theAttribute.equalsTypeOf(attribute)) {
-                        return true;
-                    }
-                }
-            }
-            return false;
+        ContextInformationList.prototype.putIfKindOfNotContained = function(contextInformation) {
+            if (!this.containsKindOf(contextInformation)) this.put(contextInformation);
         };
 
         /**
          * Verifies whether the given item is included in the list.
          *
-         * @param {Attribute} attribute AttributeValue that should be verified.
-         * @returns {Boolean}
+         * @param {ContextInformation} contextInformation Contextual information that should be verified.
+         * @returns {boolean}
          */
-        AttributeList.prototype.containsValueOf = function(attribute) {
-            if (attribute.constructor === Attribute) {
+        ContextInformationList.prototype.contains = function(contextInformation) {
+            if (contextInformation instanceof ContextInformation) {
                 for (var index in this._items) {
-                    var theAttribute = this._items[index];
-                    if (theAttribute.equalsValueOf(attribute)) {
+                    var theContextInformation = this._items[index];
+                    if (theContextInformation.equals(contextInformation)) {
                         return true;
                     }
                 }
@@ -1309,28 +1386,34 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
         };
 
         /**
+         * Verifies whether an contextual information of the given kind is included in this list.
          *
-         * @deprecated Use equalsTypesIn or equalsValuesIn instead.
-         * @param {AttributeList} attributeList
-         * @param {Boolean} typeOnly
+         * @param {ContextInformation} contextInformation Contextual information that should be verified.
          * @returns {Boolean}
          */
-        AttributeList.prototype.equals = function(attributeList, typeOnly) {
-            typeOnly = typeof typeOnly == "undefined" ? false : typeOnly;
-            return typeOnly ? this.equalsTypesIn(attributeList) : this.equalsValuesIn(attributeList);
+        ContextInformationList.prototype.containsKindOf = function(contextInformation) {
+            if (contextInformation instanceof ContextInformation) {
+                for (var index in this.getItems()) {
+                    var theContextInformation = this.getItems()[index];
+                    if (theContextInformation.isKindOf(contextInformation)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         };
 
         /**
-         * Compare the specified AttributeList with this instance.
+         * Compare the specified ContextInformationList with this instance.
          *
-         * @param {AttributeList} attributeList AttributeList that should be compared.
+         * @param {ContextInformationList} contextInformationList ContextInformationList that should be compared.
          * @returns {boolean}
          */
-        AttributeList.prototype.equalsTypesIn = function(attributeList) {
-            if (attributeList.constructor === AttributeList  && attributeList.size() == this.size()) {
-                for (var index in attributeList.getItems()) {
-                    var theAttribute = attributeList.getItems()[index];
-                    if (!this.containsTypeOf(theAttribute)) return false;
+        ContextInformationList.prototype.equals = function(contextInformationList) {
+            if (contextInformationList instanceof ContextInformationList && contextInformationList.size() == this.size()) {
+                for (var index in contextInformationList.getItems()) {
+                    var theContextInformation = contextInformationList.getItems()[index];
+                    if (!this.contains(theContextInformation)) return false;
                 }
                 return true;
             }
@@ -1338,16 +1421,16 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
         };
 
         /**
-         * Compare the specified AttributeList with this instance.
+         * Compare the specified ContextInformationList with this instance.
          *
-         * @param {AttributeList} attributeList AttributeList that should be compared.
+         * @param {ContextInformationList} contextInformationList ContextInformationList that should be compared.
          * @returns {boolean}
          */
-        AttributeList.prototype.equalsValuesIn = function(attributeList) {
-            if (attributeList.constructor === AttributeList && attributeList.size() == this.size()) {
-                for (var index in attributeList.getItems()) {
-                    var theAttribute = attributeList.getItems()[index];
-                    if (!this.containsValueOf(theAttribute)) return false;
+        ContextInformationList.prototype.isKindOf = function(contextInformationList) {
+            if (contextInformationList instanceof ContextInformationList  && contextInformationList.size() == this.size()) {
+                for (var index in contextInformationList.getItems()) {
+                    var theContextInformation = contextInformationList.getItems()[index];
+                    if (!this.containsKindOf(theContextInformation)) return false;
                 }
                 return true;
             }
@@ -1356,14 +1439,14 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
 
         /**
          *
-         * @param {String} attributeName
-         * @returns {?Attribute}
+         * @param {String} contextInformationName
+         * @returns {?ContextInformation}
          * @private
          */
-        AttributeList.prototype._getAttributeWithName = function(attributeName) {
+        ContextInformationList.prototype._getContextInformationWithName = function(contextInformationName) {
             for (var index in this._items) {
-                var theAttribute = this._items[index];
-                if (theAttribute.getName() == attributeName) return theAttribute;
+                var theContextInformation = this._items[index];
+                if (theContextInformation.getName() == contextInformationName) return theContextInformation;
             }
             return null;
         };
@@ -1371,23 +1454,23 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
         /**
          * Returns only this values that matches to the given type.
          *
-         * @param {(AttributeList|Array)} attributeList Attributes that should be returned.
-         * @returns {AttributeList}
+         * @param {(ContextInformationList|Array)} contextInformationList Contextual information that should be returned.
+         * @returns {ContextInformationList}
          */
-        AttributeList.prototype.getSubset = function(attributeList) {
-            var response = new AttributeList();
+        ContextInformationList.prototype.getSubset = function(contextInformationList) {
+            var response = new ContextInformationList();
             var list = [];
-            if (attributeList instanceof Array) {
-                list = attributeList;
-            } else if (attributeList instanceof AttributeList) {
-                list = attributeList.getItems();
+            if (contextInformationList instanceof Array) {
+                list = contextInformationList;
+            } else if (contextInformationList instanceof ContextInformationList) {
+                list = contextInformationList.getItems();
             }
             for (var i in list) {
-                var theAttribute = list[i];
-                if (theAttribute.constructor === Attribute) {
-                    var responseAttribute = this.getAttributeWithTypeOf(theAttribute);
-                    if (typeof responseAttribute != "undefined") {
-                        response.put(responseAttribute);
+                var theContextInformation = list[i];
+                if (theContextInformation instanceof ContextInformation) {
+                    var responseContextInformation = this.getContextInformationOfKind(theContextInformation);
+                    if (typeof responseContextInformation != "undefined") {
+                        response.put(responseContextInformation);
                     }
                 }
             }
@@ -1397,21 +1480,21 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
         /**
          * Returns a subset without the given types.
          *
-         * @param {(AttributeList|Array)} attributeList Attributes to be excluded
-         * @returns {AttributeList}
+         * @param {(ContextInformationList|Array)} contextInformationList Contextual information to be excluded
+         * @returns {ContextInformationList}
          */
-        AttributeList.prototype.getSubsetWithoutItems = function(attributeList) {
+        ContextInformationList.prototype.getSubsetWithoutItems = function(contextInformationList) {
             var response = this;
             var list = [];
-            if (attributeList instanceof Array) {
-                list = attributeList;
-            } else if (attributeList.constructor === AttributeList) {
-                list = attributeList.getItems();
+            if (contextInformationList instanceof Array) {
+                list = contextInformationList;
+            } else if (contextInformationList instanceof ContextInformationList) {
+                list = contextInformationList.getItems();
             }
             for (var i in list) {
-                var attribute = list[i];
-                if (attribute.constructor === Attribute) {
-                    response.removeAttributeWithTypeOf(attribute);
+                var theContextInformation = list[i];
+                if (theContextInformation instanceof ContextInformation) {
+                    response.removeContextInformationOfKind(theContextInformation);
                 }
             }
             return response;
@@ -1420,110 +1503,111 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
         /**
          * Creates a clone of the current list.
          *
-         * @param {Boolean} typeOnly
-         * @returns {AttributeList}
+         * @param {Boolean} kindOnly
+         * @returns {ContextInformationList}
          */
-        AttributeList.prototype.clone = function(typeOnly) {
-            var newList = new AttributeList();
+        ContextInformationList.prototype.clone = function(kindOnly) {
+            var newList = new ContextInformationList();
             for (var index in this._items) {
-                var oldAttribute = this._items[index];
-                var newAttribute = new Attribute(true)
-                    .withName(oldAttribute.getName())
-                    .withType(oldAttribute.getType())
-                    .withParameters(oldAttribute.getParameters())
-                    .withSynonyms(oldAttribute.getSynonyms());
-                if (!typeOnly) newAttribute.setValue(oldAttribute.getValue());
-                newList.put(newAttribute);
+                var oldContextInformation = this._items[index];
+                var newContextInformation = new ContextInformation(true)
+                    .withName(oldContextInformation.getName())
+                    .withDataType(oldContextInformation.getDataType())
+                    .withParameters(oldContextInformation.getParameters())
+                    .withSynonyms(oldContextInformation.getSynonyms());
+                if (!kindOnly) newContextInformation.setValue(oldContextInformation.getValue());
+                newList.put(newContextInformation);
             }
             return newList;
         };
 
         /**
          *
-         * @param {Attribute} attribute
-         * @param {Boolean} allOccurrences
+         * @param {ContextInformation} contextInformation
+         * @param {Boolean} [allOccurrences]
          */
-        AttributeList.prototype.removeAttributeWithTypeOf = function(attribute, allOccurrences) {
+        ContextInformationList.prototype.removeContextInformationOfKind = function(contextInformation, allOccurrences) {
             allOccurrences = typeof allOccurrences == "undefined" ? false : allOccurrences;
             for (var index in this._items) {
-                var theAttribute = this._items[index];
-                if (theAttribute.equalsTypeOf(attribute)) {
+                var theContextInformation = this._items[index];
+                if (theContextInformation.isKindOf(contextInformation)) {
                     this._items.splice(index, 1);
                 }
             }
-            if (allOccurrences && this.contains(attribute)) this.removeAttributeWithTypeOf(attribute, allOccurrences);
+            if (allOccurrences && this.contains(contextInformation)) this.removeContextInformationOfKind(contextInformation, allOccurrences);
         };
 
         /**
          *
          * @returns {boolean}
          */
-        AttributeList.prototype.hasAttributesWithInputParameters = function() {
+        ContextInformationList.prototype.hasContextInformationWithInputParameters = function() {
             for (var index in this._items) {
-                var theAttribute = this._items[index];
-                if (theAttribute.hasInputParameter()) return true;
+                var theContextInformation = this._items[index];
+                if (theContextInformation.hasInputParameter()) return true;
             }
             return false;
         };
 
         /**
          *
-         * @returns {AttributeList}
+         * @returns {ContextInformationList}
          */
-        AttributeList.prototype.getAttributesWithInputParameters = function() {
-            var list = new AttributeList();
+        ContextInformationList.prototype.getContextInformationWithInputParameters = function() {
+            var list = new ContextInformationList();
             for (var index in this._items) {
-                var theAttribute = this._items[index];
-                if (theAttribute.hasInputParameter()) list.put(theAttribute);
+                var theContextInformation = this._items[index];
+                if (theContextInformation.hasInputParameter()) list.put(theContextInformation);
             }
             return list;
         };
 
         /**
-         * Returns the attribute value that matches the provided attribute type.
+         * Returns the value for contextual information that matches the kind of the provided contextual information.
          *
-         * @param {Attribute} attribute
+         * @param {ContextInformation} contextInformation
          * @returns {String}
          */
-        AttributeList.prototype.getValueForAttributeWithTypeOf = function(attribute) {
-            return this.getAttributeWithTypeOf(attribute).getValue();
+        ContextInformationList.prototype.getValueForContextInformationOfKind = function(contextInformation) {
+            return this.getContextInformationOfKind(contextInformation).getValue();
         };
 
         /**
          *
-         * @param {Attribute} attribute
-         * @returns {Attribute}
+         * @param {ContextInformation} contextInformation
+         * @returns {ContextInformation}
          */
-        AttributeList.prototype.getAttributeWithTypeOf = function(attribute) {
+        ContextInformationList.prototype.getContextInformationOfKind = function(contextInformation) {
             for (var index in this.getItems()) {
-                var theAttribute = this.getItems()[index];
-                if (theAttribute.equalsTypeOf(attribute)) return theAttribute;
+                var theContextInformation = this.getItems()[index];
+                if (theContextInformation.isKindOf(contextInformation)) return theContextInformation;
             }
         };
 
         /**
          *
-         * @param {Attribute} attribute
+         * @param {ContextInformation} contextInformation
          */
-        AttributeList.prototype.updateValue = function(attribute) {
+        ContextInformationList.prototype.updateValue = function(contextInformation) {
             for (var index in this._items) {
-                var theAttribute = this._items[index];
-                if (theAttribute.equalsTypeOf(attribute)) this._items[index] = attribute;
+                var existingContextInformation = this._items[index];
+                if (existingContextInformation.isKindOf(contextInformation)) this._items[index] = contextInformation;
             }
         };
 
-        return AttributeList;
+        return ContextInformationList;
     })();
 });
-define('retrievalResult',["attributeList"], function(AttributeList){
+define('retrievalResult',["contextInformationList"], function(ContextInformationList){
 	return (function() {
 		/**
-		 * @classdesc Contains the data that were retrieved from the database.
-		 * @constructs RetrievalResult
+		 * Contains the data that were retrieved from the database.
+		 *
+		 * @class RetrievalResult
 		 */
 		function RetrievalResult() {
 			/**
-			 * Name of the retrieved Attribute.
+			 * Name of the retrieved contextual information.
 			 *
 			 * @private
 			 * @type {string}
@@ -1539,12 +1623,12 @@ define('retrievalResult',["attributeList"], function(AttributeList){
 			this._timestamp = '';
 
 			/**
-			 * Retrieved Attributes.
+			 * Retrieved contextual information.
 			 *
-			 * @type {AttributeList}
+			 * @type {ContextInformationList}
 			 * @private
 			 */
-			this._values = new AttributeList();
+			this._values = new ContextInformationList();
 
 			return this;
 		}
@@ -1583,7 +1667,7 @@ define('retrievalResult',["attributeList"], function(AttributeList){
 		};
 
 		/**
-		 * Returns the Attribute name.
+		 * Returns the contextual information name.
 		 *
 		 * @returns {string}
 		 */
@@ -1601,18 +1685,18 @@ define('retrievalResult',["attributeList"], function(AttributeList){
 		};
 
 		/**
-		 * Returns the retrieved Attributes.
+		 * Returns the retrieved contextual information.
 		 *
-		 * @returns {AttributeList}
+		 * @returns {ContextInformationList}
 		 */
 		RetrievalResult.prototype.getValues = function(){
 			return this._values;
 		};
 
 		/**
-		 * Sets the Attribute name.
+		 * Sets the contextual information name.
 		 *
-		 * @param {string} name Name of the retrieved Attribute.
+		 * @param {string} name Name of the retrieved contextual information.
 		 */
 		RetrievalResult.prototype.setName = function(name){
 			if(typeof name === 'string'){
@@ -1634,7 +1718,7 @@ define('retrievalResult',["attributeList"], function(AttributeList){
 		/**
 		 * Sets the retrieved values.
 		 *
-		 * @param {Array} values Retrieved Attributes.
+		 * @param {Array} values Retrieved contextual information.
 		 */
 		RetrievalResult.prototype.setValues = function(values){
 			if(values instanceof Array){
@@ -1645,8 +1729,8 @@ define('retrievalResult',["attributeList"], function(AttributeList){
 		return RetrievalResult;
 	})();
 });
-define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameterList'],
- 	function(Attribute, AttributeList, RetrievalResult, Parameter, ParameterList){
+define('storage',['contextInformation', 'contextInformationList', 'retrievalResult', 'parameter', 'parameterList'],
+ 	function(ContextInformation, ContextInformationList, RetrievalResult, Parameter, ParameterList){
 		return (function() {
 			/**
 			 * Initializes the database and all return values.
@@ -1666,12 +1750,12 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 				this._parent = aggregator;
 
 				/**
-				 * Names of all stored Attributes (tableNames as string).
+				 * Names of all stored contextual information (tableNames as string).
 				 *
 				 * @type {Array}
 				 * @private
 				 */
-				this._attributeNames = [];
+				this._contextInformationNames = [];
 
 				/**
 				 * Data of a retrieval.
@@ -1679,18 +1763,18 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 				 * @type {RetrievalResult}
 				 * @private
 				 */
-				this._attributes = new RetrievalResult();
+				this._contextInformation = new RetrievalResult();
 
 				/**
 				 * Cache before storing the new data in the database.
 				 *
-				 * @type {AttributeList}
+				 * @type {ContextInformationList}
 				 * @private
 				 */
-				this._data = new AttributeList();
+				this._data = new ContextInformationList();
 
 				/**
-				 * Names of all stored Attributes.
+				 * Names of all stored contextual information.
 				 *
 				 * @type {Number}
 				 * @private
@@ -1717,7 +1801,7 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 
 				/**
 				 * Condition at which point of time data are supposed to be flushed.
-				 * If at least 'countCondition' attributes are collected data will be flushed.
+				 * If at least 'countCondition' contextual information are collected data will be flushed.
 				 * Initial value is 5.
 				 *
 				 * @type {Number}
@@ -1741,21 +1825,21 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			}
 
 			/**
-			 * Returns the last retrieved Attributes.
+			 * Returns the last retrieved contextual information.
 			 *
 			 * @returns {RetrievalResult}
 			 */
 			Storage.prototype.getCurrentData = function() {
-				return this._attributes;
+				return this._contextInformation;
 			};
 
 			/**
-			 * Returns the names of all stored Attributes (tableNames as string).
+			 * Returns the names of all stored contextual information (tableNames as string).
 			 *
 			 * @returns {Array}
 			 */
-			Storage.prototype.getAttributesOverview = function() {
-				return this._attributeNames;
+			Storage.prototype.getContextInformationOverview = function() {
+				return this._contextInformationNames;
 			};
 
 			/**
@@ -1774,16 +1858,16 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			};
 
 			/**
-			 * Creates a new table. A table contains the values of one AttributeType.
-			 * So the name is the AttributeName.
+			 * Creates a new table. A table contains the values of one contextual information.
+			 * So the name is the contextual information name.
 			 *
 			 * @private
-			 * @param {Attribute} attribute tableName (should be the attributeName)
+			 * @param {ContextInformation} contextInformation tableName (should be the contextual information name)
 			 * @param {?function} callback For alternative actions, if an asynchronous function is used.
 			 */
-			Storage.prototype._createTable = function(attribute, callback){
+			Storage.prototype._createTable = function(contextInformation, callback){
 				if(this._storage){
-					var tableName = this._tableName(attribute);
+					var tableName = this._tableName(contextInformation);
 					var statement = 'CREATE TABLE IF NOT EXISTS "' + tableName + '" (value_, type_, created_)';
 					this._parent.log('CREATE TABLE IF NOT EXISTS "' + tableName + '"');
 					if(callback && typeof(callback) == 'function'){
@@ -1791,29 +1875,29 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 					} else {
 						this._storage.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, this._successCB);
 					}
-					if(!this._attributeNames.indexOf(attribute.getName()) > -1){
-						this._attributeNames.push(tableName);
+					if(!this._contextInformationNames.indexOf(contextInformation.getName()) > -1){
+						this._contextInformationNames.push(tableName);
 					}
 				}
 			};
 
 			/**
-			 * Inserts value into a table. The name of the given Attribute
+			 * Inserts value into a table. The name of the given contextual information.
 			 * identifies the table.
 			 *
 			 * @private
-			 * @param {Attribute} attribute Attribute that should be stored.
+			 * @param {ContextInformation} contextInformation The contextual information that should be stored.
 			 * @param {?function} callback For alternative actions, if an asynchronous function is used.
 			 */
-			Storage.prototype._insertIntoTable = function(attribute, callback){
-				if(this._storage && attribute && attribute.constructor === Attribute){
-					var tableName = this._tableName(attribute);
+			Storage.prototype._insertIntoTable = function(contextInformation, callback){
+				if(this._storage && contextInformation && contextInformation instanceof ContextInformation){
+					var tableName = this._tableName(contextInformation);
 					var statement = 'INSERT INTO "' + tableName
 						+ '" (value_, type_, created_) VALUES ("'
-						+ attribute.getValue() + '", "'
-						+ attribute.getType() + '", "'
-						+ attribute.getTimestamp() + '")';
-					this._parent.log('INSERT INTO "'+tableName+'" VALUES ('+attribute.getValue()+", "+attribute.getType()+", "+attribute.getTimestamp());
+						+ contextInformation.getValue() + '", "'
+						+ contextInformation.getDataType() + '", "'
+						+ contextInformation.getTimestamp() + '")';
+					this._parent.log('INSERT INTO "'+tableName+'" VALUES ('+contextInformation.getValue()+", "+contextInformation.getDataType()+", "+contextInformation.getTimestamp());
 					if(callback && typeof(callback) == 'function'){
 						this._storage.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, callback);
 					} else {
@@ -1844,11 +1928,11 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 
 
 			/**
-			 * Sets the attributeNames array.
+			 * Returns the contextual information names array.
 			 *
 			 * @param {?function} [callback] For alternative actions, if an asynchronous function is used.
 			 */
-			Storage.prototype.getAttributeNames = function(callback){
+			Storage.prototype.getContextInformationNames = function(callback){
 				if(this._storage){
 					var self = this;
 					this._storage.transaction(function(tx) {
@@ -1861,7 +1945,6 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			};
 
 			/**
-			 * Sets the attributeNames array. Is used in getAttributeNames().
 			 *
 			 * @callback
 			 * @private
@@ -1889,12 +1972,12 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			 * @param {?function} callback
 			 */
 			Storage.prototype._queryTableSuccess = function(tx, results, self, callback){
-				self._attributeNames = [];
+				self._contextInformationNames = [];
 				var len = results.rows.length;
 				for(var i=0; i<len; i++){
 					var table = results.rows.item(i).name;
 					if(table.indexOf("DatabaseInfoTable") == -1){
-						self._attributeNames.push(results.rows.item(i).name);
+						self._contextInformationNames.push(results.rows.item(i).name);
 					}
 
 				}
@@ -1904,18 +1987,18 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			};
 
 			/**
-			 * Verifies if a table for an attribute exists.
+			 * Verifies if a table for an contextual information exists.
 			 *
 			 * @private
-			 * @param {(Attribute|String)} attributeOrName Attribute or name for the verification.
+			 * @param {(ContextInformation|String)} contextInformationOrName The contextual information or its name for the verification.
 			 * @returns {boolean}
 			 */
-			Storage.prototype._tableExists = function(attributeOrName){
-				if(attributeOrName.constructor === Attribute){
-					var name = this._tableName(attributeOrName);
-					return this._attributeNames.indexOf(name) > -1;
-				} else if(typeof attributeOrName === 'string'){
-					return this._attributeNames.indexOf(attributeOrName) > -1;
+			Storage.prototype._tableExists = function(contextInformationOrName){
+				if(contextInformationOrName instanceof ContextInformation){
+					var name = this._tableName(contextInformationOrName);
+					return this._contextInformationNames.indexOf(name) > -1;
+				} else if(typeof contextInformationOrName === 'string'){
+					return this._contextInformationNames.indexOf(contextInformationOrName) > -1;
 				}
 				return false;
 			};
@@ -1926,8 +2009,8 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			 * @param {String} tableName Name for the table that should be retrieved.
 			 * @param {?function} callback For additional actions, if an asynchronous function is used.
 			 */
-			Storage.prototype.retrieveAttributes = function(tableName, callback){
-				console.log("retrieveAttributes from "+tableName);
+			Storage.prototype.retrieveContextInformation = function(tableName, callback){
+				console.log("retrieve contextual information from "+tableName);
 
 				if(this._storage){
 					var self = this;
@@ -1941,7 +2024,7 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			};
 
 			/**
-			 * Query function for given attribute.
+			 * Query function for given contextual information.
 			 *
 			 * @callback
 			 * @private
@@ -1966,48 +2049,48 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			};
 
 			/**
-			 * Success function for retrieveAttributes().
+			 * Success function for retrieveContextInformation().
 			 * Puts the retrieved data in RetrievalResult object.
 			 *
 			 * @callback
 			 * @private
 			 * @param {*} tx
 			 * @param {*} results
-			 * @param {String} tableName Name of the searched attribute.
+			 * @param {String} tableName Name of the searched contextual information.
 			 * @param self
 			 * @param {?function} callback For additional actions, if an asynchronous function is used.
 			 */
 			Storage.prototype._queryValuesSuccess = function(tx, results, tableName, self, callback){
 				var len = results.rows.length;
-				var attributeList = [];
-				var attributeName = this._resolveAttributeName(tableName);
+				var contextInformationList = [];
+				var contextInformationName = this._resolveContextInformationName(tableName);
 				var parameterList = this._resolveParameters(tableName);
 				for(var i=0; i<len; i++){
-					var attribute = new Attribute(true).
-						withName(attributeName).withValue(results.rows.item(i).value_).
-						withType(results.rows.item(i).type_).
+					var contextInformation = new ContextInformation(true).
+						withName(contextInformationName).withValue(results.rows.item(i).value_).
+						withDataType(results.rows.item(i).type_).
 						withTimestamp(results.rows.item(i).created_).
 						withParameters(parameterList);
-					attributeList.push(attribute);
+					contextInformationList.push(contextInformation);
 				}
-				self._attributes = new RetrievalResult().withName(tableName)
+				self._contextInformation = new RetrievalResult().withName(tableName)
 					.withTimestamp(new Date())
-					.withValues(attributeList);
+					.withValues(contextInformationList);
 				if(callback && typeof(callback) == 'function'){
 					callback();
 				}
 			};
 
 			/**
-			 * Stores the given Attribute.
+			 * Stores the given contextual information.
 			 * If the flush condition does not match,
 			 * the data is first added to the local cache before.
 			 *
 			 * @public
-			 * @param {Attribute} attributeValue Value that should be stored.
+			 * @param {ContextInformation} contextInformation Value that should be stored.
 			 */
-			Storage.prototype.store = function(attributeValue) {
-				this._addData(attributeValue);
+			Storage.prototype.store = function(contextInformation) {
+				this._addData(contextInformation);
 				if(this._checkFlushCondition){
 					this._flushStorage();
 					this._resetForFlush();
@@ -2019,11 +2102,11 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			 * The cache is used to decrease the database access.
 			 *
 			 * @private
-			 * @param {Attribute} _attribute Value that should be stored.
+			 * @param {ContextInformation} contextInformation Value that should be stored.
 			 */
-			Storage.prototype._addData = function(_attribute){
-				if(_attribute.constructor === Attribute){
-					this._data.put(_attribute);
+			Storage.prototype._addData = function(contextInformation){
+				if(contextInformation instanceof ContextInformation){
+					this._data.put(contextInformation);
 					this._dataCount++;
 				}
 			};
@@ -2051,7 +2134,7 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			 * @private
 			 */
 			Storage.prototype._resetForFlush = function(){
-				this._data = new AttributeList();
+				this._data = new ContextInformationList();
 				this._dataCount = 0;
 				this._lastFlush = new Date();
 			};
@@ -2118,24 +2201,24 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			 * 			Helper			*
 			 ****************************/
 			/**
-			 * Builds the tableName for the given attribute.
+			 * Builds the tableName for the given contextual information.
 			 *
 			 * @private
-			 * @param {Attribute} attribute Attribute that should be stored.
+			 * @param {ContextInformation} contextInformation The contextual information that should be stored.
 			 * @returns{String}
 			 */
-			Storage.prototype._tableName = function(attribute){
-				return attribute.toString(true);
+			Storage.prototype._tableName = function(contextInformation){
+				return contextInformation.toString(true);
 			};
 
 			/**
-			 * Extracts the attributeName form the table name.
+			 * Extracts the contextual information name from the table name.
 			 *
 			 * @private
 			 * @param {String} tableName Table name that should be resolved.
 			 * @returns{String}
 			 */
-			Storage.prototype._resolveAttributeName = function(tableName){
+			Storage.prototype._resolveContextInformationName = function(tableName){
 				var resolvedTableName = tableName.split('__');
 				return resolvedTableName[0];
 			};
@@ -2165,16 +2248,26 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 /**
  * Created by tobias on 30.03.15.
  */
-define('component',['attributeList'],
-    function(AttributeList) {
+define('component',['data', 'dataList'],
+    function(Data, DataList) {
         return (function() {
 
             Component.lastLogId = "";
 
+            Component.description = {
+                out: [
+                    {
+                        "name":"",
+                        "type":""
+                    }
+                ],
+                requiredObjects: []
+            };
+
             /**
             *
             * @returns {Component}
-            * @constructs Component
+            * @class Component
             */
             function Component(discoverer) {
                 /**
@@ -2194,12 +2287,12 @@ define('component',['attributeList'],
                 this._id  = Math.uuid();
 
                 /**
-                 * All available Attributes and their values.
+                 * All available contextual information and their values.
                  *
-                 * @type {AttributeList}
-                 * @private
+                 * @type {DataList}
+                 * @protected
                  */
-                this._outAttributes = new AttributeList();
+                this._outputData = new DataList();
 
                 /**
                  * Associated discoverer.
@@ -2242,49 +2335,53 @@ define('component',['attributeList'],
             };
 
             /**
-             * Returns the available AttributeTypes.
+             * Returns the available contextual information.
              *
-             * @param {?AttributeList} [attributes]
-             * @returns {AttributeList}
+             * @param {?DataList} [dataList]
+             * @returns {DataList}
              */
-            Component.prototype.getOutAttributes = function(attributes) {
-                // test if attributeList is a list
-                if (attributes && attributes instanceof AttributeList) {
-                    return this._outAttributes.getSubset(attributes);
+            Component.prototype.getOutputData = function(dataList) {
+                // test if contextual information is a list
+                if (dataList && dataList instanceof DataList) {
+                    return this._outputData.getSubset(dataList);
                 } else {
-                    return this._outAttributes;
+                    return this._outputData;
                 }
             };
 
             /**
-             * Adds an outAttribute.
+             * Sets the output data.
              *
-             * @param {Attribute} attribute
+             * @param {DataList} dataList The data to be set.
              * @protected
              */
-            Component.prototype._setOutAttribute = function(attribute) {
-                this._outAttributes.put(attribute);
+            Component.prototype._setOutputData = function(dataList) {
+                this._outputData = dataList;
             };
 
             /**
-             * Sets an outAttributes.
              *
-             * @param {(AttributeList|Array)} attributesOrArray Attributes to set.
-             * @protected
+             * @param data
+             * @param multipleInstances
              */
-            Component.prototype._setOutAttributes = function(attributesOrArray) {
-                this._outAttributes = new AttributeList().withItems(attributesOrArray);
+            Component.prototype.addOutputData = function(data, multipleInstances) {
+                this.log("will add or update "+data+".");
+                multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
+                data.setTimestamp(this.getCurrentTime());
+                if (data instanceof Data) {
+                    this._outputData.put(data, multipleInstances);
+                }
             };
 
             /**
-             * Verifies whether the specified attribute is a provided Attribute.
+             * Verifies whether the specified data is provided by the component.
              *
-             * @param {Attribute} attribute
+             * @param {Data} data
              * @returns {Boolean}
              * @protected
              */
-            Component.prototype._isOutAttribute = function(attribute) {
-                return !!this._outAttributes.containsTypeOf(attribute);
+            Component.prototype._isOutputData = function(data) {
+                return !!this._outputData.containsKindOf(data);
             };
 
             /**
@@ -2302,7 +2399,7 @@ define('component',['attributeList'],
             /**
              * Registers the component to the associated Discoverer.
              *
-             * @private
+             * @protected
              */
             Component.prototype._register = function() {
                 if (this._discoverer) {
@@ -2323,6 +2420,26 @@ define('component',['attributeList'],
                Component.lastLogId = this.getId();
             };
 
+            /**
+             *
+             * @param {Data} data
+             * @returns {boolean}
+             */
+            Component.prototype.doesSatisfyKindOf = function(data) {
+                return this._outputData.containsKindOf(data);
+            };
+
+            /*** Helper ***/
+
+            /**
+             * Returns the current time.
+             *
+             * @returns {Date}
+             */
+            Component.prototype.getCurrentTime = function() {
+                return new Date();
+            };
+
             return Component;
         })();
     }
@@ -2333,7 +2450,7 @@ define('component',['attributeList'],
  * 
  * @module Subscriber
  */
-define('callback',['attribute', 'attributeList'], function(Attribute, AttributeList){
+define('callback',['contextInformation', 'contextInformationList'], function(ContextInformation, ContextInformationList){
 	return (function() {
 		/**
 		 * Constructor: Initializes the AttributeTypeList.
@@ -2351,12 +2468,12 @@ define('callback',['attribute', 'attributeList'], function(Attribute, AttributeL
 			this._name = '';
 
 			/**
-			 * Associated Attributes that will be send to Subscriber.
+			 * Associated contextual information that will be send to the subscriber.
 			 *
-			 * @type {AttributeList}
+			 * @type {ContextInformationList}
 			 * @private
 			 */
-			this._attributes = new AttributeList();
+			this._contextInformation = new ContextInformationList();
 
 			return this;
 		}
@@ -2375,11 +2492,11 @@ define('callback',['attribute', 'attributeList'], function(Attribute, AttributeL
 		/**
 		 * Builder for AttributeTypes.
 		 *
-		 * @param {(AttributeList|Array)} attributeListOrArray attributeTypes
+		 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray
 		 * @returns {Callback}
 		 */
-		Callback.prototype.withAttributeTypes = function(attributeListOrArray) {
-			this.setAttributeTypes(attributeListOrArray);
+		Callback.prototype.withContextInformation = function(contextInformationListOrArray) {
+			this.setContextInformation(contextInformationListOrArray);
 			return this;
 		};
 
@@ -2404,50 +2521,50 @@ define('callback',['attribute', 'attributeList'], function(Attribute, AttributeL
 		};
 
 		/**
-		 * Returns the associated attributes (only the types).
+		 * Returns the associated contextual information.
 		 *
-		 * @returns {AttributeList}
+		 * @returns {ContextInformationList}
 		 */
-		Callback.prototype.getAttributeTypes = function() {
-			return this._attributes;
+		Callback.prototype.getContextInformation = function() {
+			return this._contextInformation;
 		};
 
 		/**
-		 * Adds a list of AttributeTypes.
+		 * Adds a list of contextual information.
 		 *
-		 * @param {AttributeList|Array} _attributes AttributeTypeList
+		 * @param {ContextInformationList|Array.<ContextInformation>} contextInformationListOrArray
 		 */
-		Callback.prototype.setAttributeTypes = function(_attributes){
+		Callback.prototype.setContextInformation = function(contextInformationListOrArray){
 			var list = [];
-			if(_attributes instanceof Array){
-				list = _attributes;
-			} else if (_attributes.constructor === AttributeList) {
-				list = _attributes.getItems();
+			if(contextInformationListOrArray instanceof Array){
+				list = contextInformationListOrArray;
+			} else if (contextInformationListOrArray instanceof ContextInformationList) {
+				list = contextInformationListOrArray.getItems();
 			}
 			for(var i in list){
-				this.addAttributeType(list[i]);
+				this.addContextInformation(list[i]);
 			}
 		};
 
 		/**
-		 * Adds an attribute to AttributeTypeList.
+		 * Adds a contextual information to ContextInformationList.
 		 *
-		 * @param {Attribute} attribute Attribute
+		 * @param {ContextInformation} contextInformation
 		 */
-		Callback.prototype.addAttributeType = function(attribute){
-			if(attribute.constructor === Attribute && !this._attributes.containsTypeOf(attribute)){
-				this._attributes.put(attribute);
+		Callback.prototype.addContextInformation = function(contextInformation){
+			if(contextInformation instanceof ContextInformation && !this._contextInformation.containsKindOf(contextInformation)){
+				this._contextInformation.put(contextInformation);
 			}
 		};
 
 		/**
-		 * Removes an attribute from AttributeTypeList.
+		 * Removes a contextual information from the ContextInformationList.
 		 *
-		 * @param {Attribute} attribute AttributeType
+		 * @param {ContextInformation} contextInformation
 		 */
-		Callback.prototype.removeAttributeType = function(attribute){
-			if(attribute.constructor === Attribute){
-				this._attributes.removeItem(attribute);
+		Callback.prototype.removeAttributeType = function(contextInformation){
+			if(contextInformation instanceof ContextInformation){
+				this._contextInformation.removeItem(contextInformation);
 			}
 		};
 
@@ -2460,7 +2577,7 @@ define('callback',['attribute', 'attributeList'], function(Attribute, AttributeL
 		Callback.prototype.equals = function(_callback) {
 			if (_callback.constructor === Callback){
 				if(_callback.getName() == this.getName()
-					&& _callback.getAttributeTypes().equals(this.getAttributeTypes())) {
+					&& _callback.getContextInformation().equals(this.getContextInformation())) {
 					return true;
 				}
 			}
@@ -2549,7 +2666,7 @@ define('callbackList',['abstractList', 'callback'], function(AbstractList, Callb
 		 * @returns {boolean}
 		 */
 		CallbackList.prototype.contains = function(callback){
-			if (callback.constructor === Callback) {
+			if (callback instanceof Callback) {
 				for (var index in this._items) {
 					var tmp = this._items[index];
 					if (tmp.equals(callback)) {
@@ -2609,8 +2726,8 @@ define('conditionMethod',[],function() {
 		return ConditionMethod;
 	})();
 });
-define('condition',['attribute', 'conditionMethod'],
- 	function(Attribute, ConditionMethod){
+define('condition',['contextInformation', 'conditionMethod'],
+ 	function(ContextInformation, ConditionMethod){
 		return (function() {
 			/**
 			 * @classdesc Condition for subscribed Attributes.
@@ -2625,12 +2742,12 @@ define('condition',['attribute', 'conditionMethod'],
 				 */
 				this._name = '';
 				/**
-				 * AttributeType that should be checked.
+				 * ContextInformation that should be checked.
 				 *
-				 * @type {Attribute}
+				 * @type {ContextInformation}
 				 * @private
 				 */
-				this._attributeType = '';
+				this._contextInformation = '';
 
 				/**
 				 * Method for comparison.
@@ -2663,13 +2780,13 @@ define('condition',['attribute', 'conditionMethod'],
 			};
 
 			/**
-			 * Builder for AttributeType.
+			 * Builder for ContextInformation.
 			 *
-			 * @param {Attribute} attribute Attributes that would be verified.
+			 * @param {ContextInformation} contextInformation Contextual information that should be verified.
 			 * @returns {Condition}
 			 */
-			Condition.prototype.withAttributeType = function(attribute){
-				this.setAttributeType(attribute);
+			Condition.prototype.withContextInformation = function(contextInformation){
+				this.setContextInformation(contextInformation);
 				return this;
 			};
 
@@ -2707,13 +2824,13 @@ define('condition',['attribute', 'conditionMethod'],
 			};
 
 			/**
-			 * Sets the attributeType.
+			 * Sets the ContextInformation.
 			 *
-			 * @param {Attribute} attribute AttributeType
+			 * @param {ContextInformation} contextInformation
 			 */
-			Condition.prototype.setAttributeType = function(attribute){
-				if(attribute.constructor === Attribute){
-					this._attributeType = attribute;
+			Condition.prototype.setContextInformation = function(contextInformation){
+				if(contextInformation instanceof ContextInformation){
+					this._contextInformation= contextInformation;
 				}
 			};
 
@@ -2747,12 +2864,12 @@ define('condition',['attribute', 'conditionMethod'],
 			};
 
 			/**
-			 * Returns the AttributeType.
+			 * Returns the ContextInformation.
 			 *
-			 * @returns {Attribute}
+			 * @returns {ContextInformation}
 			 */
-			Condition.prototype.getAttributeType = function(){
-				return this._attributeType;
+			Condition.prototype.getContextInformation = function(){
+				return this._contextInformation;
 			};
 
 			/**
@@ -2776,19 +2893,19 @@ define('condition',['attribute', 'conditionMethod'],
 			/**
 			 * Processes the comparison.
 			 *
-			 * @param {Attribute} newAttribute new Attribute that should be compared
-			 * @param {Attribute} oldAttribute old Attribute
+			 * @param {ContextInformation} newContextInformation New contextual information that should be compared.
+			 * @param {ContextInformation} oldContextInformation Old context information.
 			 * @returns {boolean}
 			 */
-			Condition.prototype.compare = function(newAttribute, oldAttribute){
-				if(!this.getAttributeType().equalsTypeOf(newAttribute) && !this.getAttributeType().equalsTypeOf(oldAttribute)){
+			Condition.prototype.compare = function(newContextInformation, oldContextInformation){
+				if(!this.getContextInformation().isKindOf(newContextInformation) && !this.getContextInformation().isKindOf(oldContextInformation)){
 					return false;
 				}
 				if(!this.getComparisonMethod()){
 					return false;
 				}
-				if(newAttribute.constructor === Attribute && oldAttribute.constructor === Attribute){
-					return this.getComparisonMethod().process(this.getReferenceValue(), newAttribute.getValue(), oldAttribute.getValue());
+				if(newContextInformation instanceof ContextInformation && oldContextInformation instanceof  ContextInformation){
+					return this.getComparisonMethod().process(this.getReferenceValue(), newContextInformation.getValue(), oldContextInformation.getValue());
 				}
 				return false;
 			};
@@ -2803,7 +2920,7 @@ define('condition',['attribute', 'conditionMethod'],
 				if(condition.constructor === Condition){
 					if(condition.getName() == this.getName()
 						&& condition.getReferenceValue() == this.getReferenceValue()
-						&& condition.getAttributeType().equalsTypeOf(this.getAttributeType())
+						&& condition.getContextInformation().isKindOf(this.getContextInformation())
 						&& condition.getComparisonMethod() === this.getComparisonMethod()){
 						return true;
 					}
@@ -2845,8 +2962,8 @@ define('conditionList',['abstractList', 'condition'], function(AbstractList, Con
  * 
  * @module Subscriber
  */
-define('subscriber',['attributeList', 'callbackList', 'condition', 'conditionList'],
- 	function(AttributeList, CallbackList, Condition, ConditionList)  {
+define('subscriber',['contextInformationList', 'callbackList', 'condition', 'conditionList'],
+ 	function(ContextInformationList, CallbackList, Condition, ConditionList)  {
 		return (function() {
 			/**
 			 * Constructor: Initializes the subscriptionCallbacks, subscriptionCallbacks and conditions.
@@ -2880,14 +2997,14 @@ define('subscriber',['attributeList', 'callbackList', 'condition', 'conditionLis
 				this._subscriptionCallbacks = new CallbackList();
 
 				/**
-				 * Restricts the associated Attributes of the callback to a subset
+				 * Restricts the associated contextual information of the callback to a subset
 				 * 		(i.e: the subscriber wants a subset from the available the context data).
-				 * 		If no attributes are specified, all available attributes will returned.
+				 * 		If no contextual information is specified, all available contextual information will be returned.
 				 *
 				 * @private
-				 * @type {AttributeList}
+				 * @type {ContextInformationList}
 				 */
-				this._attributesSubset = new AttributeList();
+				this._contextInformationSubset = new ContextInformationList();
 
 				/**
 				 * Defines special conditions for notification.
@@ -2934,13 +3051,13 @@ define('subscriber',['attributeList', 'callbackList', 'condition', 'conditionLis
 			};
 
 			/**
-			 * Builder for attributesSubset.
+			 * Builder for contextInformationSubset.
 			 *
-			 * @param {AttributeList} attributesSubset attributesSubset
+			 * @param {ContextInformationList} contextInformationList
 			 * @returns {Subscriber}
 			 */
-			Subscriber.prototype.withAttributesSubset = function(attributesSubset) {
-				this.setAttributesSubset(attributesSubset);
+			Subscriber.prototype.withContextInformationSubset = function(contextInformationList) {
+				this.setContextInformationSubset(contextInformationList);
 				return this;
 			};
 
@@ -3016,29 +3133,29 @@ define('subscriber',['attributeList', 'callbackList', 'condition', 'conditionLis
 			};
 
 			/**
-			 * Returns the attributesSubset.
+			 * Returns the contextInformationSubset.
 			 *
-			 * @returns {string}
+			 * @returns {ContextInformationList}
 			 */
-			Subscriber.prototype.getAttributesSubset = function() {
-				return this._attributesSubset;
+			Subscriber.prototype.getContextInformationSubset = function() {
+				return this._contextInformationSubset;
 			};
 
 			/**
-			 * Sets the attributesSubset.
+			 * Sets the contextInformationSubset.
 			 *
-			 * @param {AttributeList} attributesSubset attributesSubset
+			 * @param {ContextInformationList} contextInformationList
 			 */
-			Subscriber.prototype.setAttributesSubset = function(attributesSubset){
-				if(attributesSubset && attributesSubset.constructor === AttributeList) {
-					this._attributesSubset = attributesSubset;
+			Subscriber.prototype.setContextInformationSubset = function(contextInformationList){
+				if(contextInformationList && contextInformationList instanceof ContextInformationList) {
+					this._contextInformationSubset = contextInformationList;
 				}
 			};
 
 			/**
 			 * Returns the conditions.
 			 *
-			 * @returns {string}
+			 * @returns {ConditionList}
 			 */
 			Subscriber.prototype.getConditions = function() {
 				return this._conditions;
@@ -3096,7 +3213,7 @@ define('subscriber',['attributeList', 'callbackList', 'condition', 'conditionLis
 					if(subscriber.getSubscriberName() == this.getSubscriberName()
 						&& subscriber.getSubscriberId() == this.getSubscriberId()
 						&& subscriber.getSubscriptionCallbacks().equals(this.getSubscriptionCallbacks())
-						&& subscriber.getAttributesSubset().equals(this.getAttributesSubset())
+						&& subscriber.getContextInformationSubset().equals(this.getContextInformationSubset())
 						&& subscriber.getConditions().equals(this.getConditions())){
 						return true;
 					}
@@ -3149,16 +3266,201 @@ define('subscriberList',['abstractList', 'subscriber'], function(AbstractList, S
 	})();
 });
 /**
+ * Created by tobias on 30.09.15.
+ */
+define('queryable',['component', 'contextInformation', 'contextInformationList', 'callback', 'callbackList', 'subscriber', 'subscriberList'], function(Component, ContextInformation, ContextInformationList, Callback, CallbackList, Subscriber, SubscriberList) {
+    return (function() {
+        /**
+         * Defines all output contextual information and constant output contextual information as an object.
+         * @type {object}
+         * @public
+         */
+        Queryable.description = {
+            out: [
+                {
+                    "name":"",
+                    "type":""
+                }
+            ],
+            const: [
+                {
+                    "name":"",
+                    "type":""
+                }
+            ],
+            updateInterval: 30000,
+            requiredObjects: []
+        };
+
+        /**
+         *
+         * @returns {Queryable}
+         * @class Queryable
+         * @extends Component
+         */
+        function Queryable(discoverer) {
+            Component.call(this, discoverer);
+
+            /**
+             * Name of the queryable.
+             *
+             * @type {string}
+             * @private
+             */
+            this._name = 'Queryable';
+
+            /**
+             * List of Callbacks.
+             *
+             * @protected
+             * @type {CallbackList}
+             */
+            this._callbacks = new CallbackList();
+
+            /**
+             * All available contextual information and their values.
+             *
+             * @type {ContextInformationList}
+             * @protected
+             */
+            this._outputData = new ContextInformationList();
+
+            /**
+             * This temporary variable is used for storing the old data values.
+             * So these can be used to check conditions.
+             *
+             * @type {ContextInformationList}
+             * @protected
+             */
+            this._oldOutputContextInformation = new ContextInformationList();
+
+            /**
+             *
+             * @protected
+             * @type {ContextInformationList}
+             * @desc All available constant contextual information and their values.
+             */
+            this._constantOutputContextInformation = new ContextInformationList();
+
+            /**
+             *
+             * @protected
+             * @type {SubscriberList}
+             * @desc List of Subscriber.
+             */
+            this._subscribers = new SubscriberList();
+
+            /**
+             *
+             * @type {null}
+             * @private
+             */
+            this._updateInterval = null;
+
+            return this;
+        }
+
+        Queryable.prototype = Object.create(Component.prototype);
+        Queryable.prototype.constructor = Queryable;
+
+        /**
+         * Initializes the provided contextual information.
+         *
+         * @protected
+         */
+        Queryable.prototype._initOutputContextInformation = function() {
+            this._outputData = ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.out);
+        };
+
+        /**
+         *
+         * @param {(ContextInformationList|Array.<ContextInformation>)} [contextInformationListOrArray]
+         * @returns {ContextInformationList}
+         */
+        Queryable.prototype.getOutputContextInformation = function(contextInformationListOrArray) {
+            return /** @type {ContextInformationList} */ this.getOutputData(contextInformationListOrArray);
+        };
+
+        /**
+         * Returns the old contextual information.
+         *
+         * @returns {ContextInformationList}
+         */
+        Queryable.prototype.getOldOutputContextInformation = function() {
+            return this._oldOutputContextInformation;
+        };
+
+        /**
+         *
+         * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray
+         * @protected
+         */
+        Queryable.prototype._setOutputContextInformation = function(contextInformationListOrArray) {
+            this._setOutputData(contextInformationListOrArray);
+        };
+
+        /**
+         *
+         * @param {ContextInformation} contextInformation
+         * @returns {Boolean}
+         * @protected
+         */
+        Queryable.prototype._isOutputContextInformation = function(contextInformation) {
+            return this._isOutputData(contextInformation);
+        };
+
+        /**
+         * Updates the contextual information that is maintained by the queryable.
+         *
+         * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray Contextual information that should be entered.
+         */
+        Queryable.prototype.putData = function(contextInformationListOrArray) {
+            var list = [];
+            if (contextInformationListOrArray instanceof Array) {
+                list = contextInformationListOrArray;
+            } else if (contextInformationListOrArray instanceof ContextInformationList) {
+                list = contextInformationListOrArray.getItems();
+            }
+            for ( var i in list) {
+                var contextInformation = list[i];
+                if (contextInformation instanceof ContextInformation && this._isOutputContextInformation(contextInformation)) {
+                    this.addOutputContextInformation(contextInformation);
+                }
+            }
+        };
+
+        /**
+         * Adds a new context information value. If the given kind of
+         * contextual information is not included in the list, it will be also added.
+         * Otherwise, only the value will be updated.
+         *
+         * @param {ContextInformation} contextInformation
+         * @param {boolean} [multipleInstances=false]
+         */
+        Queryable.prototype.addOutputContextInformation = function(contextInformation, multipleInstances) {
+            this.log("will add or update contextual information "+contextInformation+".");
+            multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
+            this._oldOutputContextInformation = this._outputData;
+            contextInformation.setTimestamp(this.getCurrentTime());
+            if (contextInformation instanceof ContextInformation) {
+                this._outputData.put(contextInformation, multipleInstances);
+            }
+        };
+
+        return Queryable;
+    })();
+});
+/**
  * This module representing a Context Widget.
  * 
  * @module Widget
  */
-define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'conditionList', 'subscriber', 'subscriberList'],
-	function(Component, MathUuid, Callback, CallbackList, Attribute, AttributeList, ConditionList, Subscriber, SubscriberList) {
+define('widget',['queryable', 'callback', 'callbackList', 'contextInformation', 'contextInformationList', 'conditionList', 'subscriber', 'subscriberList'],
+	function(Queryable, Callback, CallbackList, ContextInformation, ContextInformationList, ConditionList, Subscriber, SubscriberList) {
 		return (function() {
 
 			/**
-			 * Defines all outAttributes and constOutAttributes as an object.
+			 * Defines all output contextual information and constant output contextual information as an object.
 			 * @type {object}
 			 * @public
 			 */
@@ -3181,17 +3483,16 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 
 			/**
 			 * Constructor: Generates the ID and initializes the
-			 * Widget with attributes, callbacks and subscriber
+			 * Widget with contextual information, callbacks and subscriber
 			 * that are specified in the provided functions.
 			 *
-			 * @param {Discoverer} discoverer
- 			 * @param {AttributeList} attributes
 			 * @abstract
-			 * @classdesc The Widget handles the access to sensors.
-			 * @constructs Widget
+			 * @class Widget
+			 * @extends Queryable
+			 * @param {Discoverer} discoverer
 			 */
-			function Widget(discoverer, attributes) {
-				Component.call(this, discoverer);
+			function Widget(discoverer) {
+				Queryable.call(this, discoverer);
 
 				/**
 				 * Name of the widget.
@@ -3201,48 +3502,13 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 				 */
 				this._name  = 'Widget';
 
-				/**
-				 * This temporary variable is used for storing the old attribute values.
-				 * So these can be used to check conditions.
-				 *
-				 * @type {AttributeList}
-				 * @protected
-				 */
-				this._oldOutAttributes = new AttributeList();
-
-				/**
-				 *
-				 * @protected
-				 * @type {AttributeList}
-				 * @desc All available constant Attributes and their values.
-				 */
-				this._constantOutAttributes = new AttributeList();
-
-				/**
-				 *
-				 * @protected
-				 * @type {CallbackList}
-				 * @desc List of Callbacks.
-				 */
-				this._callbacks = new CallbackList();
-
-				/**
-				 *
-				 * @protected
-				 * @type {SubscriberList}
-				 * @desc List of Subscriber.
-				 */
-				this._subscribers = new SubscriberList();
-
-				this._updateInterval = null;
-
 				this._register();
-				this._init(attributes);
+				this._init();
 
 				return this;
 			}
 
-			Widget.prototype = Object.create(Component.prototype);
+			Widget.prototype = Object.create(Queryable.prototype);
 			Widget.prototype.constructor = Widget;
 
 			/**
@@ -3251,28 +3517,19 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 			 *
 			 * @protected
 			 */
-			Widget.prototype._init = function(attributes) {
-				this._initOutAttributes();
-				this._initConstantOutAttributes();
+			Widget.prototype._init = function() {
+				this._initOutputContextInformation();
+				this._initConstantOutputContextInformation();
 				this._initCallbacks();
 			};
 
 			/**
-			 * Initializes the provided Attributes.
+			 * Initializes the provided constant contextual information.
 			 *
 			 * @private
 			 */
-			Widget.prototype._initOutAttributes = function() {
-				this._outAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.description.out);
-			};
-
-			/**
-			 * Initializes the provided ConstantAttributes.
-			 *
-			 * @private
-			 */
-			Widget.prototype._initConstantOutAttributes = function() {
-				this._constantOutAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.description.const);
+			Widget.prototype._initConstantOutputContextInformation = function() {
+				this._constantOutputContextInformation = ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.const);
 			};
 
 			/**
@@ -3286,38 +3543,28 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 			};
 
 			/**
-			 * Returns the available ConstantAttributeTypes
-			 * (attributes that do not change).
+			 * Returns the available constant contextual information.
+			 * (contextual information that do not change).
 			 *
-			 * @public
-			 * @param {?AttributeList} attributes
-			 * @returns {AttributeList}
+			 * @param {?ContextInformationList} [contextInformationList]
+			 * @returns {ContextInformationList}
 			 */
-			Widget.prototype.getConstantOutAttributes = function(attributes) {
-				if (attributes && attributes instanceof AttributeList) {
-					return this._constantOutAttributes.getSubset(attributes);
+			Widget.prototype.getConstantOutputContextInformation = function(contextInformationList) {
+				if (typeof contextInformationList != "undefined" && contextInformationList instanceof ContextInformationList) {
+					return this._constantOutputContextInformation.getSubset(contextInformationList);
 				} else {
-					return this._constantOutAttributes;
+					return this._constantOutputContextInformation;
 				}
 			};
 
 			/**
-			 * Returns the last acquired attribute value with the given attribute type.
+			 * Returns the last acquired contextual information value with the given contextual information's kind.
 			 *
-			 * @param {Attribute} attribute The attribute to return the last value for.
+			 * @param {ContextInformation} contextInformation The contextual information to return the last value for.
 			 * @returns {*}
 			 */
-			Widget.prototype.getLastValueForAttributeWithTypeOf = function(attribute) {
-				return this.getOutAttributes().getAttributeWithTypeOf(attribute).getValue();
-			};
-
-			/**
-			 * Returns the old Attributes.
-			 *
-			 * @returns {AttributeList}
-			 */
-			Widget.prototype.getOldAttributes = function() {
-				return this._oldOutAttributes;
+			Widget.prototype.getLastValueForContextInformationOfKind = function(contextInformation) {
+				return this.getOutContextInformation().getContextInformationOfKind(contextInformation).getValue();
 			};
 
 			/**
@@ -3354,50 +3601,29 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 			};
 
 			/**
-			 * Adds a new AttributeValue. If the given value is
-			 * not included in the list, the associated type will
-			 * be also added. Otherwise, only the value will be
-			 * updated.
-			 *
-			 * @public
-			 * @param {Attribute} attribute
-			 * @param {Boolean} multipleInstances
-			 */
-			Widget.prototype.addOutAttribute = function(attribute, multipleInstances) {
-				this.log("will add or update attribute "+attribute+".");
-				multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
-				this._oldOutAttributes = this._outAttributes;
-				attribute.setTimestamp(this.getCurrentTime());
-				if (attribute instanceof Attribute) {
-					this._outAttributes.put(attribute, multipleInstances);
-				}
-			};
-
-			/**
-			 * Sets the ConstantAttributeValueList and also the
-			 * associated AttributeTypes.
+			 * Sets the constant contextual information list.
 			 *
 			 * @protected
-			 * @param {(AttributeList|Array)} constantAttributes List or Array of AttributeValues
+			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray List or Array of contextual information.
 			 */
-			Widget.prototype._setConstantOutAttributes = function(constantAttributes) {
-				this._constantOutAttributes = new AttributeList().withItems(constantAttributes);
+			Widget.prototype._setConstantOutContextInformation = function(contextInformationListOrArray) {
+				this._constantOutContextInformation = new ContextInformationList().withItems(contextInformationListOrArray);
 			};
 
 			/**
-			 * Adds a new constantAttributeValue. If the given value is
+			 * Adds a new constant contextual information. If the given value is
 			 * not included in the list, the associated type will
 			 * be also added. Otherwise, only the value will be
 			 * updated.
 			 *
 			 * @protected
-			 * @param {Attribute} constantAttribute AttributeValue
+			 * @param {ContextInformation} contextInformation
 			 */
-			Widget.prototype._addConstantOutAttribute = function(constantAttribute) {
-				if (constantAttribute instanceof Attribute) {
-					if (!this._constantOutAttributes.containsTypeOf(constantAttribute)) {
-						constantAttribute.setTimestamp(this.getCurrentTime());
-						this._constantOutAttributes.put(constantAttribute);
+			Widget.prototype._addConstantOutputContextInformation = function(contextInformation) {
+				if (contextInformation instanceof ContextInformation) {
+					if (!this._constantOutputContextInformation.containsKindOf(contextInformation)) {
+						contextInformation.setTimestamp(this.getCurrentTime());
+						this._constantOutputContextInformation.put(contextInformation);
 					}
 				}
 			};
@@ -3427,7 +3653,7 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 			 * Adds a new Callback.
 			 *
 			 * @protected
-			 * @param {Callback} callback List or Array of AttributeValues.
+			 * @param {Callback} callback List or Array of contextual information.
 			 */
 			Widget.prototype._addCallback = function(callback) {
 				if (callback instanceof Callback) {
@@ -3443,7 +3669,7 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 			 * Sets SubscriberList.
 			 *
 			 * @protected
-			 * @param {(SubscriberList|Array)}  subscribers List or Array of Subscriber.
+			 * @param {(SubscriberList|Array.<Subscriber>)}  subscribers List or Array of Subscriber.
 			 */
 			Widget.prototype._setSubscriber = function(subscribers) {
 				var list = [];
@@ -3484,17 +3710,7 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 			};
 
 			/**
-			 * Returns the current time.
-			 *
-			 * @private
-			 * @returns {Date}
-			 */
-			Widget.prototype.getCurrentTime = function() {
-				return new Date();
-			};
-
-			/**
-			 * Notifies other components and sends the attributes.
+			 * Notifies other components and sends the contextual information.
 			 *
 			 * @virtual
 			 * @public
@@ -3503,30 +3719,28 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 				this.log("will notify its subscribers.");
 				var callbacks = this.getCallbacks();
 				for (var i in callbacks) {
-					this.sendToSubscriber(callbacks[i]);
+					this._sendToSubscriber(callbacks[i]);
 				}
 			};
 
 			/**
-			 * Queries the associated sensor and updates the attributes with new values.
-			 * Must be overridden by the subclasses. Overriding subclasses can call
-			 * this.__super(_function) to invoke the provided callback function.
+			 * Queries the associated sensor and updates the contextual information with new values.
+			 * Must be overridden by the subclasses.
 			 *
-			 * @virtual
-			 * @public
+			 * @protected
 			 * @param {Callback} callback
 			 */
-			Widget.prototype.sendToSubscriber = function(callback) {
+			Widget.prototype._sendToSubscriber = function(callback) {
 				if (callback && callback instanceof Callback) {
 					var subscriberList = this._subscribers.getItems();
-					for ( var i in subscriberList) {
+					for (var i in subscriberList) {
 						var subscriber = subscriberList[i];
 						if (subscriber.getSubscriptionCallbacks().contains(callback)) {
 							if(this._dataValid(subscriber.getConditions())){
 								var subscriberInstance = this._discoverer.getComponent(subscriber.getSubscriberId());
-								var callSubset =  callback.getAttributeTypes();
-								var subscriberSubset = subscriber.getAttributesSubset();
-								var data = this._outAttributes.getSubset(callSubset);
+								var callSubset =  callback.getContextInformation();
+								var subscriberSubset = subscriber.getContextInformationSubset();
+								var data = this.getOutputContextInformation().getSubset(callSubset);
 								if (subscriberSubset && subscriberSubset.size() > 0) {
 									data = data.getSubset(subscriberSubset);
 								}
@@ -3565,56 +3779,35 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 			};
 
 			/**
-			 * Updates the attributes by calling queryGenerator.
+			 * Updates the contextual information by calling queryGenerator.
 			 *
 			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
 			 *
 			 */
 			Widget.prototype.updateWidgetInformation = function(callback) {
-				this.log("will update my attributes.");
+				this.log("will update my contextual information.");
 
 				this.queryGenerator(callback);
 			};
 
 			/**
-			 * Updates the Attributes by external components.
-			 *
-			 * @param {(AttributeList|Array)} attributes Data that should be entered.
-			 */
-			Widget.prototype.putData = function(attributes) {
-				var list = [];
-				if (attributes instanceof Array) {
-					list = attributes;
-				} else if (attributes instanceof AttributeList) {
-					list = attributes.getItems();
-				}
-				for ( var i in list) {
-					var theAttribute = list[i];
-					if (theAttribute instanceof Attribute && this._isOutAttribute(theAttribute)) {
-						this.addOutAttribute(theAttribute);
-					}
-				}
-			};
-
-			/**
-			 * Returns all available AttributeValues, Attributes and ConstantAttributes.
+			 * Returns all available contextual information value and constant contextual information.
 			 *
 			 * @public
-			 * @returns {AttributeList}
+			 * @returns {ContextInformationList}
 			 */
 			Widget.prototype.queryWidget = function() {
-				var response = new AttributeList();
-				response.putAll(this.getOutAttributes());
-				response.putAll(this.getConstantOutAttributes());
+				var response = new ContextInformationList();
+				response.putAll(this.getOutputContextInformation());
+				response.putAll(this.getConstantOutputContextInformation());
 				return response;
 			};
 
 			/**
-			 * Updates and returns all available AttributeValues,
-			 * Attributes and Constant Attributes.
+			 * Updates and returns all available contextual information value and constant contextual information.
 			 *
 			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
-			 * @returns {?AttributeList}
+			 * @returns {?ContextInformationList}
 			 */
 			Widget.prototype.updateAndQueryWidget = function(callback) {
 				if(callback && typeof(callback) === 'function'){
@@ -3626,54 +3819,23 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 			};
 
 			/**
-			 * Sends all Attributes, specified in the given callback,
-			 * to components which are subscribed to this Callback.
+			 * Verifies if the contextual information match to the specified conditions in case any exists.
 			 *
-			 * @protected
-			 * @param {string} callback Name of the searched Callback.
-			 */
-			Widget.prototype._sendToSubscriber = function(callback) {
-				if (callback && callback instanceof Callback) {
-					var subscriberList = this._subscribers.getItems();
-					for (var i in subscriberList) {
-						var subscriber = subscriberList[i];
-						if (subscriber.getSubscriptionCallbacks().contains(callback)) {
-							if(this.dataValid(subscriber.getConditions())){
-								var subscriberInstance = this._discoverer.getComponent(subscriber.getSubscriberId());
-								var callSubset =  callback.getAttributeTypes();
-								var subscriberSubset = subscriber.getAttributesSubset();
-								var data = this.outAttributes.getSubset(callSubset);
-								if (subscriberSubset && subscriberSubset.size() > 0) {
-									data = data.getSubset(subscriberSubset);
-								}
-							}
-							if (data) {
-								subscriberInstance.putData(data);
-							}
-						}
-					}
-				}
-			};
-
-			/**
-			 * Verifies if the attributes match to the specified conditions in case any exists.
-			 *
-			 * @param {string} conditions List of Conditions that will be verified.
+			 * @param {ConditionList} conditionList List of Conditions that will be verified.
 			 * @returns {boolean}
 			 */
-			Widget.prototype._dataValid = function(conditions) {
-				if (conditions instanceof ConditionList) {
+			Widget.prototype._dataValid = function(conditionList) {
+				if (conditionList instanceof ConditionList) {
 					return true;
 				}
-				if (!conditions.isEmpty()) {
-					var items = _condition.getItems();
+				if (!conditionList.isEmpty()) {
+					var items = conditionList.getItems();
 					for (var i in items) {
 						var condition = items[i];
-						var conditionAttributeType = condition.getAttributeType();
-						var conditionAttributeTypeList = new AttributeTypeList()
-							.withItems(new Array(conditionAttributeType));
-						var newValue = this.getAttributes().getSubset(conditionAttributeTypeList);
-						var oldValue = this.getOldAttributes.getSubset(conditionAttributeTypeList);
+						var conditionContextInformation = condition.getContextInformation();
+						var conditionContextInformationList = new ContextInformationList().withItems(new Array(conditionContextInformation));
+						var newValue = this.getOutputContextInformation().getSubset(conditionContextInformationList);
+						var oldValue = this.getOldOutputContextInformation.getSubset(conditionContextInformationList);
 						return condition.compare(newValue, oldValue);
 					}
 				}
@@ -3688,24 +3850,13 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 			 */
 			Widget.prototype._intervalRunning = function() {
 				var self = this;
-				if (!isNaN(this.constructor.description.updateInterval) && this._updateInterval === null) {
+				if (typeof this.constructor.description.updateInterval !== "undefined" && !isNaN(this.constructor.description.updateInterval) && this._updateInterval === null) {
 					this.log("will query its context generator every "+this.constructor.description.updateInterval+" milliseconds ("+(this.constructor.description.updateInterval/1000)+" seconds).");
 					this._updateInterval = setInterval(function() {
 						self.log("Interval Trigger -> queryGenerator");
 						self.queryGenerator();
 					}, this.constructor.description.updateInterval);
 				}
-			};
-
-			/**
-			 * Returns true if the widget can satisfy the requested attribute type.
-			 *
-			 * @public
-			 * @param {Attribute} attribute
-			 * @returns {boolean}
-			 */
-			Widget.prototype.doesSatisfyTypeOf = function(attribute) {
-				return this._outAttributes.containsTypeOf(attribute);
 			};
 
 			/**
@@ -3735,13 +3886,13 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 		})();
 	}
 );
-define('interpreterResult',['attributeList'], function(AttributeList){
+define('interpreterResult',['contextInformationList'], function(ContextInformationList){
 	return (function() {
 		/**
-		 * Initializes the in- and outAttributes.
+		 * Initializes the input and output contextual information.
+		 * Contains the interpreted data, inclusive the input for the interpretation.
 		 *
-		 * @classdesc Contains the interpreted data, inclusive the input for the interpretation.
-		 * @constructs InterpreterResult
+		 * @class InterpreterResult
 		 */
 		function InterpreterResult() {
 			/**
@@ -3755,18 +3906,18 @@ define('interpreterResult',['attributeList'], function(AttributeList){
 			/**
 			 * Interpreted data.
 			 *
-			 * @type {AttributeList}
+			 * @type {ContextInformationList}
 			 * @private
 			 */
-			this._outAttributes = new AttributeList();
+			this._outContextInformation = new ContextInformationList();
 
 			/**
 			 * Data, which were used for the interpretation.
 			 *
-			 * @type {AttributeList}
+			 * @type {ContextInformationList}
 			 * @private
 			 */
-			this._inAttributes = new AttributeList();
+			this._inContextInformation = new ContextInformationList();
 
 
 			return this;
@@ -3784,24 +3935,24 @@ define('interpreterResult',['attributeList'], function(AttributeList){
 		};
 
 		/**
-		 * Builder for outAttributes.
+		 * Builder for output contextual information.
 		 *
-		 * @param {(AttributeList|Array)} attributeListOrArray values
+		 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray values
 		 * @returns {InterpreterResult}
 		 */
-		InterpreterResult.prototype.withOutAttributes = function(attributeListOrArray){
-			this.setOutAttributes(attributeListOrArray);
+		InterpreterResult.prototype.withOutContextInformation = function(contextInformationListOrArray){
+			this.setOutContextInformation(contextInformationListOrArray);
 			return this;
 		};
 
 		/**
-		 * Builder for inAttributes.
+		 * Builder for input contextual information.
 		 *
-		 * @param {(AttributeList|Array)} attributeListOrArray values
+		 * @param {(ContextInformationList|.<ContextInformation>)} contextInformationListOrArray values
 		 * @returns {InterpreterResult}
 		 */
-		InterpreterResult.prototype.withInAttributes = function(attributeListOrArray) {
-			this.setInAttributes(attributeListOrArray);
+		InterpreterResult.prototype.withInContextInformation = function(contextInformationListOrArray) {
+			this.setInContextInformation(contextInformationListOrArray);
 			return this;
 		};
 
@@ -3815,21 +3966,21 @@ define('interpreterResult',['attributeList'], function(AttributeList){
 		};
 
 		/**
-		 * Returns the interpreted attributes.
+		 * Returns the interpreted contextual information.
 		 *
-		 * @returns {AttributeList}
+		 * @returns {ContextInformationList}
 		 */
-		InterpreterResult.prototype.getOutAttributes = function(){
-			return this._outAttributes;
+		InterpreterResult.prototype.getOutContextInformation = function(){
+			return this._outContextInformation;
 		};
 
 		/**
-		 * Returns the inAttributes.
+		 * Returns the input contextual information.
 		 *
-		 * @returns {AttributeList}
+		 * @returns {ContextInformationList}
 		 */
-		InterpreterResult.prototype.getInAttributes = function(){
-			return this._inAttributes;
+		InterpreterResult.prototype.getInContextInformation = function(){
+			return this._inContextInformation;
 		};
 
 		/**
@@ -3846,42 +3997,43 @@ define('interpreterResult',['attributeList'], function(AttributeList){
 		/**
 		 * Sets the interpreted values.
 		 *
-		 * @param {(AttributeList|Array)} attributeListOrArray retrieved attributes
+		 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray The retrieved contextual information.
 		 */
-		InterpreterResult.prototype.setOutAttributes = function(attributeListOrArray){
-			if (attributeListOrArray instanceof Array) {
-				for(var i in attributeListOrArray){
-					this.outAttributes.put(attributeListOrArray[i]);
+		InterpreterResult.prototype.setOutContextInformation = function(contextInformationListOrArray){
+			if (contextInformationListOrArray instanceof Array) {
+				for(var i in contextInformationListOrArray){
+					this._outContextInformation.put(contextInformationListOrArray[i]);
 				}
-			} else if (attributeListOrArray.constructor === AttributeValueList) {
-				this.outAttributes = attributeListOrArray.getItems();
+			} else if (contextInformationListOrArray instanceof ContextInformationList) {
+				this._outContextInformation = contextInformationListOrArray.getItems();
 			}
 		};
 
 		/**
-		 * Sets the inAttributes.
+		 * Sets the put contextual information.
 		 *
-		 * @param {(AttributeList|Array)} attributeListOrArray inAttributes
+		 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray
 		 */
-		InterpreterResult.prototype.setInAttributes = function(attributeListOrArray){
-			if (attributeListOrArray instanceof Array) {
-				for(var i in attributeListOrArray){
-					this.inAttributes.put(attributeListOrArray[i]);
+		InterpreterResult.prototype.setInContextInformation = function(contextInformationListOrArray){
+			if (contextInformationListOrArray instanceof Array) {
+				for(var i in contextInformationListOrArray){
+					this._inContextInformation.put(contextInformationListOrArray[i]);
 				}
-			} else if (attributeListOrArray.constructor === AttributeValueList) {
-				this.inAttributes = attributeListOrArray.getItems();
+			} else if (contextInformationListOrArray instanceof ContextInformationList) {
+				this._inContextInformation = contextInformationListOrArray.getItems();
 			}
 		};
 
 		return InterpreterResult;
 	});
 });
-define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
-	function(Component, MathUuid, Attribute, AttributeList, InterpreterResult) {
+define('interpreter',['component', 'contextInformation', 'contextInformationList', 'interpreterResult' ],
+	function(Component, ContextInformation, ContextInformationList, InterpreterResult) {
 		return (function() {
 
 			/**
-			 * Defines all in and outAttributes as an object.
+			 * Defines all in and out contextual information as an object.
+			 *
 			 * @type {object}
 			 * @public
 			 */
@@ -3905,21 +4057,27 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 			 * Generates the id and initializes the (in and out) types and values.
 			 *
 			 * @abstract
-			 * @classdesc The Widget handles the access to sensors.
-			 * @constructs Interpreter
+			 * @class Interpreter
+			 * @extends Component
 			 */
 			function Interpreter(discoverer) {
 				Component.call(this, discoverer);
 
-				this.name = 'Interpreter';
+				/**
+				 * Name of the interpreter.
+				 *
+				 * @type {string}
+				 * @private
+				 */
+				this._name = 'Interpreter';
 
 				/**
-				 * Types of all attributes that can be handled.
+				 * Types of all contextual information that can be handled.
 				 *
 				 * @private
-				 * @type {AttributeList}
+				 * @type {ContextInformationList}
 				 */
-				this._inAttributes = new AttributeList();
+				this._inputContextInformation = new ContextInformationList();
 
 				/**
 				 * Last interpretation time.
@@ -3939,94 +4097,128 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 			Interpreter.prototype.constructor = Interpreter;
 
 			/**
-			 * Initializes interpreter and sets the expected inAttributes and provided outAttributes.
+			 * Initializes interpreter and sets the expected contextual information and provided output contextual information.
 			 *
 			 * @private
 			 */
 			Interpreter.prototype._initInterpreter = function() {
-				this._initInAttributes();
-				this._initOutAttributes();
+				this._initInputContextInformation();
+				this._initOutputContextInformation();
 			};
 
 			/**
-			 * Initializes the inAttributes.
+			 * Initializes the input contextual information.
 			 *
 			 * @private
 			 */
-			Interpreter.prototype._initInAttributes = function() {
-				this._inAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.description.in);
+			Interpreter.prototype._initInputContextInformation = function() {
+				this._setInputContextInformation(ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.in));
 			};
 
 			/**
-			 * Initializes the outAttributes.
+			 * Initializes the output contextual information.
 			 *
 			 * @private
 			 */
-			Interpreter.prototype._initOutAttributes = function() {
-				this._outAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.description.out);
+			Interpreter.prototype._initOutputContextInformation = function() {
+				this._setOutputContextInformation(ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.out));
 			};
 
 			/**
-			 * Returns the expected inAttributeTypes.
+			 * Convenience accessor for getOutputData.
+			 *
+			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray Contextual information that should be entered.
+			 * @returns {ContextInformationList}
+			 */
+			Interpreter.prototype.getOutputContextInformation = function(contextInformationListOrArray) {
+				return /** @type {ContextInformationList} */ this.getOutputData(contextInformationListOrArray);
+			};
+
+			/**
+			 * Convenience accessor for _setOutputData.
+			 *
+			 * @param contextInformation
+			 * @private
+			 */
+			Interpreter.prototype._setOutputContextInformation = function(contextInformation) {
+				this._setOutputData(contextInformation);
+			};
+
+			/**
+			 * Convenience accessor for _isOutputData.
+			 *
+			 * @param {ContextInformation} contextInformation
+			 * @returns {Boolean}
+			 * @private
+			 */
+			Interpreter.prototype._isOutputContextInformation = function(contextInformation) {
+				return this._isOutputData(contextInformation);
+			};
+
+			/**
+			 * Returns the expected input contextual information.
 			 *
 			 * @public
-			 * @returns {AttributeList}
+			 * @returns {ContextInformationList}
 			 */
-			Interpreter.prototype.getInAttributes = function() {
-				return this._inAttributes;
+			Interpreter.prototype.getInputContextInformation = function() {
+				return this._inputContextInformation;
 			};
 
 			/**
-			 * Sets an inAttribute.
+			 * Adds an input contextual information.
 			 *
 			 * @protected
-			 * @param {Attribute} attribute
+			 * @param {ContextInformation} contextInformation
 			 */
-			Interpreter.prototype._setInAttribute = function(attribute) {
-				this._inAttributes.put(attribute);
+			Interpreter.prototype._addInputContextInformation = function(contextInformation) {
+				this._inputContextInformation.put(contextInformation);
 			};
 
 			/**
-			 * Sets an inAttributes.
+			 * Sets the input contextual information.
 			 *
 			 * @protected
-			 * @param {(AttributeList|Array)} attributesOrArray Attributes to set.
+			 * @param {(ContextInformationList|Array)} contextInformationListOrArray The contextual information to set.
 			 */
-			Interpreter.prototype._setInAttributes = function(attributesOrArray) {
-				this._inAttributes = new AttributeList().withItems(attributesOrArray);
+			Interpreter.prototype._setInputContextInformation = function(contextInformationListOrArray) {
+				this._inputContextInformation = new ContextInformationList().withItems(contextInformationListOrArray);
 			};
 
 			/**
-			 * Verifies whether the specified attribute is contained in inAttributeList.
+			 * Verifies whether the specified contextual information is contained in _inputContextInformation.
 			 *
 			 * @protected
-			 * @param {Attribute} attribute Attribute that should be verified.
+			 * @param {ContextInformation} contextInformation The contextual information that should be verified.
 			 * @return {boolean}
 			 */
-			Interpreter.prototype._isInAttribute = function(attribute) {
-				return !!this._inAttributes.containsTypeOf(attribute);
+			Interpreter.prototype._isInputContextInformation = function(contextInformation) {
+				return !!this._inputContextInformation.containsKindOf(contextInformation);
 			};
 
 			/**
 			 * Validates the data and calls interpretData.
 			 *
 			 * @public
-			 * @param {AttributeList} inAttributes Data that should be interpreted.
-			 * @param {AttributeList} outAttributes
+			 * @param {ContextInformationList} inputContextInformation Data that should be interpreted.
+			 * @param {ContextInformationList} outputContextInformation
 			 * @param {?function} callback For additional actions, if an asynchronous function is used.
 			 */
-			Interpreter.prototype.callInterpreter = function(inAttributes, outAttributes, callback) {
+			Interpreter.prototype.callInterpreter = function(inputContextInformation, outputContextInformation, callback) {
 				var self = this;
 
-				if (!inAttributes || !this._canHandleInAttributes(inAttributes)) throw "Empty input attribute list or unhandled input attribute.";
-				if (!outAttributes || !this._canHandleOutAttributes(outAttributes)) throw "Empty output attribute list or unhandled output attribute.";
+				if (!inputContextInformation || !this._canHandleInputContextInformation(inputContextInformation)) throw "Empty input contextual information list or unhandled input contextual information.";
+				if (!outputContextInformation || !this._canHandleOutputContextInformation(outputContextInformation)) throw "Empty output contextual information list or unhandled output contextual information.";
 
-				this._interpretData(inAttributes, outAttributes, function(interpretedData) {
-					var response = new AttributeList().withItems(interpretedData);
+				// get expected input contextual information
+				var expectedInputContextInformation = this._getExpectedInputContextInformation(inputContextInformation);
 
-					if (!self._canHandleOutAttributes(response)) throw "Unhandled output attribute generated.";
+				this._interpretData(expectedInputContextInformation, outputContextInformation, function(interpretedData) {
+					var response = new ContextInformationList().withItems(interpretedData);
 
-					self._setInAttributes(inAttributes);
+					if (!self._canHandleOutputContextInformation(response)) throw "Unhandled output contextual information generated.";
+
+					self._setInputContextInformation(inputContextInformation);
 					self.lastInterpretation = new Date();
 
 					if (callback && typeof(callback) == 'function'){
@@ -4040,11 +4232,11 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 			 *
 			 * @abstract
 			 * @protected
-			 * @param {AttributeList} inAttributes
-			 * @param {AttributeList} outAttributes
+			 * @param {ContextInformationList} inContextInformation
+			 * @param {ContextInformationList} outContextInformation
 			 * @param {Function} callback
 			 */
-			Interpreter.prototype._interpretData = function (inAttributes, outAttributes, callback) {
+			Interpreter.prototype._interpretData = function (inContextInformation, outContextInformation, callback) {
 				throw Error("Abstract function call!");
 			};
 
@@ -4052,21 +4244,21 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 			 * Checks whether the specified data match the expected.
 			 *
 			 * @protected
-			 * @param {AttributeList|Array.<Attribute>} attributeListOrArray Data that should be verified.
+			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray Data that should be verified.
 			 */
-			Interpreter.prototype._canHandleInAttributes = function(attributeListOrArray) {
+			Interpreter.prototype._canHandleInputContextInformation = function(contextInformationListOrArray) {
 				var list = [];
-				if (attributeListOrArray instanceof Array) {
-					list = attributeListOrArray;
-				} else if (attributeListOrArray instanceof AttributeList) {
-					list = attributeListOrArray.getItems();
+				if (contextInformationListOrArray instanceof Array) {
+					list = contextInformationListOrArray;
+				} else if (contextInformationListOrArray instanceof ContextInformationList) {
+					list = contextInformationListOrArray.getItems();
 				}
-				if (list.length == 0 || attributeListOrArray.size() != this.getInAttributes().size()) {
+				if (list.length == 0 || contextInformationListOrArray.size() != this.getInputContextInformation().size()) {
 					return false;
 				}
-				for ( var i in list) {
-					var inAtt = list[i];
-					if (!this._isInAttribute(inAtt)) {
+				for (var i in list) {
+					var inContextInformation = list[i];
+					if (!this._isInputContextInformation(inContextInformation)) {
 						return false;
 					}
 				}
@@ -4077,25 +4269,43 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 			 * Checks whether the specified data match the expected.
 			 *
 			 * @protected
-			 * @param {AttributeList|Array.<Attribute>} attributeListOrArray Data that should be verified.
+			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray Data that should be verified.
 			 */
-			Interpreter.prototype._canHandleOutAttributes = function(attributeListOrArray) {
+			Interpreter.prototype._canHandleOutputContextInformation = function(contextInformationListOrArray) {
 				var list = [];
-				if (attributeListOrArray instanceof Array) {
-					list = attributeListOrArray;
-				} else if (attributeListOrArray.constructor === AttributeList) {
-					list = attributeListOrArray.getItems();
+				if (contextInformationListOrArray instanceof Array) {
+					list = contextInformationListOrArray;
+				} else if (contextInformationListOrArray instanceof ContextInformationList) {
+					list = contextInformationListOrArray.getItems();
 				}
-				if (list.length == 0 || attributeListOrArray.size() != this.getOutAttributes().size()) {
+				if (list.length == 0 || contextInformationListOrArray.size() != this.getOutputContextInformation().size()) {
 					return false;
 				}
-				for ( var i in list) {
-					var inAtt = list[i];
-					if (!this._isOutAttribute(inAtt)) {
+				for (var i in list) {
+					var outContextInformation = list[i];
+					if (!this._isOutputContextInformation(outContextInformation)) {
 						return false;
 					}
 				}
 				return true;
+			};
+
+			/**
+			 * Returns a contextual information list which consists of the synonyms that are expected by the interpreter, if possible.
+			 *
+			 * @param {ContextInformationList} contextInformationList
+			 * @returns {*}
+			 * @private
+			 */
+			Interpreter.prototype._getExpectedInputContextInformation = function(contextInformationList) {
+				var self = this;
+				var expectedContextInformation = new ContextInformationList();
+
+				contextInformationList.getItems().forEach(function(contextInformation, index) {
+					expectedContextInformation.put(contextInformation.getSynonymWithName(self.getInputContextInformation().getItems()[index].getName()).setValue(contextInformation.getValue()));
+				});
+
+				return expectedContextInformation;
 			};
 
 			/**
@@ -4104,7 +4314,7 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 			 * @public
 			 * @returns {Date}
 			 */
-			Interpreter.prototype.getLastInterpretionTime = function() {
+			Interpreter.prototype.getLastInterpretationTime = function() {
 				return this._lastInterpretation;
 			};
 
@@ -4112,42 +4322,33 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 			 *
 			 * @returns {boolean}
 			 */
-			Interpreter.prototype.hasOutAttributesWithInputParameters = function() {
-				return this._outAttributes.hasAttributesWithInputParameters();
+			Interpreter.prototype.hasOutputContextInformationWithInputParameters = function() {
+				return this._outputData.hasContextInformationWithInputParameters();
 			};
 
 			/**
 			 *
-			 * @returns {AttributeList}
+			 * @returns {ContextInformationList}
 			 */
-			Interpreter.prototype.getOutAttributesWithInputParameters = function() {
-				return this._outAttributes.getAttributesWithInputParameters();
-			};
-
-			/**
-			 *
-			 * @param {Attribute}attribute
-			 * @returns {boolean}
-			 */
-			Interpreter.prototype.doesSatisfyTypeOf = function(attribute) {
-				return this._outAttributes.containsTypeOf(attribute);
+			Interpreter.prototype.getOutputContextInformationWithInputParameters = function() {
+				return this._outputData.getContextInformationWithInputParameters();
 			};
 
 			return Interpreter;
 		})();
 	}
 );
-define('interpretation',['interpreter', 'attributeList'], function(Interpreter, AttributeList) {
+define('interpretation',['interpreter', 'contextInformationList'], function(Interpreter, ContextInformationList) {
     return (function () {
         /**
          *
          * @param {String} interpreterId
-         * @param {AttributeList} inAttributes
-         * @param {AttributeList} outAttributes
+         * @param {ContextInformationList} inContextInformation
+         * @param {ContextInformationList} outContextInformation
          * @returns {Interpretation}
-         * @constructs Interpretation
+         * @class Interpretation
          */
-        function Interpretation(interpreterId, inAttributes, outAttributes) {
+        function Interpretation(interpreterId, inContextInformation, outContextInformation) {
             /**
              *
              * @type {String}
@@ -4156,15 +4357,15 @@ define('interpretation',['interpreter', 'attributeList'], function(Interpreter, 
 
             /**
              *
-             * @type {AttributeList}
+             * @type {ContextInformationList}
              */
-            this.inAttributeTypes = inAttributes;
+            this.inContextInformation = inContextInformation;
 
             /**
              *
-             * @type {AttributeList}
+             * @type {ContextInformationList}
              */
-            this.outAttributeTypes = outAttributes;
+            this.outContextInformation = outContextInformation;
 
             return this;
         }
@@ -4172,20 +4373,19 @@ define('interpretation',['interpreter', 'attributeList'], function(Interpreter, 
         return Interpretation;
     })();
 });
-define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subscriberList', 'callbackList', 'storage', 'interpreter', 'interpretation'],
- 	function(MathUuid, Widget, Attribute, AttributeList, Subscriber, SubscriberList, CallbackList, Storage, Interpreter, Interpretation){
+define('aggregator',['queryable', 'widget', 'contextInformation', 'contextInformationList', 'subscriber', 'subscriberList', 'callbackList', 'storage', 'interpreter', 'interpretation'],
+ 	function(Queryable, Widget, ContextInformation, ContextInformationList, Subscriber, SubscriberList, CallbackList, Storage, Interpreter, Interpretation){
 		return (function() {
 			/**
 			 * Generates the id and initializes the Aggregator.
 			 *
+			 * @class Aggregator
+			 * @extends Queryable
 			 * @param {Discoverer} discoverer
-			 * @param {AttributeList} attributes
-			 * @classdesc The Widget handles the access to sensors.
-			 * @constructs Aggregator
-			 * @extends Widget
+			 * @param {ContextInformationList} contextInformation
 			 */
-			function Aggregator(discoverer, attributes) {
-				Widget.call(this, discoverer, attributes);
+			function Aggregator(discoverer, contextInformation) {
+				Queryable.call(this, discoverer);
 
 				/**
 				 * Name of the Aggregator.
@@ -4217,12 +4417,13 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 				 */
 				this._storage = new Storage("DB_Aggregator", 7200000, 5, this);
 
-				this._aggregatorSetup(attributes);
+				this._register();
+				this._aggregatorSetup(contextInformation);
 
 				return this;
 			}
 
-			Aggregator.prototype = Object.create(Widget.prototype);
+			Aggregator.prototype = Object.create(Queryable.prototype);
 			Aggregator.prototype.constructor = Aggregator;
 
 			/**
@@ -4275,37 +4476,37 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			};
 
 			/**
-			 * Retrieves all Attributes of the specified widgets.
+			 * Retrieves all contextual information of the specified widgets.
 			 *
 			 * @protected
 			 */
-			Aggregator.prototype._initOutAttributes = function() {
+			Aggregator.prototype._initOutputContextInformation = function() {
 				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
 						/** @type {Widget} */
 						var theWidget = this._discoverer.getComponent(widgetId);
 						if (theWidget) {
-							this._setOutAttributes(theWidget.getOutAttributes());
+							this._setOutputContextInformation(theWidget.getOutputContextInformation());
 						}
 					}
 				}
 			};
 
 			/**
-			 * Retrieves all ConstantAttributes of the specified widgets.
+			 * Retrieves all constant contextual information of the specified widgets.
 			 *
 			 * @protected
 			 * @override
 			 */
-			Aggregator.prototype._initConstantOutAttributes = function() {
+			Aggregator.prototype._initConstantOutputContextInformation = function() {
 				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
 						/** @type {Widget} */
 						var theWidget = this._discoverer.getComponent(widgetId);
 						if (theWidget) {
-							this._setConstantOutAttributes(theWidget.getConstantOutAttributes());
+							this._setConstantOutputContextInformation(theWidget.getConstantOutputContextInformation());
 						}
 					}
 				}
@@ -4318,6 +4519,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * @override
 			 */
 			Aggregator.prototype._initCallbacks = function() {
+				new Error("Call the aggregator _initCallbacks.");
 				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
@@ -4330,40 +4532,40 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * InitMethod for Aggregators. Called by constructor. Initializes the associated Storage.
 			 *
 			 * @protected
-			 * @param {AttributeList} attributes
+			 * @param {ContextInformationList} contextInformationList
 			 */
-			Aggregator.prototype._aggregatorSetup = function(attributes) {
-				this._setAggregatorAttributeValues(attributes);
-				this._setAggregatorConstantAttributeValues();
+			Aggregator.prototype._aggregatorSetup = function(contextInformationList) {
+				this._setAggregatorOutputContextInformation(contextInformationList);
+				this._setAggregatorConstantContextInformation();
 				this._setAggregatorCallbacks();
 
 				this.didFinishSetup();
 			};
 
 			/**
-			 * Initializes the provided attributeValues that are only specific to the Aggregator.
+			 * Initializes the provided contextual information that are only specific to the Aggregator.
 			 * Called by aggregatorSetup().
 			 *
-			 * @param {AttributeList} attributes
+			 * @param {ContextInformationList} contextInformationList
 			 * @protected
 			 */
-			Aggregator.prototype._setAggregatorAttributeValues = function(attributes) {
-				if (attributes instanceof AttributeList) {
-					for (var index in attributes.getItems()) {
-						var theAttribute = attributes.getItems()[index];
-						this.addOutAttribute(theAttribute);
+			Aggregator.prototype._setAggregatorOutputContextInformation = function(contextInformationList) {
+				if (contextInformationList instanceof ContextInformationList) {
+					for (var index in contextInformationList.getItems()) {
+						var theContextInformation = contextInformationList.getItems()[index];
+						this.addOutputContextInformation(theContextInformation);
 					}
 				}
 			};
 
 			/**
-			 * Initializes the provided ConstantAttributeValues that are only specific to the Aggregator.
+			 * Initializes the provided constant contextual information that are only specific to the Aggregator.
 			 * Called by aggregatorSetup().
 			 *
 			 * @virtual
 			 * @protected
 			 */
-			Aggregator.prototype._setAggregatorConstantAttributeValues = function() {
+			Aggregator.prototype._setAggregatorConstantContextInformation = function() {
 
 			};
 
@@ -4379,13 +4581,13 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			};
 
 			/**
-			 * Returns the current Attributes that are saved in the cache.
+			 * Returns the current contextual information that are saved in the cache.
 			 *
 			 * @public
-			 * @returns {AttributeList}
+			 * @returns {ContextInformationList}
 			 */
 			Aggregator.prototype.getCurrentData = function() {
-				return this._outAttributes;
+				return this._outputData;
 			};
 
 			/**
@@ -4402,7 +4604,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 					var subscriber = new Subscriber().withSubscriberId(this.getId()).
 						withSubscriberName(this.getName()).
 						withSubscriptionCallbacks(callbacks).
-						withAttributesSubset(subSet).
+						withContextInformationSubset(subSet).
 						withConditions(conditions);
 					widget.addSubscriber(subscriber);
 				}
@@ -4453,10 +4655,10 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 						var callsList = callbackList.getItems();
 						for(var x in callsList){
 							var singleCallback = callsList[x];
-							var typeList = singleCallback.getAttributeTypes().getItems();
+							var typeList = singleCallback.getContextInformation().getItems();
 							for(var y in typeList){
 								var singleType = typeList[y];
-								this.addOutAttribute(singleType);
+								this.addOutputContextInformation(singleType);
 							}
 						}
 						this.addWidget(widgetIdOrWidget);
@@ -4487,40 +4689,40 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 *
 			 * @override
 			 * @public
-			 * @param {(AttributeList|Array)} attributeListOrArray data that shall be input
+			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray data that shall be input
 			 */
-			Aggregator.prototype.putData = function(attributeListOrArray){
+			Aggregator.prototype.putData = function(contextInformationListOrArray){
 				this.log("did receive data from a subscribed component.");
 
 				var list = [];
 
-				// prepare attributes
-				if(attributeListOrArray instanceof Array){
-					list = attributeListOrArray;
-				} else if (attributeListOrArray instanceof AttributeList) {
-					list = attributeListOrArray.getItems();
+				// prepare contextual information
+				if(contextInformationListOrArray instanceof Array){
+					list = contextInformationListOrArray;
+				} else if (contextInformationListOrArray instanceof ContextInformationList) {
+					list = contextInformationListOrArray.getItems();
 				}
 
 				var interpretationsToBeQueried = [];
 
-				// add attributes to memory and persistent storage
+				// add contextual information to memory and persistent storage
 				for(var i in list){
-					var theAttribute = list[i];
-					if(theAttribute instanceof Attribute && this._isOutAttribute(theAttribute)){
-						this.addOutAttribute(theAttribute);
+					var theContextInformation = list[i];
+					if(theContextInformation instanceof ContextInformation && this._isOutputContextInformation(theContextInformation)){
+						this.addOutputContextInformation(theContextInformation);
 						if(this._storage) {
-							this._store(theAttribute);
+							this._store(theContextInformation);
 						}
 
 						// check for interpreters to be called
 						if (this._interpretations.length > 0) {
 							for (var index in this._interpretations) {
 								var theInterpretation = this._interpretations[index];
-								var inAttributes = theInterpretation.inAttributeTypes;
+								var inContextInformation = theInterpretation.inContextInformation;
 
-								if (inAttributes.containsTypeOf(theAttribute)) {
+								if (inContextInformation.containsKindOf(theContextInformation)) {
 									if ($.inArray(theInterpretation, interpretationsToBeQueried) == -1) {
-										this.log("found an new interpretation that needs "+theAttribute+".");
+										this.log("found an new interpretation that needs "+theContextInformation+".");
 										interpretationsToBeQueried.push(theInterpretation);
 									}
 								}
@@ -4531,7 +4733,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 
 				// call interpretations
 				for (var index in interpretationsToBeQueried) {
-					this.queryReferencedInterpretation(this._interpretations[index]);
+					this.queryReferencedInterpretation(interpretationsToBeQueried[index]);
 				}
 			};
 
@@ -4540,14 +4742,14 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 *
 			 * @public
 			 * @param {String} interpreterId ID of the searched Interpreter
-			 * @param {AttributeList} inAttributes
-			 * @param {AttributeList} outAttributes
+			 * @param {ContextInformationList} inContextInformation
+			 * @param {ContextInformationList} outContextInformation
 			 * @param {?function} callback for additional actions, if an asynchronous function is used
 			 */
-			Aggregator.prototype.interpretData = function(interpreterId, inAttributes, outAttributes, callback){
+			Aggregator.prototype.interpretData = function(interpreterId, inContextInformation, outContextInformation, callback){
 				var interpreter = this._discoverer.getComponent(interpreterId);
 				if (interpreter instanceof Interpreter) {
-					interpreter.callInterpreter(inAttributes, outAttributes, callback);
+					interpreter.callInterpreter(inContextInformation, outContextInformation, callback);
 				}
 			};
 
@@ -4555,10 +4757,10 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * Stores the data.
 			 *
 			 * @protected
-			 * @param {Attribute} attribute data that should be stored
+			 * @param {ContextInformation} contextInformation data that should be stored
 			 */
-			Aggregator.prototype._store = function(attribute) {
-				this._storage.store(attribute);
+			Aggregator.prototype._store = function(contextInformation) {
+				this._storage.store(contextInformation);
 			};
 
 			/**
@@ -4569,16 +4771,16 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * in retrieveStorage().
 			 *
 			 * @public
-			 * @param {String} name Name of the searched AtTributes.
+			 * @param {String} name Name of the searched contextual information.
 			 * @param {?function} callback for alternative  actions, because an asynchronous function is used
 			 */
-			Aggregator.prototype.queryAttribute = function(name, callback){
-				this._storage.retrieveAttributes(name, callback);
+			Aggregator.prototype.queryContextInformation = function(name, callback){
+				this._storage.retrieveContextInformation(name, callback);
 			};
 
 			/**
 			 * Queries a specific table and only actualizes the storage cache.
-			 * For an alternativ action can be used a callback.
+			 * For an alternative action can be used a callback.
 			 *
 			 * @public
 			 * @returns {RetrievalResult}
@@ -4588,8 +4790,8 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			};
 
 			/**
-			 * Returns an overview about the stored attributes.
-			 * It may be that the overview about the stored attributes is not up to date,
+			 * Returns an overview about the stored contextual information.
+			 * It may be that the overview about the stored contextual information is not up to date,
 			 * because an asynchronous function is used for the retrieval.
 			 * For retrieving the current data, this function can be used as callback function
 			 * in queryTables().
@@ -4598,18 +4800,18 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * @returns {?Array}
 			 */
 			Aggregator.prototype.getStorageOverview = function() {
-				return this._storage.getAttributesOverview();
+				return this._storage.getContextInformationOverview();
 			};
 
 			/**
-			 * Only updates the attribute cache in the database.
+			 * Only updates the contextual information cache in the database.
 			 * For an alternative action a callback can be used.
 			 *
 			 * @public
 			 * @param {?function} callback for alternative actions, because an asynchronous function is used
 			 */
 			Aggregator.prototype.queryTables = function(callback) {
-				this._storage.getAttributeNames(callback);
+				this._storage.getContextInformationNames(callback);
 			};
 
 			/**
@@ -4635,10 +4837,10 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 				var self = this;
 
 				var theInterpreterId = theInterpretation.interpreterId;
-				var interpretationInAttributeValues = this.getOutAttributes(theInterpretation.inAttributeTypes);
-				var interpretationOutAttributeValues = this.getOutAttributes(theInterpretation.outAttributeTypes);
+				var interpretationInContextInformation = this.getOutputContextInformation(theInterpretation.inContextInformation);
+				var interpretationOutContextInformation = this.getOutputContextInformation(theInterpretation.outContextInformation);
 
-				this.interpretData(theInterpreterId, interpretationInAttributeValues, interpretationOutAttributeValues, function(interpretedData) {
+				this.interpretData(theInterpreterId, interpretationInContextInformation, interpretationOutContextInformation, function(interpretedData) {
 					self.putData(interpretedData);
 
 					if (callback && typeof(callback) == 'function') {
@@ -4677,16 +4879,16 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 *
 			 * @override
 			 * @public
-			 * @param {Attribute} attribute
+			 * @param {ContextInformation} contextInformation
 			 * @returns {boolean}
 			 */
-			Aggregator.prototype.doesSatisfyTypeOf = function(attribute) {
+			Aggregator.prototype.doesSatisfyKindOf = function(contextInformation) {
 				var componentUUIDs = this.getComponentUUIDs();
 				var doesSatisfy = false;
 
 				for (var index in componentUUIDs) {
 					var theComponent = this._discoverer.getComponent(componentUUIDs[index]);
-					if (theComponent.doesSatisfyTypeOf(attribute)) {
+					if (theComponent.doesSatisfyKindOf(contextInformation)) {
 						doesSatisfy = true;
 					}
 				}
@@ -4695,33 +4897,33 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			};
 
 			/**
-			 * Searches for components that can satisfy the requested attributes. Through recursion it is possible to search
-			 * for components that satisfy attributes of components that have been found in the process.
+			 * Searches for components that can satisfy the requested contextual information. Through recursion it is possible to search
+			 * for components that satisfy the contextual information of the components that have been found in the process.
 			 *
 			 * @private
-			 * @param {AttributeList} unsatisfiedAttributes A list of attributes that components should be searched for.
-			 * @param {boolean} all If true all attributes must be satisfied by a single component.
+			 * @param {ContextInformationList} unsatisfiedContextInformation A list of contextual information that components should be searched for.
+			 * @param {boolean} all If true all contextual information must be satisfied by a single component.
 			 * @param {Array} componentTypes An array of components classes that should be searched for (e.g. Widget, Interpreter and Aggregator).
 			 */
-			Aggregator.prototype._getComponentsForUnsatisfiedAttributes = function(unsatisfiedAttributes, all, componentTypes) {
+			Aggregator.prototype._getComponentsForUnsatisfiedContextInformation = function(unsatisfiedContextInformation, all, componentTypes) {
 				// ask the discoverer for components that satisfy the requested components
-				this.log("needs to satisfy Attributes and will ask the Discoverer.");
-				this._discoverer.getComponentsForUnsatisfiedAttributes(this.getId(), unsatisfiedAttributes, all, componentTypes);
+				this.log("needs to satisfy contextual information and will ask the Discoverer.");
+				this._discoverer.getComponentsForUnsatisfiedContextInformation(this.getId(), unsatisfiedContextInformation, all, componentTypes);
 			};
 
 			/**
-			 * After the aggregator finished its setup start searching for component that satisfy the attributes that where requrested.
+			 * After the aggregator finished its setup start searching for component that satisfy the contextual information that where requested.
 			 *
 			 * @public
 			 * @virtual
 			 */
 			Aggregator.prototype.didFinishSetup = function() {
-				var unsatisfiedAttributes = this.getOutAttributes().clone();
+				var unsatisfiedContextInformation = this.getOutputData().clone();
 
-				// get all components that satisfy attribute types
-				this._getComponentsForUnsatisfiedAttributes(unsatisfiedAttributes, false, [Widget, Interpreter]);
-				this.log("Unsatisfied attributes: "+unsatisfiedAttributes.size());
-				this.log("Satisfied attributes: "+this.getOutAttributes().size());
+				// get all components that satisfy contextual information
+				this._getComponentsForUnsatisfiedContextInformation(unsatisfiedContextInformation, false, [Widget, Interpreter]);
+				this.log("Unsatisfied contextual information: "+unsatisfiedContextInformation.size());
+				this.log("Satisfied contextual information: "+this.getOutputData().size());
 				this.log("Interpretations "+this._interpretations.length);
 			};
 
@@ -4746,14 +4948,14 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 							completedQueriesCounter++;
 							if (completedQueriesCounter == self._widgets.length) {
 								if (callback && typeof(callback) == 'function') {
-									callback(self.getOutAttributes());
+									callback(self.getOutputContextInformation());
 								}
 							}
 						});
 					}
 				} else {
 					if (callback && typeof(callback) == 'function') {
-						callback(self.getOutAttributes());
+						callback(self.getOutputContextInformation());
 					}
 				}
 			};
@@ -4780,14 +4982,14 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 							completedQueriesCounter++;
 							if (completedQueriesCounter == self._interpretations.length) {
 								if (callback && typeof(callback) == 'function') {
-									callback(self.getOutAttributes());
+									callback(self.getOutputContextInformation());
 								}
 							}
 						});
 					}
 				} else {
 					if (callback && typeof(callback) == 'function') {
-						callback(self.getOutAttributes());
+						callback(self.getOutputContextInformation());
 					}
 				}
 			};
@@ -4802,10 +5004,10 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 
 				var self = this;
 
-				this.queryReferencedWidgets(function(_attributeValues) {
-					self.queryReferencedInterpretations(function(_attributeValues) {
+				this.queryReferencedWidgets(function(_contextInformation) {
+					self.queryReferencedInterpretations(function(_contextInformation) {
 						if (callback && typeof(callback) == 'function') {
-							callback(_attributeValues);
+							callback(_contextInformation);
 						}
 					});
 				});
@@ -4885,33 +5087,32 @@ define('unequals',['conditionMethod'], function(ConditionMethod){
  * 
  * @module Translation
  */
-define('translation', ['attribute'], function(Attribute) {
+define('translation', ['contextInformation'], function(ContextInformation) {
 	return (function() {
 		/**
-		 * Constructs a translation tuple.
+		 * This class represents a translation tuple. It holds two synonymous contextual information.
 		 *
-		 * @classdesc This class represents a translation tuple. It holds two synonymous attribute types.
-		 * @requires attribute
-		 * @constructs Translation
+		 * @requires ContextInformation
+		 * @class Translation
 		 */
-		function Translation(fromAttribute, toAttribute) {
+		function Translation(fromContextInformation, toContextInformation) {
 			/**
 			 *
-			 * @type {?Attribute}
+			 * @type {?ContextInformation}
 			 * @private
 			 */
-			this._fromAttribute = null;
+			this._fromContextInformation = null;
 
 			/**
 			 *
-			 * @type {?Attribute}
+			 * @type {?ContextInformation}
 			 * @private
 			 */
-			this._toAttribute = null;
+			this._toContextInformation = null;
 
-			if (fromAttribute instanceof Attribute && toAttribute instanceof Attribute) {
-				this._fromAttribute = fromAttribute;
-				this._toAttribute = toAttribute;
+			if (fromContextInformation instanceof ContextInformation && toContextInformation instanceof ContextInformation) {
+				this._fromContextInformation = fromContextInformation;
+				this._toContextInformation = toContextInformation;
 			}
 
 			return this;
@@ -4920,70 +5121,70 @@ define('translation', ['attribute'], function(Attribute) {
 		/**
 		 * Return the target synonym.
 		 *
-		 * @returns {Attribute} The synonymous attribute
+		 * @returns {ContextInformation} The synonymous contextual information.
 		 */
 		Translation.prototype.getSynonym = function() {
-			return this._toAttribute;
+			return this._toContextInformation;
 		};
 
 		/**
-		 * Return the original attribute for which a translation exists.
+		 * Return the original contextual information for which a translation exists.
 		 *
-		 * @returns {Attribute} The original attribute
+		 * @returns {ContextInformation} The original contextual information
 		 */
 		Translation.prototype.getOrigin = function() {
-			return this._fromAttribute;
+			return this._fromContextInformation;
 		};
 
 		/**
 		 * Look for a translation and return true if one exists.
 		 *
-		 * @param {Attribute} attribute Attribute whose synonym is queried
+		 * @param {ContextInformation} contextInformation The contextual information whose synonym is queried.
 		 * @returns {boolean}
 		 */
-		Translation.prototype.hasTranslation = function(attribute) {
-			return this._fromAttribute.equalsTypeOf(attribute);
+		Translation.prototype.hasTranslation = function(contextInformation) {
+			return this._fromContextInformation.isKindOf(contextInformation);
 		};
 
 		/**
 		 * Look for a translation result and return true if one exists.
 		 *
-		 * @param {Attribute} attribute Attribute whose synonym is queried
+		 * @param {ContextInformation} contextInformation The contextual information whose synonym is queried
 		 * @returns {boolean}
 		 */
-		Translation.prototype.isTranslation = function(attribute) {
-			return this._toAttribute.equalsTypeOf(attribute);
+		Translation.prototype.isTranslation = function(contextInformation) {
+			return this._toContextInformation.isKindOf(contextInformation);
 		};
 
 		/**
-		 * Look for a translation and return the (translated) attribute.
+		 * Look for a translation and return the (translated) contextual information.
 		 *
-		 * @param {Attribute} attribute Attribute whose synonym is queried
-		 * @returns {Attribute}
+		 * @param {ContextInformation} contextInformation The contextual information whose synonym is queried
+		 * @returns {ContextInformation}
 		 */
-		Translation.prototype.translate = function(attribute) {
-			if (this.hasTranslation(attribute) && !attribute.hasSynonym(this._toAttribute)) {
-				return attribute.withSynonym(this._toAttribute);
+		Translation.prototype.translate = function(contextInformation) {
+			if (this.hasTranslation(contextInformation) && !contextInformation.hasSynonym(this._toContextInformation)) {
+				return contextInformation.withSynonym(this._toContextInformation);
 			}
-			else if (this.isTranslation(attribute) && !attribute.hasSynonym(this._fromAttribute)) {
-				return attribute.withSynonym(this._fromAttribute);
+			else if (this.isTranslation(contextInformation) && !contextInformation.hasSynonym(this._fromContextInformation)) {
+				return contextInformation.withSynonym(this._fromContextInformation);
 			}
 			else {
-				return attribute;
+				return contextInformation;
 			}
 		};
 
 		return Translation;
 	})();
 });
-define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', 'parameterList', 'widget', 'interpreter', 'aggregator',  'interpretation' ],
-	function(AttributeList, Attribute, Translation, Parameter, ParameterList, Widget, Interpreter, Aggregator, Interpretation) {
+define('discoverer',['contextInformation', 'contextInformationList', 'translation', 'parameter', 'parameterList', 'widget', 'interpreter', 'aggregator',  'interpretation' ],
+	function(ContextInformation, ContextInformationList, Translation, Parameter, ParameterList, Widget, Interpreter, Aggregator, Interpretation) {
 		return (function() {
 			/**
-			 * Constructor: All known components given in the associated functions will be registered as startup.
+			 * The Discoverer handles requests for components and contextual information.
+			 * All known components given in the associated functions will be registered as startup.
 			 *
-			 * @classdesc The Discoverer handles requests for components and attributes.
-			 * @constructs Discoverer
+			 * @class Discoverer
 			 */
 			function Discoverer(widgets, interpreters, translations) {
 				/**
@@ -5028,7 +5229,7 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 				this._unregisteredInterpreters = interpreters;
 
 				/**
-				 * List of translations or synonymous attributes, respectively.
+				 * List of translations or synonymous contextual information, respectively.
 				 *
 				 * @type {Array}
 				 * @private
@@ -5041,27 +5242,27 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
                     var translationArray = translations[i];
 					// check for correct cardinality
                     if (translationArray.length != 2)
-                        throw new Error("Translations must consist of exactly 2 attributes!");
-					// check for correct number of attribute building blocks
+                        throw new Error("Translations must consist of exactly 2 contextual information!");
+					// check for correct number of contextual information building blocks
 					for (var j in translationArray) {
                         if (translationArray[j].length > 3 || translationArray[j].length < 2)
                             throw new Error("Please provide a name, type and (optional) list of parameters!");
                     }
-					// build attributes from arrays containing name, type (and parameters)
-                    var firstAttribute = this.buildAttribute(
+					// build contextual information from arrays containing name, type (and parameters)
+                    var firstContextInformation = this.buildContextInformation(
                         translationArray[0][0],
                         translationArray[0][1],
                         translationArray[0][2],
                         false
                     );
-                    var secondAttribute = this.buildAttribute(
+                    var secondContextInformation = this.buildContextInformation(
                         translationArray[1][0],
                         translationArray[1][1],
                         translationArray[1][2],
                         false
                     );
-					// add built attributes to translations
-                    this._translations.push(new Translation(firstAttribute, secondAttribute));
+					// add built contextual information to translations
+                    this._translations.push(new Translation(firstContextInformation, secondContextInformation));
                 }
 
 				return this;
@@ -5178,31 +5379,31 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 			};
 
 			/**
-			 * Returns all registered components that have the specified attribute as
-			 * outAttribute. It can be chosen between the verification of
-			 * all attributes or at least one attribute.
+			 * Returns all registered components that have the specified contextual information as
+			 * outputContextInformation. It can be chosen between the verification of
+			 * all contextual information or at least one information.
 			 *
-			 * @param {AttributeList|Array} attributeListOrArray list of searched attributes
-			 * @param {Boolean} all choise of the verification mode
-			 * @param {Array} componentTypes Components types to search for
+			 * @param {ContextInformationList|Array.<ContextInformation>} contextInformationListOrArray A list of searched contextual information.
+			 * @param {Boolean} all Selection of the verification mode.
+			 * @param {Array} componentTypes Components types to search for.
 			 * @returns {Array}
 			 */
-			Discoverer.prototype.getRegisteredComponentsByAttributes = function(attributeListOrArray, all, componentTypes) {
+			Discoverer.prototype.getRegisteredComponentsByContextInformation = function(contextInformationListOrArray, all, componentTypes) {
 				var componentList = [];
 				var list = [];
 				if (typeof componentTypes == "undefined") componentTypes = [Widget, Interpreter, Aggregator];
-				if (attributeListOrArray instanceof Array) {
-					list = attributeListOrArray;
-				} else if (attributeListOrArray.constructor === AttributeList) {
-					list = attributeListOrArray.getItems();
+				if (contextInformationListOrArray instanceof Array) {
+					list = contextInformationListOrArray;
+				} else if (contextInformationListOrArray instanceof ContextInformationList) {
+					list = contextInformationListOrArray.getItems();
 				}
 				if (typeof list != "undefined") {
 					var components = this.getComponents(componentTypes);
 					for (var i in components) {
 						var theComponent = components[i];
-						if(all && this._containsAllAttributes(theComponent, list)) {
+						if(all && this._containsAllContextInformation(theComponent, list)) {
 							componentList.push(theComponent);
-						} else if(!all && this._containsAtLeastOneAttribute(theComponent, list)) {
+						} else if(!all && this._containsAtLeastOneContextInformation(theComponent, list)) {
 							componentList.push(theComponent);
 						}
 					}
@@ -5220,23 +5421,23 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 			};
 
 			/**
-			 * Builds a new attribute from given name, type and parameters,
+			 * Builds a new {ContextInformation} from given name, type and parameters,
 			 * adding known translations to its synonyms.
 			 *
-			 * @param attributeName
-			 * @param attributeType
-			 * @param {Array} [parameterList=[]]
-             * @param {Boolean} [withSynonyms=true]
-			 * @returns {Attribute}
+			 * @param {string} contextInformationName
+			 * @param {string} contextInformationDataType
+			 * @param {array} [parameterList=[]]
+             * @param {boolean} [withSynonyms=true]
+			 * @returns {ContextInformation}
 			 */
-			Discoverer.prototype.buildAttribute = function(attributeName, attributeType, parameterList, withSynonyms) {
+			Discoverer.prototype.buildContextInformation = function(contextInformationName, contextInformationDataType, parameterList, withSynonyms) {
 				if (typeof withSynonyms == 'undefined') withSynonyms = true;
 				if (typeof parameterList == 'undefined') parameterList = [];
 
-                if (typeof attributeName != 'string' || typeof attributeType != 'string')
+                if (typeof contextInformationName != 'string' || typeof contextInformationDataType != 'string')
                     throw new Error("Parameters name and type must be of type String!");
 
-                var newAttribute = new Attribute(true).withName(attributeName).withType(attributeType);
+                var newContextInformation = new ContextInformation(true).withName(contextInformationName).withDataType(contextInformationDataType);
 
 				for (var i = 0; i < parameterList.length; i++) {
 					var param = parameterList[i];
@@ -5244,17 +5445,17 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 					var type = param[1];
 					var key = param[0];
 					if (typeof key != 'undefined' && typeof value != 'undefined')
-						newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withType(type).withValue(value));
+						newContextInformation = newContextInformation.withParameter(new Parameter().withKey(key).withDataType(type).withValue(value));
 				}
 
                 if (withSynonyms) {
                     for (var index in this._translations) {
                         var translation = this._translations[index];
-						newAttribute = translation.translate(newAttribute);
+						newContextInformation = translation.translate(newContextInformation);
                     }
                 }
 
-				return newAttribute;
+				return newContextInformation;
 			};
 
 
@@ -5262,17 +5463,17 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 			 * Helper *
 			 **********************************************************************/
 			/**
-			 * Helper: Verifies whether a component description contains all searched attributes.
+			 * Helper: Verifies whether a component description contains all searched contextual information.
 			 *
 			 * @private
 			 * @param {Widget|Interpreter|Aggregator} component description of a component
-			 * @param {Array} list searched attributes
+			 * @param {Array} list searched contextual information
 			 * @returns {boolean}
 			 */
-			Discoverer.prototype._containsAllAttributes = function(component, list) {
+			Discoverer.prototype._containsAllContextInformation = function(component, list) {
 				for (var j in list) {
-					var attribute = list[j];
-					if (!component.doesSatisfyTypeOf(attribute)) {
+					var contextInformation = list[j];
+					if (!component.doesSatisfyKindOf(contextInformation)) {
 						return false;
 					}
 				}
@@ -5280,17 +5481,17 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 			};
 
 			/**
-			 * Helper: Verifies whether a component description contains at least on searched attributes.
+			 * Helper: Verifies whether a component description contains at least on searched contextual information.
 			 *
 			 * @private
 			 * @param {Widget|Interpreter|Aggregator} component description of a component
-			 * @param {Array} list searched attributes
+			 * @param {Array} list searched contextual information
 			 * @returns {boolean}
 			 */
-			Discoverer.prototype._containsAtLeastOneAttribute = function(component, list) {
+			Discoverer.prototype._containsAtLeastOneContextInformation = function(component, list) {
 				for (var j in list) {
-					var attribute = list[j];
-					if (component.doesSatisfyTypeOf(attribute)) {
+					var contextInformation = list[j];
+					if (component.doesSatisfyKindOf(contextInformation)) {
 						return true;
 					}
 				}
@@ -5298,39 +5499,38 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 			};
 
 			/**
-			 * Searches for components that can satisfy the requested attributes. Searches recursively through all
+			 * Searches for components that can satisfy the requested contextual information. Searches recursively through all
 			 * registered and unregistered components and initiates them.
 			 *
 			 * @param {String} aggregatorId The aggregator's ID
-			 * @param {AttributeList} unsatisfiedAttributes A list of attributes that components should be searched for.
-			 * @param {Boolean} all If true all attributes must be satisfied by a single component.
+			 * @param {ContextInformationList} unsatisfiedContextInformation A list of contextual information that components should be searched for.
+			 * @param {Boolean} all If true all contextual information must be satisfied by a single component.
 			 * @param {Array} componentTypes An array of components classes that should be searched for (e.g. Widget, Interpreter and Aggregator).
-			 * @private
 			 */
-			Discoverer.prototype.getComponentsForUnsatisfiedAttributes = function(aggregatorId, unsatisfiedAttributes, all, componentTypes){
-				// the discoverer gets a list of attributes to satisfy
-				console.log('Discoverer: I will look for components that satisfy the following Attributes: '+unsatisfiedAttributes.getItems()+'.' );
+			Discoverer.prototype.getComponentsForUnsatisfiedContextInformation = function(aggregatorId, unsatisfiedContextInformation, all, componentTypes){
+				// the discoverer gets a list of contextual information to satisfy
+				console.log('Discoverer: I will look for components that satisfy the following contextual information: '+unsatisfiedContextInformation.getItems()+'.' );
 				// look at all the already registered components
-				this._getRegisteredComponentsForUnsatisfiedAttributes(aggregatorId, unsatisfiedAttributes, all, componentTypes);
+				this._getRegisteredComponentsForUnsatisfiedContextInformation(aggregatorId, unsatisfiedContextInformation, all, componentTypes);
 				// look at all unregistered components
-				this._getUnregisteredComponentsForUnsatisfiedAttributes(aggregatorId, unsatisfiedAttributes);
+				this._getUnregisteredComponentsForUnsatisfiedContextInformation(aggregatorId, unsatisfiedContextInformation);
 			};
 
 			/**
-			 * Searches for registered components that satisfy the requested attributes.
+			 * Searches for registered components that satisfy the requested contextual information.
 			 *
 			 * @param {String} aggregatorId The aggregator's ID
-			 * @param {AttributeList} unsatisfiedAttributes A list of attributes that components should be searched for.
-			 * @param {Boolean} all If true all attributes must be satisfied by a single component.
+			 * @param {ContextInformationList} unsatisfiedContextInformation A list of contextual information that components should be searched for.
+			 * @param {Boolean} all If true all contextual information must be satisfied by a single component.
 			 * @param {Array} componentTypes An array of components classes that should be searched for (e.g. Widget, Interpreter and Aggregator).
 			 * @private
 			 */
-			Discoverer.prototype._getRegisteredComponentsForUnsatisfiedAttributes = function(aggregatorId, unsatisfiedAttributes, all, componentTypes) {
+			Discoverer.prototype._getRegisteredComponentsForUnsatisfiedContextInformation = function(aggregatorId, unsatisfiedContextInformation, all, componentTypes) {
 				var theAggregator = this.getAggregator(aggregatorId);
 				console.log("Discoverer: Let's look at my registered components.");
 
-				var relevantComponents = this.getRegisteredComponentsByAttributes(unsatisfiedAttributes, all, componentTypes);
-				console.log("Discoverer: I found " + relevantComponents.length + " registered component(s) that might satisfy the requested attributes.");
+				var relevantComponents = this.getRegisteredComponentsByContextInformation(unsatisfiedContextInformation, all, componentTypes);
+				console.log("Discoverer: I found " + relevantComponents.length + " registered component(s) that might satisfy the requested contextual information.");
 
 				//iterate over the found components
 				for(var index in relevantComponents) {
@@ -5343,17 +5543,17 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 						if (theComponent instanceof Widget) {
 							theAggregator.addWidgetSubscription(theComponent);
 							console.log("Discoverer: I found "+theComponent.getName()+" and the Aggregator did subscribe to it.");
-							this._removeAttributesSatisfiedByWidget(aggregatorId, theComponent, unsatisfiedAttributes);
-						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
+							this._removeContextInformationSatisfiedByWidget(aggregatorId, theComponent, unsatisfiedContextInformation);
+						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its input contextual information can be satisfied, add the interpreter
 							console.log("Discoverer: It's an Interpreter.");
 
-							if (this._checkInterpreterInAttributes(aggregatorId, theComponent)) {
-								// remove satisfied attributes
-								this._removeAttributesSatisfiedByInterpreter(aggregatorId, theComponent, unsatisfiedAttributes);
+							if (this._checkInterpreterInputContextInformation(aggregatorId, theComponent)) {
+								// remove satisfied contextual information
+								this._removeContextInformationSatisfiedByInterpreter(aggregatorId, theComponent, unsatisfiedContextInformation);
 							} else {
-								console.log("Discoverer: I found a registered Interpreter but I couldn't satisfy the required attributes.");
-								for (var j in theComponent.getInAttributes().getItems()) {
-									console.log("Discoverer: It is missing " + theComponent.getInAttributes().getItems()[j] + ".");
+								console.log("Discoverer: I found a registered Interpreter but I couldn't satisfy the required contextual information.");
+								for (var j in theComponent.getInputContextInformation().getItems()) {
+									console.log("Discoverer: It is missing " + theComponent.getInputContextInformation().getItems()[j] + ".");
 								}
 							}
 						} else {
@@ -5364,66 +5564,66 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 			};
 
 			/**
-			 * Searches for unregistered components that satisfy the requested attributes.
+			 * Searches for unregistered components that satisfy the requested contextual information.
 			 *
 			 * @param {String} aggregatorId The aggregator's ID
-			 * @param {AttributeList} unsatisfiedAttributes A list of attributes that components should be searched for.
+			 * @param {ContextInformationList} unsatisfiedContextInformation A list of contextual information that components should be searched for.
 			 * @private
 			 */
-			Discoverer.prototype._getUnregisteredComponentsForUnsatisfiedAttributes = function(aggregatorId, unsatisfiedAttributes) {
+			Discoverer.prototype._getUnregisteredComponentsForUnsatisfiedContextInformation = function(aggregatorId, unsatisfiedContextInformation) {
 				var theAggregator = this.getAggregator(aggregatorId);
 				console.log("Discoverer: Let's look at the unregistered components.");
 
-				//check all Widget's outAttributes
+				//check all Widget's output contextual information
 				for(var widgetIndex in this._unregisteredWidgets){
 					var theWidget = this._unregisteredWidgets[widgetIndex];
 					// check i
 					if (this._checkComponentRequirements(theWidget)) {
-						for(var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()){
-							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
-							//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
+						for(var unsatisfiedContextInformationIndex in unsatisfiedContextInformation.getItems()){
+							var theUnsatisfiedContextInformation = unsatisfiedContextInformation.getItems()[unsatisfiedContextInformationIndex];
+							//if a Widget can satisfy the ContextInformation, register it and subscribe the Aggregator
 
-							//create temporary OutAttributeList
-							var tempWidgetOutList = AttributeList.fromAttributeDescriptions(this, theWidget.description.out);
+							//create temporary OutputContextInformationList
+							var tempWidgetOutList = ContextInformationList.fromContextInformationDescriptions(this, theWidget.description.out);
 
 							for(var tempWidgetOutListIndex in tempWidgetOutList.getItems()) {
-								if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempWidgetOutListIndex])) {
+								if (theUnsatisfiedContextInformation.isKindOf(tempWidgetOutList.getItems()[tempWidgetOutListIndex])) {
 									console.log("Discoverer: I have found an unregistered "+theWidget.name+".");
 									var newWidget = new theWidget(this, tempWidgetOutList);
 									theAggregator.addWidgetSubscription(newWidget);
 									console.log("Discoverer: I registered "+theWidget.name+" and the Aggregator subscribed to it.");
-									// remove satisfied attributes
-									this._removeAttributesSatisfiedByWidget(aggregatorId, newWidget, unsatisfiedAttributes);
+									// remove satisfied contextual information
+									this._removeContextInformationSatisfiedByWidget(aggregatorId, newWidget, unsatisfiedContextInformation);
 								}
 							}
 						}
 					}
 				}
 
-				//check all interpreters' outAttributes
+				//check all interpreters' output contextual information
 				for (var index in this._unregisteredInterpreters) {
 					var theInterpreter = this._unregisteredInterpreters[index];
 					if (this._checkComponentRequirements(theInterpreter)) {
-						for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
-							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
-							//create temporary outAttributeList
-							var tempOutList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.out);
-							//create temporary inAttributeList
-							var tempInList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.in);
+						for (var unsatisfiedContextInformationIndex in unsatisfiedContextInformation.getItems()) {
+							var theUnsatisfiedContextInformation = unsatisfiedContextInformation.getItems()[unsatisfiedContextInformationIndex];
+							//create temporary outputContextInformationList
+							var tempOutList = ContextInformationList.fromContextInformationDescriptions(this, theInterpreter.description.out);
+							//create temporary inContextInformationList
+							var tempInList = ContextInformationList.fromContextInformationDescriptions(this, theInterpreter.description.in);
 
-							for (var tempOutAttributeIndex in tempOutList.getItems()) {
-								if (theUnsatisfiedAttribute.equalsTypeOf(tempOutList.getItems()[tempOutAttributeIndex])) {
-									console.log("Discoverer: I have found an unregistered "+theInterpreter.name+" that might satisfy the requested Attribute.");
+							for (var tempOutputContextInformationIndex in tempOutList.getItems()) {
+								if (theUnsatisfiedContextInformation.isKindOf(tempOutList.getItems()[tempOutputContextInformationIndex])) {
+									console.log("Discoverer: I have found an unregistered "+theInterpreter.name+" that might satisfy the requested contextual information.");
 
-									//if an interpreter can satisfy the Attribute, check if the inAttributes are satisfied
-									if (this._checkInterpreterInAttributes(aggregatorId, theInterpreter)) {
+									//if an interpreter can satisfy the ContextInformation, check if the inContextInformation are satisfied
+									if (this._checkInterpreterInputContextInformation(aggregatorId, theInterpreter)) {
 										var newInterpreter = new theInterpreter(this, tempInList, tempOutList);
 										//theAggregator.addWidgetSubscription(newInterpreter);
 										console.log("Discoverer: I registered the Interpreter \""+theInterpreter.name+"\" .");
-										// remove satisfied attributes
-										this._removeAttributesSatisfiedByInterpreter(aggregatorId, newInterpreter, unsatisfiedAttributes);
+										// remove satisfied contextual information
+										this._removeContextInformationSatisfiedByInterpreter(aggregatorId, newInterpreter, unsatisfiedContextInformation);
 									} else {
-										console.log("Discoverer: I found an unregistered Interpreter but I couldn't satisfy the required Attributes.");
+										console.log("Discoverer: I found an unregistered Interpreter but I couldn't satisfy the required contextual information.");
 									}
 								}
 							}
@@ -5439,57 +5639,57 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 			 * @returns {boolean}
 			 * @private
 			 */
-			Discoverer.prototype._checkInterpreterInAttributes = function(aggregatorId, theInterpreter) {
+			Discoverer.prototype._checkInterpreterInputContextInformation = function(aggregatorId, theInterpreter) {
 				var theAggregator = this.getComponent(aggregatorId);
-				var canSatisfyInAttributes = true;
-				var attributes;
+				var canSatisfyInContextInformation = true;
+				var contextInformation;
 				if (theInterpreter instanceof Interpreter) {
-					attributes = theInterpreter.getInAttributes().getItems();
+					contextInformation = theInterpreter.getInputContextInformation().getItems();
 				} else {
-					attributes = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.in).getItems();
+					contextInformation = ContextInformationList.fromContextInformationDescriptions(this, theInterpreter.description.in).getItems();
 				}
 
-				for (var attributeIdentifier in attributes) {
-					// get the attribute
-					var theAttribute = attributes[attributeIdentifier];
-					console.log("Discoverer: The Interpreter needs the Attribute: "+theAttribute.toString(true)+".");
-					// if required attribute is not already satisfied by the aggregator search for components that do
-					if (!theAggregator.doesSatisfyTypeOf(theAttribute)) {
-						console.log("Discoverer: The Aggregator doesn't satisfy "+theAttribute.toString(true)+", but I will search for components that do.");
-						var newAttributeList = new AttributeList();
-						newAttributeList.put(theAttribute);
-						this.getComponentsForUnsatisfiedAttributes(aggregatorId, newAttributeList, false, [Widget, Interpreter]);
-						// if the attribute still can't be satisfied drop the interpreter
-						if (!theAggregator.doesSatisfyTypeOf(theAttribute)) {
-							console.log("Discoverer: I couldn't find a component to satisfy "+theAttribute.toString(true)+". Dropping interpreter.");
-							canSatisfyInAttributes = false;
+				for (var contextInformationIdentifier in contextInformation) {
+					// get the contextual information
+					var theContextInformation = contextInformation[contextInformationIdentifier];
+					console.log("Discoverer: The Interpreter needs the contextual information: "+theContextInformation.toString(true)+".");
+					// if required contextual information is not already satisfied by the aggregator search for components that do
+					if (!theAggregator.doesSatisfyKindOf(theContextInformation)) {
+						console.log("Discoverer: The Aggregator doesn't satisfy "+theContextInformation.toString(true)+", but I will search for components that do.");
+						var newContextInformationList = new ContextInformationList();
+						newContextInformationList.put(theContextInformation);
+						this.getComponentsForUnsatisfiedContextInformation(aggregatorId, newContextInformationList, false, [Widget, Interpreter]);
+						// if the contextual information still can't be satisfied drop the interpreter
+						if (!theAggregator.doesSatisfyKindOf(theContextInformation)) {
+							console.log("Discoverer: I couldn't find a component to satisfy "+theContextInformation.toString(true)+". Dropping interpreter.");
+							canSatisfyInContextInformation = false;
 							break;
 						}
 					} else {
-						console.log("Discoverer: It seems that the Aggregator already satisfies the Attribute "+theAttribute.toString(true)+". Will move on.");
+						console.log("Discoverer: It seems that the Aggregator already satisfies the contextual information "+theContextInformation.toString(true)+". Will move on.");
 					}
 				}
 
-				return canSatisfyInAttributes;
+				return canSatisfyInContextInformation;
 			};
 
 			/**
 			 *
 			 * @param aggregatorId
 			 * @param theWidget
-			 * @param unsatisfiedAttributes
+			 * @param unsatisfiedContextInformation
 			 * @private
 			 */
-			Discoverer.prototype._removeAttributesSatisfiedByWidget = function(aggregatorId, theWidget, unsatisfiedAttributes) {
+			Discoverer.prototype._removeContextInformationSatisfiedByWidget = function(aggregatorId, theWidget, unsatisfiedContextInformation) {
 				var theAggregator = this.getAggregator(aggregatorId);
 
-				var attributes = theWidget.getOutAttributes().getItems();
-				for (var attributeIndex in attributes) {
-					var theAttribute = attributes[attributeIndex];
-					// add the attribute type to the aggregator's list of handled attribute types
-					if (!theAggregator.getOutAttributes().containsTypeOf(theAttribute)) theAggregator.addOutAttribute(theAttribute);
-					console.log("Discoverer: The Aggregator can now satisfy attribute "+theAttribute.toString(true)+" with the help of "+theWidget.getName()+".");
-					unsatisfiedAttributes.removeAttributeWithTypeOf(theAttribute);
+				var contextInformation = theWidget.getOutputContextInformation().getItems();
+				for (var contextInformationIndex in contextInformation) {
+					var theContextInformation = contextInformation[contextInformationIndex];
+					// add the contextual information type to the aggregator's list of handled contextual information
+					if (!theAggregator.getOutputContextInformation().containsKindOf(theContextInformation)) theAggregator.addOutputContextInformation(theContextInformation);
+					console.log("Discoverer: The Aggregator can now satisfy contextual information "+theContextInformation.toString(true)+" with the help of "+theWidget.getName()+".");
+					unsatisfiedContextInformation.removeContextInformationOfKind(theContextInformation);
 				}
 			};
 
@@ -5497,64 +5697,64 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 			 *
 			 * @param aggregatorId
 			 * @param theInterpreter
-			 * @param unsatisfiedAttributes
+			 * @param unsatisfiedContextInformation
 			 * @private
 			 */
-			Discoverer.prototype._removeAttributesSatisfiedByInterpreter = function(aggregatorId, theInterpreter, unsatisfiedAttributes) {
+			Discoverer.prototype._removeContextInformationSatisfiedByInterpreter = function(aggregatorId, theInterpreter, unsatisfiedContextInformation) {
 				var theAggregator = this.getAggregator(aggregatorId);
 
-				var attributes = theInterpreter.getOutAttributes().getItems();
-				for (var attributeIndex in attributes) {
-					var theAttribute = attributes[attributeIndex];
-					// add the attribute type to the aggregator's list of handled attribute types
-					for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
-						var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
-						if (theUnsatisfiedAttribute.equalsTypeOf(theAttribute)) {
-							if (!theAggregator.getOutAttributes().containsTypeOf(theAttribute)) theAggregator.addOutAttribute(theAttribute);
-							console.log("Discoverer: The Aggregator can now satisfy Attribute "+theAttribute.toString(true)+" with the help of "+theInterpreter.getName()+".");
-							theAggregator._interpretations.push(new Interpretation(theInterpreter.getId(), theInterpreter.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
+				var contextInformation = theInterpreter.getOutputContextInformation().getItems();
+				for (var contextInformationIndex in contextInformation) {
+					var theContextInformation = contextInformation[contextInformationIndex];
+					// add the contextual informationto the aggregator's list of handled contextual information
+					for (var unsatisfiedContextInformationIndex in unsatisfiedContextInformation.getItems()) {
+						var theUnsatisfiedContextInformation = unsatisfiedContextInformation.getItems()[unsatisfiedContextInformationIndex];
+						if (theUnsatisfiedContextInformation.isKindOf(theContextInformation)) {
+							if (!theAggregator.getOutputContextInformation().containsKindOf(theContextInformation)) theAggregator.addOutputContextInformation(theContextInformation);
+							console.log("Discoverer: The Aggregator can now satisfy contextual information "+theContextInformation.toString(true)+" with the help of "+theInterpreter.getName()+".");
+							theAggregator._interpretations.push(new Interpretation(theInterpreter.getId(), theInterpreter.getInputContextInformation(), new ContextInformationList().withItems([theUnsatisfiedContextInformation])));
 						}
 					}
-					unsatisfiedAttributes.removeAttributeWithTypeOf(theAttribute, true);
+					unsatisfiedContextInformation.removeContextInformationOfKind(theContextInformation, true);
 				}
 			};
 
 			/**
 			 *
-			 * @returns {AttributeList}
+			 * @returns {ContextInformationList}
 			 */
-			Discoverer.prototype.getPossibleAttributes = function() {
-				var possibleAttributes = new AttributeList();
+			Discoverer.prototype.getPossibleContextInformation = function() {
+				var possibleContextInformation = new ContextInformationList();
 
 				// iterate over all unregistered widgets
 				for (var widgetIndex in this._unregisteredWidgets) {
 					var theWidget = this._unregisteredWidgets[widgetIndex];
-					for (var attributeDescriptionIndex in theWidget.description.out) {
-						var theAttribute = Attribute.fromAttributeDescription(this, theWidget.description.out[attributeDescriptionIndex]);
-						possibleAttributes.putIfTypeNotContained(theAttribute);
+					for (var contextInformationDescriptionIndex in theWidget.description.out) {
+						var theContextInformation = ContextInformation.fromContextInformationDescription(this, theWidget.description.out[contextInformationDescriptionIndex]);
+						possibleContextInformation.putIfKindOfNotContained(theContextInformation);
 					}
 				}
 
 				// iterate over all unregistered interpreters
 				for (var interpreterIndex in this._unregisteredInterpreters) {
 					var theInterpreter = this._unregisteredInterpreters[interpreterIndex];
-					for (var outAttributeDescriptionIndex in theInterpreter.description.out) {
-						var theAttribute = Attribute.fromAttributeDescription(this, theInterpreter.description.out[outAttributeDescriptionIndex]);
-						possibleAttributes.putIfTypeNotContained(theAttribute);
+					for (var outputContextInformationDescriptionIndex in theInterpreter.description.out) {
+						var theContextInformation = ContextInformation.fromContextInformationDescription(this, theInterpreter.description.out[outputContextInformationDescriptionIndex]);
+						possibleContextInformation.putIfKindOfNotContained(theContextInformation);
 					}
 				}
 
-				return possibleAttributes;
+				return possibleContextInformation;
 			};
 
 			/**
 			 *
 			 *
-			 * @param attributeNames
+			 * @param contextInformationNames
 			 * @returns {*}
 			 */
-			Discoverer.prototype.getAttributesWithNames = function(attributeNames) {
-				return AttributeList.fromAttributeNames(this, attributeNames);
+			Discoverer.prototype.getContextInformationWithNames = function(contextInformationNames) {
+				return ContextInformation.fromContextInformationNames(this, contextInformationNames);
 			};
 
 			/**
@@ -5595,11 +5795,68 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 		})();
 	}
 );
+/**
+ * Created by tobias on 30.09.15.
+ */
+define('callable',['component'],
+    function(Component) {
+        return (function() {
+
+            /**
+             * @type {object}
+             * @public
+             */
+            Callable.description = {
+                in: [
+                    {
+                        'name':'',
+                        'type':''
+                    }
+                ],
+                out: [
+                    {
+                        'name':'',
+                        'type':''
+                    }
+                ],
+                requiredObjects: []
+            };
+
+            /**
+             * Generates the id and initializes the (in and out) types and values.
+             *
+             * @abstract
+             * @classdesc The Widget handles the access to sensors.
+             * @class Callable
+             */
+            function Callable(discoverer) {
+                Component.call(this, discoverer);
+
+                /**
+                 * Name of the callable.
+                 *
+                 * @type {string}
+                 * @private
+                 */
+                this.name = 'Callable';
+
+                return this;
+            }
+
+            Callable.prototype = Object.create(Component.prototype);
+            Callable.prototype.constructor = Callable;
+
+            return Callable;
+        })();
+    }
+);
 	define('contactJS',['retrievalResult',
 			'storage',
 			'aggregator',
-		    'attribute',
-		    'attributeList',
+			'data',
+			'dataList',
+		    'contextInformation',
+		    'contextInformationList',
 		    'parameter',
 		    'parameterList',		
 		    'condition',
@@ -5609,6 +5866,8 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
             'unequals',
 		    'discoverer',
 		    'translation',
+			'queryable',
+			'callable',
 		    'interpreter',
 		    'interpreterResult',
 		    'callback',   
@@ -5618,39 +5877,44 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 		    'widget',
 		    'abstractList'], 
 		function(RetrievalResult,
-				Storage,
-				Aggregator,
-			    Attribute,
-			    AttributeList,
-			    Parameter,
-			    ParameterList,		
-			    Condition,
-			    ConditionList,
-			    ConditionMethod,
-			    Equals,
-                UnEquals,
-			    Discoverer,
-			    Translation,
-			    Interpreter, 
-			    InterpreterResult,
-			    Callback,   
-			    CallbackList,
-			    Subscriber,
-			    SubscriberList,
-			    Widget,
-			    AbstractList) {
+			Storage,
+			Aggregator,
+			Data,
+			DataList,
+			ContextInformation,
+			ContextInformationList,
+			Parameter,
+			ParameterList,
+			Condition,
+			ConditionList,
+			ConditionMethod,
+			Equals,
+			UnEquals,
+			Discoverer,
+			Translation,
+			Queryable,
+			Callable,
+			Interpreter,
+			InterpreterResult,
+			Callback,
+			CallbackList,
+			Subscriber,
+			SubscriberList,
+			Widget,
+			AbstractList) {
 		
 	// Object Contructor
 	var contactJS = function(obj) {
 		return obj;
 	};
-	contactJS.VERSION = '2.0.1';
+	contactJS.VERSION = '3.0.0';
 	// Methods
 	contactJS.RetrievalResult = RetrievalResult;
 	contactJS.Storage = Storage;
 	contactJS.Aggregator = Aggregator;
-	contactJS.Attribute = Attribute;
-	contactJS.AttributeList = AttributeList;
+	contactJS.Data = Data;
+	contactJS.ContextInformation = ContextInformation;
+	contactJS.ContextInformationList = ContextInformationList;
 	contactJS.Parameter = Parameter;
 	contactJS.ParameterList = ParameterList;
 	contactJS.Condition = Condition;
@@ -5660,6 +5924,8 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
     contactJS.UnEquals = UnEquals;
 	contactJS.Discoverer = Discoverer;
 	contactJS.Translation = Translation;
+	contactJS.Queryable = Queryable;
+	contactJS.Callable = Callable;
 	contactJS.Interpreter = Interpreter;
 	contactJS.InterpreterResult = InterpreterResult;
 	contactJS.Callback = Callback;

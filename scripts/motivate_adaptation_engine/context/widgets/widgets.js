@@ -10,7 +10,11 @@ define([
     './LocalWifiIPWidget',
     './DeviceOrientationWidget',
     './DeviceModelWidget',
-    './DevicePlatformWidget'
+    './DevicePlatformWidget',
+    './BatteryStatusWidget',
+    './DevicePluggedInWidget',
+    './NetworkConnectionTypeWidget',
+    './UPMoodleAvailableWidget'
 ], function(
     FakeCelsiusTemperatureWidget,
     GeoLocationWidget,
@@ -20,7 +24,11 @@ define([
     LocalWifiIDWidget,
     DeviceOrientationWidget,
     DeviceModelWidget,
-    DevicePlatformWidget
+    DevicePlatformWidget,
+    BatteryStatusWidget,
+    DevicePluggedInWidget,
+    NetworkConnectionTypeWidget,
+    UPMoodleAvailableWidget
 ) {
     return arguments;
 });

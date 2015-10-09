@@ -7,14 +7,18 @@ define([
     './DistanceInterpreter',
     './ISO8601Interpreter',
     './SecondsInterpreter',
-    './NightTimeInterpreter'
+    './NightTimeInterpreter',
+    './LocalURIAvailableInterpreter',
+    './MoodleLoginInterpreter'
 ], function(
     AddressInterpreter,
     CelsiusToFahrenheitInterpreter,
     DistanceInterpreter,
     ISO8601Interpreter,
     SecondsInterpreter,
-    NightTimeInterpreter
+    NightTimeInterpreter,
+    LocalURIAvailableInterpreter,
+    MoodleLoginInterpreter
 ) {
     return arguments;
 });

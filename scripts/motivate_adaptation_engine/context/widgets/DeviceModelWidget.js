@@ -39,14 +39,14 @@ define(['contactJS'], function (contactJS) {
         DeviceModelWidget.prototype.constructor = DeviceModelWidget;
 
         DeviceModelWidget.prototype._initCallbacks = function() {
-            this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
+            this._addCallback(new contactJS.Callback().withName('UPDATE').withContextInformation(this.getOutputContextInformation()));
         };
 
         DeviceModelWidget.prototype.queryGenerator = function(callback) {
             var self = this;
 
-            var response = new contactJS.AttributeList();
-            response.put(self.getOutAttributes().getItems()[0].setValue(device.model));
+            var response = new contactJS.ContextInformationList();
+            response.put(self.getOutputContextInformation().getItems()[0].setValue(device.model));
             self._sendResponse(response, callback);
         };
 

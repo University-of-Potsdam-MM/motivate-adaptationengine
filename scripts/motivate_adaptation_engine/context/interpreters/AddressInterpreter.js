@@ -41,10 +41,12 @@ define(['contactJS'], function(contactJS) {
         AddressInterpreter.prototype.constructor = AddressInterpreter;
 
         AddressInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
+            var self = this;
+
             var addressValue = outAttributes.getItems()[0];
 
-            var latitude = inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[0]);
-            var longitude = inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[1]);
+            var latitude = inAttributes.getValueForContextInformationOfKind(this.getInputContextInformation().getItems()[0]);
+            var longitude = inAttributes.getValueForContextInformationOfKind(this.getInputContextInformation().getItems()[1]);
 
             if (latitude && longitude) {
                 $.ajax({
