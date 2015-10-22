@@ -50,7 +50,7 @@ define(['contactJS'], function (contactJS) {
 
             var response = new contactJS.AttributeList();
             response.put(this.getOutAttributes().getItems()[0].setValue(Date.now()));
-            this._sendResponse(response, callback)
+            this._sendResponse(response, callback);
         };
 
         return UnixTimeWidget;
