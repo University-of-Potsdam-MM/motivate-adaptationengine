@@ -4,7 +4,7 @@
 define(['contactJS'], function(contactJS) {
     return (function() {
 
-        ISO8601Interpreter.inOut = {
+        ISO8601Interpreter.description = {
             in: [
                 {
                     'name':'CI_BASE_UNIT_OF_TIME',
@@ -30,7 +30,7 @@ define(['contactJS'], function(contactJS) {
          */
         function ISO8601Interpreter(discoverer) {
             contactJS.Interpreter.call(this, discoverer);
-            this.name = "ISO8601Interpreter";
+            this._name = "ISO8601Interpreter";
             return this;
         }
 

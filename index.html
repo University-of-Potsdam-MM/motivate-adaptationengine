@@ -32,7 +32,14 @@
                                 }
                                 console.log("</preload>");
                             });
-                            adaptationEngine.startContextDetection();
+                            adaptationEngine.setNewContextInformationCallback(function(contextInformation) {
+                                console.log("<newcontextinformation>");
+                                for(var index in contextInformation) {
+                                    console.log("\t"+contextInformation[index].description());
+                                }
+                                console.log("</newcontextinformation>");
+                            });
+                            adaptationEngine.startContextDetection(10000);
                             //adaptationEngine.startRuleMatching(10000);
                         }
                     });

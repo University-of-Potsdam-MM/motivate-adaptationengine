@@ -4,7 +4,7 @@
 define(['contactJS'], function(contactJS) {
     return (function() {
 
-        NightTimeInterpreter.inOut = {
+        NightTimeInterpreter.description = {
             in: [
                 {
                     'name':'CI_BASE_UNIT_OF_TIME',
@@ -29,7 +29,7 @@ define(['contactJS'], function(contactJS) {
          */
         function NightTimeInterpreter(discoverer) {
             contactJS.Interpreter.call(this, discoverer);
-            this.name = "NightTimeInterpreter";
+            this._name = "NightTimeInterpreter";
             return this;
         }
 
@@ -38,16 +38,13 @@ define(['contactJS'], function(contactJS) {
 
         NightTimeInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var isNightTime = outAttributes.getItems()[0];
-            var inAttributeValue = inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[0]);
+            var inAttributeValue = inAttributes.getValueForContextInformationOfKind(this.getInputContextInformation().getItems()[0]);
             var currentTimeInHours = new Date(inAttributeValue*1000).getHours();
             var isNightTimeValue = (currentTimeInHours < 6 || currentTimeInHours > 20);
 
             isNightTime.setValue(isNightTimeValue);
 
-            callback([
-                isNightTime
-            ]);
-
+            callback([isNightTime]);
         };
 
         return NightTimeInterpreter;

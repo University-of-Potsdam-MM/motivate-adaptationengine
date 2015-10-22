@@ -49,13 +49,37 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
                 [
                     ['CI_CURRENT_TEMPERATURE','INTEGER',[['CP_TEMPERATURE_SCALE','STRING','CELSIUS']]],
                     ['CI_TEMPERATURE','INTEGER',[['CP_TEMPERATURE_SCALE','STRING','CELSIUS']]]
+                ],
+                [
+                    ['CI_UP_MOODLE_AVAILABLE', 'BOOLEAN'],
+                    ['CI_URI_AVAILABLE', 'BOOLEAN', [['CP_URI', 'STRING', 'https://moodle2.uni-potsdam.de/login/index.php']]]
+                ],
+                [
+                    ['CI_UP_MOODLE_AVAILABLE', 'BOOLEAN'],
+                    ['CI_MOODLE_AVAILABLE', 'BOOLEAN', [['CP_MOODLE_URI', 'STRING', 'https://moodle2.uni-potsdam.de/login/index.php']]]
                 ]
             ]);
 
             //Dynamic Configuration
-            var contextIds = this._extractContextIdsFromAdaptationRules(adaptationRules);
-            this._aggregators.push(new contactJS.Aggregator(this._discoverer, this._discoverer.getAttributesWithNames(contextIds)));
+            // this.extractAttributesFromAdaptationRules(adaptationRules)
+            this._aggregators.push(new contactJS.Aggregator(this._discoverer, contactJS.ContextInformationList.fromContextInformationDescriptions(this._discoverer, [
+                    {
+                        'name':'CI_IS_NIGHTTIME',
+                        'type':'BOOLEAN'
+                    }
+                ])
+            ));
         }
+
+        ContextDetector.prototype._contextInformationFromAttributes = function(attributes) {
+            var contextInformation = [];
+            for(var index in attributes.getItems()) {
+                var attribute = attributes.getItems()[index];
+
+                contextInformation.push(ContextInformation.fromAttribute(attribute));
+            }
+            return contextInformation;
+        };
 
         /**
          * Sets a function as the callback for the provided callback name.
@@ -69,8 +93,18 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
 
         /**
          *
+         * @param adaptationRules
+         * @returns {*}
+         */
+        ContextDetector.prototype.extractAttributesFromAdaptationRules = function(adaptationRules) {
+            return this._discoverer.getAttributesWithNames(this._extractContextIdsFromAdaptationRules(adaptationRules));
+        };
+
+        /**
+         *
          *
          * @param {*|Array} adaptationRules
+         * @return {Array}
          * @private
          */
         ContextDetector.prototype._extractContextIdsFromAdaptationRules = function(adaptationRules) {
@@ -152,13 +186,7 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
             for (var index in this._aggregators) {
                 var theAggregator = this._aggregators[index];
 
-                theAggregator.queryReferencedComponents(function(attributes) {
-                    for (var attributeIndex in attributes.getItems()) {
-                        var theAttributeValue = attributes.getItems()[attributeIndex];
-
-                        self.addContextInformation(ContextInformation.fromAttributeValue(theAttributeValue), false);
-                    }
-                });
+                this._callbacks["newContextInformationCallback"](this._contextInformationFromAttributes(theAggregator.getOutputContextInformation()));
             }
         };
 

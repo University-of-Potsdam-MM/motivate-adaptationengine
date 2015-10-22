@@ -4,7 +4,7 @@
 define(['contactJS'], function(contactJS) {
     return (function() {
 
-        AddressInterpreter.inOut = {
+        AddressInterpreter.description = {
             in: [
                 {
                     'name':'CI_USER_LOCATION_LATITUDE',
@@ -20,7 +20,8 @@ define(['contactJS'], function(contactJS) {
                     'name':'CI_USER_LOCATION_ADDRESS',
                     'type':'STRING'
                 }
-            ]
+            ],
+            requiredObjects: ["jQuery"]
         };
 
         /**
@@ -32,7 +33,7 @@ define(['contactJS'], function(contactJS) {
          */
         function AddressInterpreter(discoverer) {
             contactJS.Interpreter.call(this, discoverer);
-            this.name = "AddressInterpreter";
+            this._name = "AddressInterpreter";
             return this;
         }
 
@@ -40,27 +41,34 @@ define(['contactJS'], function(contactJS) {
         AddressInterpreter.prototype.constructor = AddressInterpreter;
 
         AddressInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
+            var self = this;
+
             var addressValue = outAttributes.getItems()[0];
 
-            var latitude = inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[0]);
-            var longitude = inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[1]);
+            var latitude = inAttributes.getValueForContextInformationOfKind(this.getInputContextInformation().getItems()[0]);
+            var longitude = inAttributes.getValueForContextInformationOfKind(this.getInputContextInformation().getItems()[1]);
 
-            if(navigator.onLine){
-                if (latitude && longitude) {
-                    var url = "http://maps.googleapis.com/maps/api/geocode/json?latlng="+latitude+","+longitude+"&sensor=false";
-                    $.getJSON(url, function(json) {
-                        if (!json["status"] == ("OK")) {
+            if (latitude && longitude) {
+                $.ajax({
+                    url: "http://maps.googleapis.com/maps/api/geocode/json?latlng="+latitude+","+longitude+"&sensor=true",
+                    dataType: 'json',
+                    success: function(json) {
+                        if (json["status"] != ("OK")) {
                             //TODO: handle error case
-                            addressValue.setValue("NO_VALUE");
+                            addressValue.setValue(json["status"]);
                         } else {
                             addressValue.setValue(json["results"][0]["formatted_address"]);
                         }
                         callback([addressValue]);
-                    });
-                }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown ) {
+                        self.log(jqXHR.status);
+                        self.log(textStatus);
+                        self.log(errorThrown);
+                    }
+                });
             } else {
-                //TODO: handle error case
-                addressValue.setValue("NO_VALUE");
+                addressValue.setValue("NO_LAT_LONG");
                 callback([addressValue]);
             }
         };

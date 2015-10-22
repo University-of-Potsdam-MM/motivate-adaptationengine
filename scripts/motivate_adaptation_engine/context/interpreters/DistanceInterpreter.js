@@ -4,7 +4,7 @@
 define(['contactJS'], function(contactJS) {
     return (function() {
 
-        DistanceInterpreter.inOut = {
+        DistanceInterpreter.description = {
             in: [
                 {
                     'name':'CI_USER_LOCATION_LATITUDE',
@@ -33,11 +33,11 @@ define(['contactJS'], function(contactJS) {
          * @param discoverer
          * @extends Interpreter
          * @returns {DistanceInterpreter}
-         * @constructor
+         * @constructs DistanceInterpreter
          */
         function DistanceInterpreter(discoverer) {
             contactJS.Interpreter.call(this, discoverer);
-            this.name = "DistanceInterpreter";
+            this._name = "DistanceInterpreter";
             return this;
         }
 
@@ -47,8 +47,8 @@ define(['contactJS'], function(contactJS) {
         DistanceInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var distanceValue = outAttributes.getItems()[0];
 
-            var startingPointLatitude = inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[0]);
-            var startingPointLongitude = inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[1]);
+            var startingPointLatitude = inAttributes.getValueForContextInformationOfKind(this.getInputContextInformation().getItems()[0]);
+            var startingPointLongitude = inAttributes.getValueForContextInformationOfKind(this.getInputContextInformation().getItems()[1]);
             var endPointLatitude = distanceValue.getParameters().getItems()[0].getValue();
             var endPointLongitude = distanceValue.getParameters().getItems()[1].getValue();
 
@@ -72,9 +72,7 @@ define(['contactJS'], function(contactJS) {
 
             distanceValue.setValue(getDistanceFromLatLonInKm(startingPointLatitude, startingPointLongitude, endPointLatitude, endPointLongitude));
 
-            callback([
-                distanceValue
-            ]);
+            callback([distanceValue]);
         };
 
         return DistanceInterpreter;

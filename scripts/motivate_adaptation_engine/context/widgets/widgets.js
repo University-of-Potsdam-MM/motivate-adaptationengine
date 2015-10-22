@@ -4,11 +4,31 @@
 define([
     './FakeCelsiusTemperatureWidget',
     './GeoLocationWidget',
-    './UnixTimeWidget'
+    './UnixTimeWidget',
+    './WifiEnabledWidget',
+    './BluetoothEnabledWidget',
+    './LocalWifiIPWidget',
+    './DeviceOrientationWidget',
+    './DeviceModelWidget',
+    './DevicePlatformWidget',
+    './BatteryStatusWidget',
+    './DevicePluggedInWidget',
+    './NetworkConnectionTypeWidget',
+    './UPMoodleAvailableWidget'
 ], function(
     FakeCelsiusTemperatureWidget,
     GeoLocationWidget,
-    UnixTimeWidget
+    UnixTimeWidget,
+    WifiEnabledWidget,
+    BluetoothEnabledWidget,
+    LocalWifiIDWidget,
+    DeviceOrientationWidget,
+    DeviceModelWidget,
+    DevicePlatformWidget,
+    BatteryStatusWidget,
+    DevicePluggedInWidget,
+    NetworkConnectionTypeWidget,
+    UPMoodleAvailableWidget
 ) {
     return arguments;
 });

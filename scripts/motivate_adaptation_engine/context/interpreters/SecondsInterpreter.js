@@ -4,7 +4,7 @@
 define(['contactJS'], function(contactJS) {
     return (function() {
 
-        SecondsInterpreter.inOut = {
+        SecondsInterpreter.description = {
             in: [
                 {
                     'name':'CI_BASE_UNIT_OF_TIME',
@@ -30,17 +30,17 @@ define(['contactJS'], function(contactJS) {
          */
         function SecondsInterpreter(discoverer) {
             contactJS.Interpreter.call(this, discoverer);
-            this.name = "SecondsInterpreter";
+            this._name = "SecondsInterpreter";
             return this;
         }
 
         SecondsInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
         SecondsInterpreter.prototype.constructor = SecondsInterpreter;
 
-        SecondsInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
-            var unixSecondsValue = outAttributes.getItems()[0];
+        SecondsInterpreter.prototype._interpretData = function(inContextInformation, outContextInformation, callback) {
+            var unixSecondsValue = outContextInformation.getItems()[0];
 
-            unixSecondsValue.setValue(Math.floor(inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[0]) / 1000));
+            unixSecondsValue.setValue(Math.floor(inContextInformation.getValueForContextInformationOfKind(this.getInputContextInformation().getItems()[0]) / 1000));
 
             callback([
                 unixSecondsValue
