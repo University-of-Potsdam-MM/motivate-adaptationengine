@@ -1,15 +1,33 @@
-define('MoRE', ['nools', 'MoCI'], function (nools, ContextInformation) {
-    var RuleEngine = (function() {
+define('MoRE', ['nools', 'node-rules', 'contactJS', 'MathUuid'], function (nools, NodeRuleEngine, contactJS) {
+    return (function() {
+
+        RuleEngine.NOOLS = "nools";
+        RuleEngine.NODE_RULES = "node-rules";
 
         /**
          * The rule engine encapsulates the nools.js rule engine.
-         * @class
-         * @constructs RuleEngine
-         * @param noolsDSL {string} The adaptation rules formated in nools DSL as provided by the rule generator.
-         * @param verbose {boolean} Activates console output if set to true.
+         *
+         * @class RuleEngine
+         * @param {String} engine
+         * @param {String} rules The adaptation rules formated in nools DSL as provided by the rule generator.
+         * @param {boolean} verbose Activates console output if set to true.
          */
-        function RuleEngine(noolsDSL, verbose) {
+        function RuleEngine(engine, rules, verbose) {
+            /**
+             * Controls the amount of console output.
+             *
+             * @type {boolean}
+             * @private
+             */
             this._verbose = verbose;
+
+            /**
+             * Contains the callbacks for certain actions or events of the rule engine.
+             * Can be set by invoking the respective functions of the adaptation engine.
+             *
+             * @type {{ruleMatchingSuccessCallback: Function, ruleMatchingErrorCallback: Function}}
+             * @private
+             */
             this._callbacks = {
                 "ruleMatchingSuccessCallback": function() {
                     console.log("Rule matching finished successfully.");
@@ -19,50 +37,120 @@ define('MoRE', ['nools', 'MoCI'], function (nools, ContextInformation) {
                 }
             };
 
-            this._nools = require("nools");
-            this._parsedFlow = this._nools.parse(noolsDSL);
-            this._flow = this._nools.compile(noolsDSL, {name: "adaptationRules"});
-            this._FlowContextInformation = this.getDefined("ContextInformation");
-            this._currentSession = null;
+            /**
+             *
+             * @type {string}
+             * @private
+             */
+            this._engine = engine;
 
-            /*
-            var _FlowContextInformation = this.getDefined("ContextInformation");
-            var _currentSession = this._flow.getSession();
+            /**
+             *
+             * @type {ContextInformationList}
+             * @private
+             */
+            this._neededContextInformation = new contactJS.ContextInformationList();
 
-            var addIntTime = Date.now() / 1000;
-            for (var i = 1; i < 10000; i++) {
-                _currentSession.assert(i);
-            }
-            console.log("Add 10000 integers time: "+(Date.now() / 1000 - addIntTime));
-
-            var addStringsTime = Date.now() / 1000;
-            for (var i = 1; i < 10000; i++) {
-                _currentSession.assert("foo");
-            }
-            console.log("Add 10000 strings time: "+(Date.now() / 1000 - addStringsTime));
-
-            var addArrayTime = Date.now() / 1000;
-            for (var i = 1; i < 10000; i++) {
-                _currentSession.assert([1, 2, 3]);
-            }
-            console.log("Add 10000 arrays time: "+(Date.now() / 1000 - addArrayTime));
-
-            var addObjectTime = Date.now() / 1000;
-            for (var i = 1; i < 10000; i++) {
-                _currentSession.assert({foo: "bar", baz: [42, "foobar", 24]});
-            }
-            console.log("Add 10000 objects time: "+(Date.now() / 1000 - addObjectTime));
-
-            var addDefinedObjectTime = Date.now() / 1000;
-            for (var i = 1; i < 10; i++) {
-                var addObjectTime = Date.now() / 1000;
-                _currentSession.assert(new _FlowContextInformation("foo", "bar", {foo: "baz"}));
-                console.log("Add predefined object time: "+(Date.now() / 1000 - addObjectTime));
-            }
-            console.log("Add 10 predefined objects time: "+(Date.now() / 1000 - addDefinedObjectTime));
-            */
+            this._initiateRules(rules);
         }
 
+        /**
+         *
+         * @param rules
+         * @private
+         */
+        RuleEngine.prototype._initiateRules = function(rules) {
+            var self = this;
+
+            switch (this._engine) {
+                case RuleEngine.NOOLS:
+                    /**
+                     * The nools object.
+                     *
+                     * @private
+                     */
+                    this._nools = require("nools");
+
+                    /**
+                     * The flow parsed from the provided nools DSL.
+                     *
+                     * @type {number|*}
+                     * @private
+                     */
+                    this._parsedFlow = this._nools.parse(rules);
+
+                    /**
+                     * The flow compiled from the provided nools DSL.
+                     *
+                     * @private
+                     */
+                    this._flow = this._nools.compile(rules, {name: "adaptationRules"});
+
+                    /**
+                     * The current nools session.
+                     *
+                     * @type {null}
+                     * @private
+                     */
+                    this._currentSession = null;
+
+                    break;
+                case RuleEngine.NODE_RULES:
+                    window["ruleEngine"] = this;
+
+                    /**
+                     *
+                     */
+                    (function() {return eval(rules)} )();
+
+                    /**
+                     * @private
+                     */
+                    this._R = new NodeRuleEngine(_rules);
+
+                    break;
+                default:
+                    throw ("Unknown or no rule engine provided.");
+            }
+        };
+
+        /**
+         * Starts the nools rule matching and triggers callbacks for success or errors.
+         *
+         * @param contextInformation
+         */
+        RuleEngine.prototype.matchRules = function(contextInformation) {
+            var self = this;
+
+            var startTime = Math.floor(Date.now() / 1000);
+            switch (this._engine) {
+                case RuleEngine.NOOLS:
+                    // create new session
+                    this._generateNewSession(contextInformation);
+
+                    if (this._verbose) console.log("Matching rules...");
+                    this._currentSession.match(function(err) {
+                        if (err) {
+                            self._callbacks["ruleMatchingErrorCallback"](err);
+                        } else {
+                            var endTime = Math.floor(Date.now() / 1000);
+                            if (self._verbose) console.log("Time for rule matching "+(endTime-startTime)+" secs.");
+                            self._callbacks["ruleMatchingSuccessCallback"]();
+                        }
+                    });
+                    break;
+                case RuleEngine.NODE_RULES:
+                    this._R.execute(contextInformation, this._callbacks["ruleMatchingSuccessCallback"]);
+                    var endTime = Math.floor(Date.now() / 1000);
+                    if (self._verbose) console.log("Time for rule matching "+(endTime-startTime)+" secs.");
+            }
+        };
+
+        /**
+         *
+         * @param {ContextInformationList} contextInformation
+         * @private
+         */
         RuleEngine.prototype._generateNewSession = function(contextInformation) {
             var self = this;
 
@@ -73,45 +161,33 @@ define('MoRE', ['nools', 'MoCI'], function (nools, ContextInformation) {
             // set session callbacks
             this._currentSession.on("restrictFeature", function(feature, facts){
                 if (typeof self._callbacks["restrictFeatureCallback"] != "undefined") {
-                    self._callbacks["restrictFeatureCallback"](feature, self._contextInformationFromFacts(facts));
+                    self._callbacks["restrictFeatureCallback"](feature, facts);
                 }
             });
 
             this._currentSession.on("selectLearningUnit", function(id, facts){
                 if (typeof self._callbacks["selectLearningUnitCallback"] != "undefined") {
-                    self._callbacks["selectLearningUnitCallback"](id, self._contextInformationFromFacts(facts));
+                    self._callbacks["selectLearningUnitCallback"](id, facts);
                 }
             });
 
             this._currentSession.on("preloadLearningUnit", function(id, facts){
                 if (typeof self._callbacks["preloadLearningUnitCallback"] != "undefined") {
-                    self._callbacks["preloadLearningUnitCallback"](id, self._contextInformationFromFacts(facts));
+                    self._callbacks["preloadLearningUnitCallback"](id, facts);
                 }
             });
 
             // add context information as facts
             if (this._verbose) var addOverallTime = Date.now() / 1000;
-            for (var index in contextInformation) {
-                this.addContextInformation(contextInformation[index]);
-            }
+            contextInformation.getItems().forEach(function(contextInformation) {
+                self.addContextInformation(contextInformation);
+            });
             if (this._verbose) console.log("Add overall time: "+(Date.now() / 1000 - addOverallTime));
-        };
-
-        RuleEngine.prototype._contextInformationFromFacts = function(facts) {
-            var contextInformation = [];
-            for(var index in facts) {
-                var fact = facts[index];
-                if(fact instanceof this._FlowContextInformation) {
-                    contextInformation.push(ContextInformation.fromFact(fact));
-                }
-            }
-            return contextInformation;
         };
 
         /**
          * Sets a function as the callback for the provided callback name.
-         * @alias setCallback
-         * @memberof RuleEngine#
+         *
          * @param callbackName {string} The name of the callback.
          * @param callback {function} The function that handles the callback.
          */
@@ -121,8 +197,7 @@ define('MoRE', ['nools', 'MoCI'], function (nools, ContextInformation) {
 
         /**
          * Returns the rules that are part of the current nools flow.
-         * @alias getRules
-         * @memberof RuleEngine#
+         *
          * @returns {*|Array}
          */
         RuleEngine.prototype.getRules = function() {
@@ -130,58 +205,26 @@ define('MoRE', ['nools', 'MoCI'], function (nools, ContextInformation) {
         };
 
         /**
-         * Starts the nools rule matching and triggers callbacks for success or errors.
-         * @alias matchRules
-         * @memberof RuleEngine#
+         * Adds the parameter as fact to the current nools session.
+         *
+         * @param fact
+         * @private
          */
-        RuleEngine.prototype.matchRules = function(contextInformation) {
-            var self = this;
-
-            // create new session
-            this._generateNewSession(contextInformation);
-
-            if (this._verbose) console.log("Matching rules...");
-            var startTime = Math.floor(Date.now() / 1000);
-            this._currentSession.match(function(err) {
-                if (err) {
-                    self._callbacks["ruleMatchingErrorCallback"](err);
-                } else {
-                    var endTime = Math.floor(Date.now() / 1000);
-                    if (self._verbose) console.log("Time for rule matching "+(endTime-startTime)+" secs.");
-                    self._callbacks["ruleMatchingSuccessCallback"]();
-                }
-            });
-        };
-
         RuleEngine.prototype._addFact = function(fact) {
-            this._currentSession.assert(fact);
+            if (this._currentSession != null) this._currentSession.assert(fact);
         };
 
         /**
          * Adds a context information as a fact to the current nools session.
-         * @alias addContextInformation
-         * @memberof RuleEngine#
-         * @param contextInformation {ContextInformation}
+         *
+         * @param {ContextInformation} contextInformation
          */
         RuleEngine.prototype.addContextInformation = function(contextInformation) {
             if (this._verbose) var addStart = Date.now() / 1000;
-            this._addFact(new this._FlowContextInformation(contextInformation.getID(), contextInformation.getValue(), contextInformation.getParameters()));
-            if (this._verbose) console.log("Add time: "+(Date.now() / 1000 - addStart)+" "+contextInformation.getID());
-        };
-
-        /**
-         * Returns the nools class definition with the provided name.
-         * @alias getDefined
-         * @memberof RuleEngine#
-         * @param definitionName
-         * @returns {*}
-         */
-        RuleEngine.prototype.getDefined = function(definitionName) {
-            return this._flow.getDefined(definitionName);
+            this._addFact(contextInformation.getJSONRepresentation());
+            if (this._verbose) console.log("Add time: "+(Date.now() / 1000 - addStart)+" for "+contextInformation.getName());
         };
 
         return RuleEngine;
     })();
-
-    return RuleEngine;
 });

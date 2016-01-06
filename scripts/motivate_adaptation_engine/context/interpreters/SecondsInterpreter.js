@@ -3,7 +3,6 @@
  */
 define(['contactJS'], function(contactJS) {
     return (function() {
-
         SecondsInterpreter.description = {
             in: [
                 {
@@ -39,12 +38,8 @@ define(['contactJS'], function(contactJS) {
 
         SecondsInterpreter.prototype._interpretData = function(inContextInformation, outContextInformation, callback) {
             var unixSecondsValue = outContextInformation.getItems()[0];
-
             unixSecondsValue.setValue(Math.floor(inContextInformation.getValueForContextInformationOfKind(this.getInputContextInformation().getItems()[0]) / 1000));
-
-            callback([
-                unixSecondsValue
-            ]);
+            callback([unixSecondsValue]);
         };
 
         return SecondsInterpreter;

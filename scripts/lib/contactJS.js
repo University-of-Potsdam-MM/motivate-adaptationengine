@@ -759,22 +759,19 @@ define('parameterList',['abstractList', 'parameter'], function(AbstractList, Par
 		/**
 		 * Returns the objects of the list as JSON objects.
 		 *
-		 * @public
 		 * @returns {{}}
 		 */
 		ParameterList.prototype.getItemsAsJson = function() {
 			var parameters = {};
-			for (var key in this._items) {
-				var theParameter = this._items[key];
+			this._items.forEach(function(theParameter) {
 				parameters[theParameter.getKey()] = theParameter.getValue();
-			}
+			});
 			return parameters;
 		};
 
 		/**
 		 * Return true if the list contains a parameter that is set at runtime.
 		 *
-		 * @public
 		 * @returns {boolean}
 		 */
 		ParameterList.prototype.hasInputParameter = function() {
@@ -790,6 +787,10 @@ define('parameterList',['abstractList', 'parameter'], function(AbstractList, Par
 });
 define('contextInformation',['data', 'parameterList'], function(Data, ParameterList) {
     return (function() {
+
+        ContextInformation.OPERATOR_EQUALS = "==";
+        ContextInformation.OPERATOR_LESS_THAN = "<";
+        ContextInformation.OPERATOR_GREATER_THAN = ">";
 
         /**
          *
@@ -871,6 +872,13 @@ define('contextInformation',['data', 'parameterList'], function(Data, ParameterL
         ContextInformation.prototype = Object.create(Data.prototype);
         ContextInformation.prototype.constructor = ContextInformation;
 
+        /**
+         *
+         * @constructs ContextInformation
+         * @param discoverer
+         * @param contextInformationDescription
+         * @returns {ContextInformation}
+         */
         ContextInformation.fromContextInformationDescription = function(discoverer, contextInformationDescription) {
             return discoverer.buildContextInformation(
                 contextInformationDescription.name,
@@ -1267,6 +1275,19 @@ define('contextInformation',['data', 'parameterList'], function(Data, ParameterL
             return this.getValue() != ContextInformation.VALUE_UNKNOWN && this.getValue() != ContextInformation.VALUE_ERROR;
         };
 
+        /**
+         * Returns a JSON representation of the contextual information.
+         *
+         * @returns {{id: string, parameters: {}, value: string}}
+         */
+        ContextInformation.prototype.getJSONRepresentation = function() {
+            return {
+                id: this.getName(),
+                parameters: this.getParameters().getItemsAsJson(),
+                value: this.getValue()
+            }
+        };
+
         return ContextInformation;
     })();
 });
@@ -1375,8 +1396,8 @@ define('contextInformationList',['dataList', 'contextInformation'], function(Dat
          */
         ContextInformationList.prototype.contains = function(contextInformation) {
             if (contextInformation instanceof ContextInformation) {
-                for (var index in this._items) {
-                    var theContextInformation = this._items[index];
+                for (var index in this.getItems()) {
+                    var theContextInformation = this.getItems()[index];
                     if (theContextInformation.equals(contextInformation)) {
                         return true;
                     }
@@ -1386,7 +1407,7 @@ define('contextInformationList',['dataList', 'contextInformation'], function(Dat
         };
 
         /**
-         * Verifies whether an contextual information of the given kind is included in this list.
+         * Verifies whether a contextual information of the given kind is included in this list.
          *
          * @param {ContextInformation} contextInformation Contextual information that should be verified.
          * @returns {Boolean}
@@ -1592,6 +1613,60 @@ define('contextInformationList',['dataList', 'contextInformation'], function(Dat
             for (var index in this._items) {
                 var existingContextInformation = this._items[index];
                 if (existingContextInformation.isKindOf(contextInformation)) this._items[index] = contextInformation;
+            }
+        };
+
+        /**
+         *
+         * @param {ContextInformation} contextInformation
+         * @returns {Array}
+         */
+        ContextInformationList.prototype.find = function(contextInformation) {
+            var result = [];
+            if (contextInformation instanceof ContextInformation) {
+                this._items.forEach(function(theContextInformation) {
+                    if (theContextInformation.isKindOf(contextInformation)) result.push(theContextInformation);
+                });
+            }
+            return result;
+        };
+
+        /**
+         *
+         * @param {ContextInformation} contextInformation
+         * @param operator
+         * @param {*} value
+         * @returns {boolean}
+         */
+        ContextInformationList.prototype.fulfils = function(contextInformation, operator, value) {
+            var contextInformationOfKind = this.find(contextInformation);
+            for (var index in contextInformationOfKind) {
+                if (contextInformationOfKind.hasOwnProperty(index) && this._fulfils(contextInformationOfKind[index], operator, value)) return true;
+            }
+            return false;
+        };
+
+        /**
+         *
+         * @param {ContextInformation} contextInformation
+         * @param operator
+         * @param {*} value
+         * @returns {boolean}
+         * @private
+         */
+        ContextInformationList.prototype._fulfils = function(contextInformation, operator, value) {
+            switch(operator) {
+                case ContextInformation.OPERATOR_EQUALS:
+                    return contextInformation.getValue() == value;
+                    break;
+                case ContextInformation.OPERATOR_LESS_THAN:
+                    return contextInformation.getValue() < value;
+                    break;
+                case ContextInformation.OPERATOR_GREATER_THAN:
+                    return contextInformation.getValue() > value;
+                    break;
+                default:
+                    return false;
             }
         };
 
@@ -4127,7 +4202,7 @@ define('interpreter',['component', 'contextInformation', 'contextInformationList
 			/**
 			 * Convenience accessor for getOutputData.
 			 *
-			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray Contextual information that should be entered.
+			 * @param {(ContextInformationList|Array.<ContextInformation>)} [contextInformationListOrArray] Contextual information that should be entered.
 			 * @returns {ContextInformationList}
 			 */
 			Interpreter.prototype.getOutputContextInformation = function(contextInformationListOrArray) {
@@ -5751,10 +5826,10 @@ define('discoverer',['contextInformation', 'contextInformationList', 'translatio
 			 *
 			 *
 			 * @param contextInformationNames
-			 * @returns {*}
+			 * @returns {ContextInformationList}
 			 */
 			Discoverer.prototype.getContextInformationWithNames = function(contextInformationNames) {
-				return ContextInformation.fromContextInformationNames(this, contextInformationNames);
+				return ContextInformationList.fromContextInformationNames(this, contextInformationNames);
 			};
 
 			/**

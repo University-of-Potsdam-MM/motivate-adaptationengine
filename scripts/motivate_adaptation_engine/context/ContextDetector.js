@@ -1,24 +1,32 @@
-define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters',
-    'lib/parser/constraint/parser'], function(nools, $, ContextInformation, contactJS, widgets, interpreters) {
+define("MoCD", ['MoRE', 'nools', 'jquery', 'contactJS', 'widgets', 'interpreters',
+    'lib/parser/constraint/parser'], function(RuleEngine, nools, $, contactJS, widgets, interpreters) {
     return (function() {
 
         /**
          * The context detector encapsulates the context toolkit which provides context information.
-         * @class
-         * @constructs ContextDetector
+         *
+         * @class ContextDetector
+         * @param engine {String}
          * @param adaptationRules {*|Array} The adaptation rules that are returned by the rule engine are used to determine which context information are required.
          * @param verbose {boolean} Activates console output if set to true.
          */
-        function ContextDetector(adaptationRules, verbose) {
+        function ContextDetector(engine, adaptationRules, verbose) {
             this._verbose = verbose;
-            this._aggregators = [];
+
             /**
-             * Stores recently collected context information values.
+             *
+             * @type {string}
+             * @private
+             */
+            this._engine = engine;
+
+            /**
+             * Contains all the aggregators.
              *
              * @type {Array}
              * @private
              */
-            this._contextInformation = [];
+            this._aggregators = [];
             this._callbacks = {
                 "newContextInformationCallback": function() {
                     console.log("Warning! There is no callback set to handle new context information.");
@@ -61,25 +69,25 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
             ]);
 
             //Dynamic Configuration
-            // this.extractAttributesFromAdaptationRules(adaptationRules)
-            this._aggregators.push(new contactJS.Aggregator(this._discoverer, contactJS.ContextInformationList.fromContextInformationDescriptions(this._discoverer, [
-                    {
-                        'name':'CI_IS_NIGHTTIME',
-                        'type':'BOOLEAN'
-                    }
-                ])
-            ));
+            /**
+             * The aggregator for gathering contextual information that was derived from the provided adaptation rules.
+             *
+             * @type {Aggregator}
+             * @private
+             */
+            this._autoAggregator = new contactJS.Aggregator(this._discoverer, this.extractContextInformationFromAdaptationRules(adaptationRules));
+
+            /**
+             * The aggregator for gathering contextual information that was add manually by the overlying application.
+             *
+             * @type {Aggregator}
+             * @private
+             */
+            this._manualAggregator = new contactJS.Aggregator(this._discoverer);
+
+            this._aggregators.push(this._autoAggregator);
+            this._aggregators.push(this._manualAggregator);
         }
-
-        ContextDetector.prototype._contextInformationFromAttributes = function(attributes) {
-            var contextInformation = [];
-            for(var index in attributes.getItems()) {
-                var attribute = attributes.getItems()[index];
-
-                contextInformation.push(ContextInformation.fromAttribute(attribute));
-            }
-            return contextInformation;
-        };
 
         /**
          * Sets a function as the callback for the provided callback name.
@@ -93,11 +101,23 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
 
         /**
          *
-         * @param adaptationRules
-         * @returns {*}
+         * @param adaptationRules {*|Array}
+         * @returns {ContextInformationList}
          */
-        ContextDetector.prototype.extractAttributesFromAdaptationRules = function(adaptationRules) {
-            return this._discoverer.getAttributesWithNames(this._extractContextIdsFromAdaptationRules(adaptationRules));
+        ContextDetector.prototype.extractContextInformationFromAdaptationRules = function(adaptationRules) {
+            if (this._engine == RuleEngine.NOOLS) {
+                return this._discoverer.getContextInformationWithNames(this._extractContextIdsFromAdaptationRules(adaptationRules));
+            } else if (this._engine == RuleEngine.NODE_RULES) {
+                (function() {return eval(adaptationRules)} )();
+
+                var contextInformation = new contactJS.ContextInformationList();
+                _rules.forEach(function(theRule) {
+                    theRule.relatedContextInformation.forEach(function(theContextInformation) {
+                        contextInformation.put(theContextInformation);
+                    });
+                });
+                return contextInformation;
+            }
         };
 
         /**
@@ -142,37 +162,17 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
         };
 
         /**
-         * Returns true if the given context information was gathered before.
-         *
-         * @param contextInformation {ContextInformation} The context information to test.
-         * @returns {Boolean}
-         */
-        ContextDetector.prototype.contextInformationExists = function(contextInformation) {
-            return this._indexForContextInformation(contextInformation) != -1;
-        };
-
-        ContextDetector.prototype._indexForContextInformation = function(contextInformation) {
-            for(index in this._contextInformation) {
-                var existingContextInformation = this._contextInformation[index];
-                if (existingContextInformation.equals(contextInformation)) return index;
-            }
-            return -1;
-        };
-
-        /**
          * Adds a context information that wasn't gathered before.
          *
-         * @param newContextInformation {ContextInformation} The new context information.
+         * @param {{id: string, dataType: string, parameters: [], value: *}} newContextInformation The new context information.
          * @param {Boolean} allowMultipleInstances Set to true if multiple instances of the context information are allowed.
          */
         ContextDetector.prototype.addContextInformation = function(newContextInformation, allowMultipleInstances) {
-            var indexForContextInformation = this._indexForContextInformation(newContextInformation);
-
-            if (allowMultipleInstances || !allowMultipleInstances && !this.contextInformationExists(newContextInformation)) {
-                this._contextInformation.push(newContextInformation);
-            } else {
-                if (indexForContextInformation != -1) this._contextInformation[indexForContextInformation] = newContextInformation
-            }
+            this._manualAggregator.addOutputContextInformation(contactJS.ContextInformation.fromContextInformationDescription(this._discoverer, {
+                name: newContextInformation.id,
+                type: newContextInformation.dataType,
+                parameters: newContextInformation.parameters
+            }).setValue(newContextInformation.value), allowMultipleInstances);
         };
 
         /**
@@ -186,17 +186,20 @@ define("MoCD", ['nools', 'jquery', 'MoCI', 'contactJS', 'widgets', 'interpreters
             for (var index in this._aggregators) {
                 var theAggregator = this._aggregators[index];
 
-                this._callbacks["newContextInformationCallback"](this._contextInformationFromAttributes(theAggregator.getOutputContextInformation()));
+                this._callbacks["newContextInformationCallback"](theAggregator.getOutputContextInformation());
             }
         };
 
         /**
          *
-         *
-         * @returns {Array}
+         * @returns {ContextInformationList}
          */
         ContextDetector.prototype.getContextInformation = function() {
-            return this._contextInformation;
+            var contextInformation = new contactJS.ContextInformationList();
+            this._aggregators.forEach(function(aggregator) {
+                contextInformation.putAll(aggregator.getOutputContextInformation());
+            });
+            return contextInformation;
         };
 
         return ContextDetector;

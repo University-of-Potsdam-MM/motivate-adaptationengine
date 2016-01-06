@@ -1,5 +1,5 @@
-define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, ContextInformation) {
-    var AdaptationEngine = (function() {
+define('MoAE', ['MoRE', 'MoCD'], function (RuleEngine, ContextDetector) {
+    return (function() {
         /**
          * The adaptation engine encapsulates the rule engine and the context detection. Via callbacks an application
          * can listen to events fired by the rule engine during the rule evaluation process and react to the triggered rules.
@@ -11,8 +11,8 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
          * - require.js
          * - ease.js
          *
-         * @constructs AdaptationEngine
-         * @param {String} noolsDSL The adaptation rules as nools DSL format.
+         * @class AdaptationEngine
+         * @param {String} rules The adaptation rules as nools DSL format.
          * @param {Boolean} verbose
          * @example
          * $.ajax({
@@ -22,21 +22,19 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
              *     }
              * });
          */
-        function AdaptationEngine(noolsDSL, verbose) {
+        function AdaptationEngine(rules, verbose) {
             var self = this;
 
             /**
              * Indicates whether the rule matching process is running.
-             * @alias isRuleMatching
-             * @memberof AdaptationEngine#
+             *
              * @type {boolean}
              * @default false
              */
             this.isRuleMatching = false;
             /**
              * Indicates whether the context detection process is running.
-             * @alias isDetectingContext
-             * @memberof AdaptationEngine#
+             *
              * @type {boolean}
              * @default false
              */
@@ -45,27 +43,25 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
             this._ruleMatchingInterval = null;
             this._contextDetectionInterval = null;
 
-            this._noolsDSL = noolsDSL;
-
             // initialize the rule engine
-            this._ruleEngine = new RuleEngine(noolsDSL, verbose);
+            this._ruleEngine = new RuleEngine(RuleEngine.NODE_RULES, rules, verbose);
 
             // initialize context detector
-            this._contextDetector = new ContextDetector(this._ruleEngine.getRules(), verbose);
+            this._contextDetector = new ContextDetector(RuleEngine.NODE_RULES, rules, verbose);
 
             return this;
         }
 
         /**
          * Sets a callback function to be executed when a feature restricting rule fires.
-         * @alias setRestrictFeatureCallback
-         * @memberof AdaptationEngine#
+         *
          * @param {AdaptationEngine~restrictFeatureCallback} callback The function that handles the callback.
          */
         AdaptationEngine.prototype.setRestrictFeatureCallback = function(callback) {
             /**
              * The callback returns with a string containing the feature to be restricted and an array of context
              * information that triggered the rule.
+             *
              * @callback AdaptationEngine~restrictFeatureCallback
              * @param {string} feature The feature to be restricted.
              * @param {Array.<ContextInformation>} contextInformation An array of context information that triggered the rule.
@@ -82,14 +78,14 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
 
         /**
          * Sets a callback function to be executed when a learning unit selection rule fires.
-         * @alias setSelectLearningUnitCallback
-         * @memberof AdaptationEngine#
+         *
          * @param callback {AdaptationEngine~selectLearningUnitCallback} The function that handles the callback.
          */
         AdaptationEngine.prototype.setSelectLearningUnitCallback = function(callback) {
             /**
              * The callback returns with a string containing the ID of the learning unit to be selected and an array
              * of context information that triggered the rule.
+             *
              * @callback AdaptationEngine~selectLearningUnitCallback
              * @param {String} id The id of the learning unit to be selected.
              * @param {Array.<ContextInformation>} contextInformation An array of context information that triggered the rule.
@@ -168,7 +164,7 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
             /**
              * The callback returns with an object containing further information about the error that occurred.
              * @callback AdaptationEngine~newContextInformationCallback
-             * @param attributes {array.<Attribute>} The context information attributes.
+             * @param attributes {array.<ContextInformation>} The context information attributes.
              * @example
              * adaptationEngine.setNewContextInformationCallback(function(contextInformation) {
                  *     console.log(contextInformation);
@@ -289,8 +285,8 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
         /**
          * Allows to manually add context information to be used by the rule engine.
          *
-         * @param contextInformation {ContextInformation}
-         * @param allowMultipleInstances {boolean}
+         * @param {{id: string, dataType: string, parameters: [], value: *}} contextInformation
+         * @param {boolean} allowMultipleInstances
          */
         AdaptationEngine.prototype.addContextInformation = function(contextInformation, allowMultipleInstances) {
             this._contextDetector.addContextInformation(contextInformation, allowMultipleInstances);
@@ -298,6 +294,4 @@ define('MoAE', ['MoRE', 'MoCD', 'MoCI'], function (RuleEngine, ContextDetector, 
 
         return AdaptationEngine;
     })();
-
-    return AdaptationEngine;
 });

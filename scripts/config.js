@@ -14,25 +14,28 @@ require.config({
     ],
     paths: {
         // external libraries
-        jquery: 'lib/jquery-2.1.1.min',
+        jquery: 'lib/jquery-2.1.4.min',
+        underscore: 'lib/underscore-min',
         MathUuid: 'lib/Math.uuid',
         nools: 'lib/nools.min',
+        'node-rules': 'lib/node-rules',
         contactJS: 'lib/contactJS',
         // adaptation engine
         MoAE: 'motivate_adaptation_engine/AdaptationEngine',
         // rule engine
         MoRE: 'motivate_adaptation_engine/rules/RuleEngine',
-        // context information
-        MoCI: 'motivate_adaptation_engine/context/ContextInformation',
         // context detection
         MoCD: 'motivate_adaptation_engine/context/ContextDetector'
     },
     shim:{
-        'jquery' : {
-            exports : '$'
+        'jquery': {
+            exports: '$'
         },
-        'MathUuid' : {
-            exports : 'MathUuid'
+        'MathUuid': {
+            exports: 'MathUuid'
+        },
+        'underscore': {
+            exports: '_'
         }
     }
 });

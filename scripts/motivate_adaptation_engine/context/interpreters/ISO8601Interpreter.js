@@ -40,7 +40,7 @@ define(['contactJS'], function(contactJS) {
         ISO8601Interpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
             var formattedTime = outAttributes.getItems()[0];
 
-            var unixTimeSeconds = inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[0]);
+            var unixTimeSeconds = inAttributes.getValueForContextInformationOfKind(this.getOutputContextInformation().getItems()[0]);
             var theDate = new Date(unixTimeSeconds * 1000);
 
             var year = theDate.getFullYear();
@@ -49,9 +49,7 @@ define(['contactJS'], function(contactJS) {
 
             formattedTime.setValue(year + "" + month + "" + day);
 
-            callback([
-                formattedTime
-            ]);
+            callback([formattedTime]);
         };
 
         return ISO8601Interpreter;

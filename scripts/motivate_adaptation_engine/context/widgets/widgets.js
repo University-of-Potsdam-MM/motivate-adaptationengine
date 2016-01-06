@@ -14,7 +14,8 @@ define([
     './BatteryStatusWidget',
     './DevicePluggedInWidget',
     './NetworkConnectionTypeWidget',
-    './UPMoodleAvailableWidget'
+    './UPMoodleAvailableWidget',
+    './FakeUserRoleWidget'
 ], function(
     FakeCelsiusTemperatureWidget,
     GeoLocationWidget,
@@ -28,7 +29,8 @@ define([
     BatteryStatusWidget,
     DevicePluggedInWidget,
     NetworkConnectionTypeWidget,
-    UPMoodleAvailableWidget
+    UPMoodleAvailableWidget,
+    FakeUserRoleWidget
 ) {
     return arguments;
 });

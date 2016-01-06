@@ -1,47 +1,36 @@
-define ContextInformation {
-	id : '',
-	value : 'NO_VALUE',
-	parameters : { },
-	constructor : function(id, value, parameters) {
-		this.id = id;
-		this.value = value;
-		this.parameters = parameters;
-	}
-}
-
-rule "fb191463-4a89-4528-95cc-1365cdfd76e8" { 
+rule "fb191463-4a89-4528-95cc-1365cdfd76e8" {
 	when {
-		c1 : ContextInformation ((c1.id == 'CI_USER_ROLE' && c1.value != 'Student') || (c1.id == 'CI_CURRENT_TIME' && c1.value > '16:00:00') || (c1.id == 'CI_CURRENT_TIME' && c1.value < '09:00:00'));
+		c1 : Object ((c1.id == 'CI_USER_ROLE' && c1.value != 'Student') || (c1.id == 'CI_CURRENT_TIME' && c1.value > '16:00:00') || (c1.id == 'CI_CURRENT_TIME' && c1.value < '09:00:00'));
 	} then {
 		emit("restrictFeature", "AppUsageFeature", facts);
 	}
 }
 
-rule "202222e0-c5cc-4679-a066-626843aa5983" { 
+rule "202222e0-c5cc-4679-a066-626843aa5983" {
 	when {
-		c1 : ContextInformation ((c1.id == 'CI_DID_ARRIVE_AT_LOCATION' && c1.parameters['CP_LATITUDE'] == '52.39351' && c1.parameters['CP_LONGITUDE'] == '13.13024' && c1.value == 'true'));
+		c1 : Object ((c1.id == 'CI_DID_ARRIVE_AT_LOCATION' && c1.parameters['CP_LATITUDE'] == '52.39351' && c1.parameters['CP_LONGITUDE'] == '13.13024' && c1.value == 'true'));
 	} then {
 		emit("selectLearningUnit", "129", facts);
 	}
 }
 
-rule "4cde00e8-4118-46a5-815c-32ec47f76a9f" { 
+rule "4cde00e8-4118-46a5-815c-32ec47f76a9f" {
 	when {
-		c1 : ContextInformation;
-		c2 : ContextInformation;
-		c3 : ContextInformation;
-		c4 : ContextInformation;
-		c5 : ContextInformation;
-		c6 : ContextInformation;
-		c7 : ContextInformation ((c1.id == 'CI_FINISHED_LEARNING_UNIT' && c1.value == '127') && ((c2.id == 'CI_FINISHED_LEARNING_UNIT' && c2.value == '124') || (c2.id == 'CI_FINISHED_LEARNING_UNIT' && c2.value == '125')) && ((c3.id == 'CI_FINISHED_LEARNING_UNIT' && c3.value == '128') || (c3.id == 'CI_FINISHED_LEARNING_UNIT' && c3.value == '125')) && (c4.id == 'CI_USER_MOVEMENT_SPEED' && c4.parameters['CP_VELOCITY_UNIT'] == 'KILOMETERS_PER_HOUR' && c4.value < '20.0') && (c5.id == 'CI_DEVICE_TYPE' && c5.value == 'FEATURE_PHONE')) && ((c6.id == 'CI_USER_LOCATION_LONGITUDE' && c6.value == '13.13021') && (c7.id == 'CI_USER_LOCATION_LATITUDE' && c7.value == '52.39346'));
+		c1 : Object;
+		c2 : Object;
+		c3 : Object;
+		c4 : Object;
+		c5 : Object;
+		c6 : Object;
+		c7 : Object c1.id == 'CI_FINISHED_LEARNING_UNIT' && c1.value == '127' && c2.id == 'CI_FINISHED_LEARNING_UNIT' && (c2.value == '124' || c2.value == '125') && c3.id == 'CI_FINISHED_LEARNING_UNIT' && (c3.value == '128' || c3.value == '125') && c4.id == 'CI_USER_MOVEMENT_SPEED' && c4.parameters['CP_VELOCITY_UNIT'] == 'KILOMETERS_PER_HOUR' && c4.value < '20.0' && c5.id == 'CI_DEVICE_MODEL' && c5.value == 'FEATURE_PHONE' && c6.id == 'CI_USER_LOCATION_LONGITUDE' && c6.value == '13.13021' && c7.id == 'CI_USER_LOCATION_LATITUDE' && c7.value == '52.39346';
 	} then {
 		emit("selectLearningUnit", "126", facts);
 	}
 }
 
-rule "80760a3a-c093-4c70-a0b9-3a2dd80668f2" { 
+rule "80760a3a-c093-4c70-a0b9-3a2dd80668f2" {
 	when {
-		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '126'));
+		c1 : Object ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '126'));
 	} then {
 		emit("preloadLearningUnit", "127", facts);
 	}
@@ -49,7 +38,7 @@ rule "80760a3a-c093-4c70-a0b9-3a2dd80668f2" {
 
 rule "da684112-9a15-4a69-b246-8756b934ebda" { 
 	when {
-		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '126'));
+		c1 : Object ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '126'));
 	} then {
 		emit("preloadLearningUnit", "124", facts);
 	}
@@ -57,64 +46,64 @@ rule "da684112-9a15-4a69-b246-8756b934ebda" {
 
 rule "e391d9fc-c71b-47be-914c-eb9a89d8f75e" { 
 	when {
-		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '126'));
+		c1 : Object ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '126'));
 	} then {
 		emit("preloadLearningUnit", "128", facts);
 	}
 }
 
-rule "1540dfca-7dda-40dd-9a0a-e861e418f270" { 
+rule "1540dfca-7dda-40dd-9a0a-e861e418f270" {
 	when {
-		c1 : ContextInformation;
-		c2 : ContextInformation ((c1.id == 'CI_DEVICE_TYPE' && c1.value == 'FEATURE_PHONE')) && ((c2.id == 'CI_CURRENT_TEMPERATURE' && c2.parameters['CP_TEMPERATURE_SCALE'] == 'FAHRENHEIT' && c2.value > '30.0'));
+		c1 : Object;
+		c2 : Object ((c1.id == 'CI_DEVICE_MODEL' && c1.value == 'FEATURE_PHONE')) && ((c2.id == 'CI_CURRENT_TEMPERATURE' && c2.parameters['CP_TEMPERATURE_SCALE'] == 'FAHRENHEIT' && c2.value > '30.0'));
 	} then {
 		emit("selectLearningUnit", "130", facts);
 	}
 }
 
-rule "02a5a45e-42bc-43d1-99a4-ee7c2302878c" { 
+rule "02a5a45e-42bc-43d1-99a4-ee7c2302878c" {
 	when {
-		c1 : ContextInformation ((c1.id == 'CI_CURRENT_TEMPERATURE' && c1.parameters['CP_TEMPERATURE_SCALE'] == 'FAHRENHEIT' && c1.value > '30.0'));
+		c1 : Object ((c1.id == 'CI_CURRENT_TEMPERATURE' && c1.parameters['CP_TEMPERATURE_SCALE'] == 'FAHRENHEIT' && c1.value > '30.0'));
 	} then {
 		emit("selectLearningUnit", "124", facts);
 	}
 }
 
-rule "130a4774-f243-411e-976e-d2a88df5a1d6" { 
+rule "130a4774-f243-411e-976e-d2a88df5a1d6" {
 	when {
-		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '124'));
+		c1 : Object ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '124'));
 	} then {
 		emit("preloadLearningUnit", "125", facts);
 	}
 }
 
-rule "466c7fea-277f-40e1-bbc0-d853eb008dbe" { 
+rule "466c7fea-277f-40e1-bbc0-d853eb008dbe" {
 	when {
-		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '125'));
+		c1 : Object ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '125'));
 	} then {
 		emit("preloadLearningUnit", "124", facts);
 	}
 }
 
-rule "d6a3832e-1997-4a36-bf7b-4f57aa8d15d9" { 
+rule "d6a3832e-1997-4a36-bf7b-4f57aa8d15d9" {
 	when {
-		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '125'));
+		c1 : Object ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '125'));
 	} then {
 		emit("preloadLearningUnit", "128", facts);
 	}
 }
 
-rule "5c3ce844-f792-4aa3-97a4-c42723217b1b" { 
+rule "5c3ce844-f792-4aa3-97a4-c42723217b1b" {
 	when {
-		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '128'));
+		c1 : Object ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '128'));
 	} then {
 		emit("preloadLearningUnit", "125", facts);
 	}
 }
 
-rule "50b176c2-6033-4b3e-b178-087743fece2e" { 
+rule "50b176c2-6033-4b3e-b178-087743fece2e" {
 	when {
-		c1 : ContextInformation ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '128'));
+		c1 : Object ((c1.id == 'CI_CURRENT_LEARNING_UNIT' && c1.value == '128'));
 	} then {
 		emit("preloadLearningUnit", "129", facts);
 	}
