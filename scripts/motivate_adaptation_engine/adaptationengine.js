@@ -285,7 +285,7 @@ define('MoAE', ['MoRE', 'MoCD'], function (RuleEngine, ContextDetector) {
         /**
          * Allows to manually add context information to be used by the rule engine.
          *
-         * @param {{id: string, dataType: string, parameters: [], value: *}} contextInformation
+         * @param {{name: string, type: string, parameterList: [], value: *}} contextInformation
          * @param {boolean} allowMultipleInstances
          */
         AdaptationEngine.prototype.addContextInformation = function(contextInformation, allowMultipleInstances) {

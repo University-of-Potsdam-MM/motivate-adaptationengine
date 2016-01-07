@@ -164,14 +164,14 @@ define("MoCD", ['MoRE', 'nools', 'jquery', 'contactJS', 'widgets', 'interpreters
         /**
          * Adds a context information that wasn't gathered before.
          *
-         * @param {{id: string, dataType: string, parameters: [], value: *}} newContextInformation The new context information.
+         * @param {{name: string, type: string, parameterList: [], value: *}} newContextInformation The new context information.
          * @param {Boolean} allowMultipleInstances Set to true if multiple instances of the context information are allowed.
          */
         ContextDetector.prototype.addContextInformation = function(newContextInformation, allowMultipleInstances) {
             this._manualAggregator.addOutputContextInformation(contactJS.ContextInformation.fromContextInformationDescription(this._discoverer, {
-                name: newContextInformation.id,
-                type: newContextInformation.dataType,
-                parameters: newContextInformation.parameters
+                name: newContextInformation.name,
+                type: newContextInformation.type,
+                parameterList: newContextInformation.parameterList
             }).setValue(newContextInformation.value), allowMultipleInstances);
         };
 

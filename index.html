@@ -45,30 +45,30 @@
                             adaptationEngine.startRuleMatching(10000);
 
                             adaptationEngine.addContextInformation({
-                                id: "CI_FINISHED_LEARNING_UNIT",
-                                dataType: "INTEGER",
-                                parameters: [],
+                                name: "CI_FINISHED_LEARNING_UNIT",
+                                type: "INTEGER",
+                                parameterList: [],
                                 value: 124
                             }, true);
 
                             adaptationEngine.addContextInformation({
-                                id: "CI_FINISHED_LEARNING_UNIT",
-                                dataType: "INTEGER",
-                                parameters: [],
+                                name: "CI_FINISHED_LEARNING_UNIT",
+                                type: "INTEGER",
+                                parameterList: [],
                                 value: 125
                             }, true);
 
                             adaptationEngine.addContextInformation({
-                                id: "CI_CURRENT_LEARNING_UNIT",
-                                dataType: "INTEGER",
-                                parameters: [],
+                                name: "CI_CURRENT_LEARNING_UNIT",
+                                type: "INTEGER",
+                                parameterList: [],
                                 value: 126
                             }, false);
 
                             adaptationEngine.addContextInformation({
-                                id: "CI_USER_DID_PERFORM_ACTION",
-                                dataType: "STRING",
-                                parameters: [
+                                name: "CI_USER_DID_PERFORM_ACTION",
+                                type: "STRING",
+                                parameterList: [
                                     ["CP_ACTION_START_TIMESTAMP", "INTEGER", "1"],
                                     ["CP_ACTION_END_TIMESTAMP", "INTEGER", "1"],
                                     ["CP_ACTION_REFERENCED_LEARNING_UNIT", "INTEGER", 126]

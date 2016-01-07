@@ -46,7 +46,7 @@ define(['contactJS'], function(contactJS) {
             fahrenheitValue.setValue(fahrenheitTemperature);
 
             callback([
-                fahrenheitTemperature
+                fahrenheitValue
             ]);
         };
 
